@@ -6,9 +6,15 @@ public class Tile {
     private int diceNumber;
     private ResourceType resourceType;
 
-    public Tile(int diceNumber, ResourceType resourceType) {
+    // center coordinates of the tile
+    private double xCoordinate;
+    private double yCoordinate;
+
+    public Tile(int diceNumber, ResourceType resourceType, double xCoordinate, double yCoordinate) {
         this.diceNumber = diceNumber;
         this.resourceType = resourceType;
+        this.xCoordinate = xCoordinate;
+        this.yCoordinate = yCoordinate;
     }
 
     public void setDiceNumber(int diceNumber) {
@@ -25,5 +31,19 @@ public class Tile {
 
     public ResourceType getResourceType() {
         return resourceType;
+    }
+
+    public void setXCoordinate(double xCoordinate) {
+        this.xCoordinate = xCoordinate;
+    }
+    public double getxCoordinate() {
+        return xCoordinate;
+    }
+
+    public void setYCoordinate(double yCoordinate) {
+        this.yCoordinate = yCoordinate;
+    }
+    public double getyCoordinate() {
+        return yCoordinate;
     }
 }
