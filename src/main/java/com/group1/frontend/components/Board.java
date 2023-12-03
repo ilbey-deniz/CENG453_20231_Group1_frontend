@@ -2,15 +2,14 @@ package com.group1.frontend.components;
 
 import com.group1.frontend.enums.ResourceType;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.group1.frontend.constants.BoardConstants.*;
 import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomKey;
 
 public class Board {
     private final List<Tile> tiles = new ArrayList<>();
-    private List<Intersection> points = new ArrayList<>();
+    private List<Corner> points = new ArrayList<>();
     private List<Edge> roads = new ArrayList<>();
 
     public Board() {
@@ -27,11 +26,13 @@ public class Board {
 //    • Roads will connect hexagon tiles, forming a network of paths between them.
 //    • Roads will also extend along the outer edges of the hexagons, creating a border around the entire board.
     public void generateRandomBoard() {
-
+        System.out.print(getCornersFromTileCoordinates());
         for(double[] tileCoordinate : TILE_COORDINATES) {
             double x = tileCoordinate[0];
             double y = tileCoordinate[1];
+
             if( tileCoordinate[0] == 0 && tileCoordinate[1] == 0){
+                // TODO: Not assign number to desert.
                 Tile tile = new Tile(7, ResourceType.DESERT, x, y);
                 tiles.add(tile);
                 continue;
@@ -40,7 +41,6 @@ public class Board {
             ResourceType randomResourceType = getRandomKey(TILE_RESOURCE_TYPES);
             TILE_RESOURCE_TYPES.put(randomResourceType, TILE_RESOURCE_TYPES.get(randomResourceType) - 1);
 
-//            int randomDiceNumber = new Random().nextInt(11) + 2;
             Integer randomDiceNumber = getRandomKey(TILE_DICE_NUMBERS);
             TILE_DICE_NUMBERS.put(randomDiceNumber, TILE_DICE_NUMBERS.get(randomDiceNumber) - 1);
 
@@ -52,17 +52,38 @@ public class Board {
                 TILE_DICE_NUMBERS.remove(randomDiceNumber);
             }
 
-            // pick random resource type and dice number and decrement its count
-            System.out.println(randomResourceType);
-
             assert randomDiceNumber != null;
             Tile tile = new Tile(randomDiceNumber, randomResourceType, x, y);
             tiles.add(tile);
         }
+        for (List<Double> cornerCoordinates : getCornersFromTileCoordinates()) {
+            Corner corner = new Corner(cornerCoordinates.get(0), cornerCoordinates.get(1));
+            points.add(corner);
+        }
     }
+
+    public Set<List<Double>> getCornersFromTileCoordinates(){
+        Set<List<Double>> corners = new HashSet<>();
+        for(double[] tileCoordinate : TILE_COORDINATES) {
+            double x = tileCoordinate[0] * 2;
+            double y = tileCoordinate[1] * 3;
+            corners.add(Arrays.asList(x, y-2));
+            corners.add(Arrays.asList(x-1, y-1));
+            corners.add(Arrays.asList(x-1, y+1));
+            corners.add(Arrays.asList(x, y+2));
+            corners.add(Arrays.asList(x+1, y+1));
+            corners.add(Arrays.asList(x+1, y-1));
+        }
+        return corners;
+    }
+
 
     public List<Tile> getTiles() {
         return tiles;
+    }
+
+    public List<Corner> getPoints() {
+        return points;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.group1.frontend.view.elements;
 
 import com.group1.frontend.components.Board;
+import com.group1.frontend.components.Corner;
 import com.group1.frontend.components.Tile;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -21,6 +22,11 @@ public class BoardView extends AnchorPane {
             getChildren().add(tileView);
             getChildren().add(new Text(tileView.getBoardXCoordinate(), tileView.getBoardYCoordinate(),
                     String.valueOf(tile.getDiceNumber())));
+        }
+
+        for(Corner point : board.getPoints()){
+            CornerView cornerView = new CornerView(point);
+            getChildren().add(cornerView);
         }
 
         setBackground(Background.fill(Color.LIGHTSKYBLUE));

@@ -3,8 +3,7 @@ package com.group1.frontend.constants;
 import com.group1.frontend.enums.ResourceType;
 import javafx.stage.Screen;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public final class BoardConstants {
 
@@ -37,6 +36,8 @@ public final class BoardConstants {
         12, 1
     ));
 
+
+    // Coordinates of the tiles on the board
     public static final double[][] TILE_COORDINATES = {
         {-1, -2}, {0, -2}, {1, -2},
         {-1.5, -1}, {-0.5, -1}, {0.5, -1}, {1.5, -1},
