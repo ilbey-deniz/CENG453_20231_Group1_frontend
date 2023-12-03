@@ -17,10 +17,10 @@ public class BoardView extends AnchorPane {
 
         List<Tile> tiles = board.getTiles();
         for (Tile tile : tiles) {
-            TileView tileView = new TileView(tile.getDiceNumber(), tile.getResourceType(),
-                    tile.getxCoordinate(), tile.getyCoordinate());
+            TileView tileView = new TileView(tile);
             getChildren().add(tileView);
-            getChildren().add(new Text(tile.getxCoordinate(), tile.getyCoordinate(), String.valueOf(tile.getDiceNumber())));
+            getChildren().add(new Text(tileView.getBoardXCoordinate(), tileView.getBoardYCoordinate(),
+                    String.valueOf(tile.getDiceNumber())));
         }
 
         setBackground(Background.fill(Color.LIGHTSKYBLUE));
