@@ -4,14 +4,14 @@ import com.group1.frontend.enums.ResourceType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static com.group1.frontend.constants.BoardConstants.*;
+import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomKey;
 
 public class Board {
-    private final List<Tile> tiles = new ArrayList<Tile>();
-    private List<Intersection> points = new ArrayList<Intersection>();
-    private List<Edge> roads = new ArrayList<Edge>();
+    private final List<Tile> tiles = new ArrayList<>();
+    private List<Intersection> points = new ArrayList<>();
+    private List<Edge> roads = new ArrayList<>();
 
     public Board() {
 
@@ -29,17 +29,33 @@ public class Board {
     public void generateRandomBoard() {
 
         for(double[] tileCoordinate : TILE_COORDINATES) {
-            double x = tileCoordinate[0] * TILE_HEIGHT*V2/2 * 1.10 + xStartOffset;
-            double y = tileCoordinate[1] * TILE_HEIGHT*3/4 * 1.10 + yStartOffset;
-            ResourceType randomResourceType = ResourceType.values()[new Random().nextInt(ResourceType.values().length)];
-            int randomDiceNumber = new Random().nextInt(11) + 2;
-//            if (TILE_RESOURCE_TYPES.get(randomResourceType) == 0){
-//                randomResourceType = ResourceType.values()[new Random().nextInt(ResourceType.values().length)];
-//                while (TILE_RESOURCE_TYPES.get(randomResourceType) != 0){
-//                    randomResourceType = ResourceType.values()[new Random().nextInt(ResourceType.values().length)];
-//                }
-//            }
+            double x = tileCoordinate[0];
+            double y = tileCoordinate[1];
+            if( tileCoordinate[0] == 0 && tileCoordinate[1] == 0){
+                Tile tile = new Tile(7, ResourceType.DESERT, x, y);
+                tiles.add(tile);
+                continue;
+            }
+
+            ResourceType randomResourceType = getRandomKey(TILE_RESOURCE_TYPES);
+            TILE_RESOURCE_TYPES.put(randomResourceType, TILE_RESOURCE_TYPES.get(randomResourceType) - 1);
+
+//            int randomDiceNumber = new Random().nextInt(11) + 2;
+            Integer randomDiceNumber = getRandomKey(TILE_DICE_NUMBERS);
+            TILE_DICE_NUMBERS.put(randomDiceNumber, TILE_DICE_NUMBERS.get(randomDiceNumber) - 1);
+
+            if(TILE_RESOURCE_TYPES.get(randomResourceType) == 0){
+                TILE_RESOURCE_TYPES.remove(randomResourceType);
+            }
+
+            if(TILE_DICE_NUMBERS.get(randomDiceNumber) == 0){
+                TILE_DICE_NUMBERS.remove(randomDiceNumber);
+            }
+
             // pick random resource type and dice number and decrement its count
+            System.out.println(randomResourceType);
+
+            assert randomDiceNumber != null;
             Tile tile = new Tile(randomDiceNumber, randomResourceType, x, y);
             tiles.add(tile);
         }
