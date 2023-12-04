@@ -1,39 +1,63 @@
 package com.group1.frontend.components;
 
 public class Edge {
-    private int xCoordinate;
-    private int yCoordinate;
+    private double firstXCoordinate;
+    private double firstYCoordinate;
+
+    private double secondXCoordinate;
+    private double secondYCoordinate;
 
     private boolean isOccupied;
     private Player owner;
 
-    public Edge(int xCoordinate, int yCoordinate) {
-        this.xCoordinate = xCoordinate;
-        this.yCoordinate = yCoordinate;
+    public Edge(double firstXCoordinate, double firstYCoordinate, double secondXCoordinate, double secondYCoordinate) {
+        this.firstXCoordinate = firstXCoordinate;
+        this.firstYCoordinate = firstYCoordinate;
+        this.secondXCoordinate = secondXCoordinate;
+        this.secondYCoordinate = secondYCoordinate;
         this.isOccupied = false;
         this.owner = null;
     }
 
-    public Edge(int xCoordinate, int yCoordinate, boolean isOccupied, Player owner) {
-        this.xCoordinate = xCoordinate;
-        this.yCoordinate = yCoordinate;
+    public Edge(double firstXCoordinate, double firstYCoordinate, double secondXCoordinate, double secondYCoordinate,
+                boolean isOccupied, Player owner) {
+        this.firstXCoordinate = firstXCoordinate;
+        this.firstYCoordinate = firstYCoordinate;
+        this.secondXCoordinate = secondXCoordinate;
+        this.secondYCoordinate = secondYCoordinate;
         this.isOccupied = isOccupied;
         this.owner = owner;
     }
 
-    public void setXCoordinate(int xCoordinate) {
-        this.xCoordinate = xCoordinate;
+    public void setFirstXCoordinate(double firstXCoordinate) {
+        this.firstXCoordinate = firstXCoordinate;
     }
-    public int getXCoordinate() {
-        return xCoordinate;
-    }
-
-    public void setYCoordinate(int yCoordinate) {
-        this.yCoordinate = yCoordinate;
+    public double getFirstXCoordinate() {
+        return firstXCoordinate;
     }
 
-    public int getYCoordinate() {
-        return yCoordinate;
+    public void setFirstYCoordinate(double firstYCoordinate) {
+        this.firstYCoordinate = firstYCoordinate;
+    }
+
+    public double getFirstYCoordinate() {
+        return firstYCoordinate;
+    }
+
+    public void setSecondXCoordinate(double secondXCoordinate) {
+        this.secondXCoordinate = secondXCoordinate;
+    }
+
+    public double getSecondXCoordinate() {
+        return secondXCoordinate;
+    }
+
+    public void setSecondYCoordinate(double secondYCoordinate) {
+        this.secondYCoordinate = secondYCoordinate;
+    }
+
+    public double getSecondYCoordinate() {
+        return secondYCoordinate;
     }
 
     public void setIsOccupied(boolean isOccupied) {

@@ -2,6 +2,7 @@ package com.group1.frontend.view.elements;
 
 import com.group1.frontend.components.Board;
 import com.group1.frontend.components.Corner;
+import com.group1.frontend.components.Edge;
 import com.group1.frontend.components.Tile;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -27,6 +28,11 @@ public class BoardView extends AnchorPane {
         for(Corner point : board.getPoints()){
             CornerView cornerView = new CornerView(point);
             getChildren().add(cornerView);
+        }
+
+        for(Edge edge : board.getEdges()){
+            EdgeView edgeView = new EdgeView(edge);
+            getChildren().add(edgeView);
         }
 
         setBackground(Background.fill(Color.LIGHTSKYBLUE));
