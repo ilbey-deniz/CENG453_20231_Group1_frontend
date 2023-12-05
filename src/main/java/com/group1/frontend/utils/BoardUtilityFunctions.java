@@ -3,6 +3,8 @@ package com.group1.frontend.utils;
 import java.util.Map;
 import java.util.Random;
 
+import static com.group1.frontend.constants.BoardConstants.PLAYER_COLORS;
+
 public class BoardUtilityFunctions {
 
     public static <K, V> K getRandomKey(Map<K, V> map) {
@@ -22,5 +24,22 @@ public class BoardUtilityFunctions {
 
     public static String mapIntToNumberAsset(Integer number){
         return "src/main/resources/assets/" + number.toString() + ".png";
+    }
+
+    public static String getRandomColor(){
+        return PLAYER_COLORS.get(getRandomKey(PLAYER_COLORS));
+    }
+
+    public  static String getRandomBuildingAsset(){
+        Random random = new Random();
+        String buildingType;
+        if(random.nextBoolean()){
+            buildingType = "house_";
+        }
+        else{
+            buildingType = "city_";
+        }
+
+        return "src/main/resources/assets/" + buildingType + getRandomKey(PLAYER_COLORS) + ".png";
     }
 }

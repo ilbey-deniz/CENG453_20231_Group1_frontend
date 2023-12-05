@@ -18,6 +18,7 @@ import java.util.List;
 
 import static com.group1.frontend.constants.BoardConstants.*;
 import static com.group1.frontend.constants.BoardConstants.V;
+import static com.group1.frontend.constants.BoardConstants.BACKGROUND_ISLAND_COLOR;
 import static com.group1.frontend.utils.BoardUtilityFunctions.mapIntToNumberAsset;
 
 public class BoardView extends AnchorPane {
@@ -37,7 +38,7 @@ public class BoardView extends AnchorPane {
                 xStartOffset + backgroundScaleConstant, yStartOffset,
                 xStartOffset + (backgroundScaleConstant/2), yStartOffset - (V * backgroundScaleConstant)
         );
-        backgroundIsland.setFill(Color.valueOf("#fff7d0"));
+        backgroundIsland.setFill(Color.valueOf(BACKGROUND_ISLAND_COLOR));
         getChildren().add(backgroundIsland);
 
         List<Tile> tiles = board.getTiles();

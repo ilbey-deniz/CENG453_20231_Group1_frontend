@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import static com.group1.frontend.constants.BoardConstants.*;
+import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomBuildingAsset;
 
 public class CornerView extends Circle {
 //    private double boardXCoordinate;
@@ -38,7 +39,7 @@ public CornerView(Corner corner) {
     });
 }
     public void occupyCorner() throws FileNotFoundException {
-        Image image = new Image(new FileInputStream("src/main/resources/assets/house_blue.png"));
+        Image image = new Image(new FileInputStream(getRandomBuildingAsset()));
         setFill(new ImagePattern(image));
         corner.setIsOccupied(true);
     }

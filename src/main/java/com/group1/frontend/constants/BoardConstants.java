@@ -15,6 +15,15 @@ public final class BoardConstants {
     public static final double V = Math.sqrt(3) / 2.0;
     public static final double V2 = Math.sqrt(3);
 
+    public static final Map<String , String > PLAYER_COLORS = new HashMap<>(Map.of(
+        "red", "#9c4300",
+        "blue", "#4fa6eb",
+        "green", "#517d19",
+        "yellow", "#f0ad00"
+    ));
+
+    public static final String BACKGROUND_ISLAND_COLOR = "#fff7d0";
+
     public static HashMap<ResourceType, Integer> TILE_RESOURCE_TYPES = new HashMap<>(Map.of(
         ResourceType.HILLS, 3,
         ResourceType.MOUNTAIN, 3,
