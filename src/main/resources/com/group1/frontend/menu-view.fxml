@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.group1.frontend.controllers.MenuController">
+   <children>
+      <AnchorPane prefHeight="400.0" prefWidth="276.0" style="-fx-background-color: #4fa6eb;">
+         <children>
+            <ImageView fitHeight="40.0" fitWidth="190.0" layoutX="50.0" layoutY="123.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@assets/catan_logo.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="94.0" layoutY="210.0" text="Group 1" />
+            <Label layoutX="37.0" layoutY="234.0" text="Mustafa İlbey Deniz - 2448314" />
+            <Label layoutX="12.0" layoutY="255.0" text="Muhammet Fatih Berberoğlu - 2380202" />
+         </children>
+      </AnchorPane>
+      <AnchorPane prefHeight="400.0" prefWidth="408.0">
+         <children>
+            <AnchorPane layoutX="20.0" layoutY="102.0" prefHeight="246.0" prefWidth="329.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+               <children>
+                  <Label layoutX="35.0" layoutY="30.0" text="Welcome, " AnchorPane.leftAnchor="35.0" />
+                  <Label fx:id="usernameLabel" layoutX="96.0" layoutY="30.0" />
+                  <Button fx:id="createGameButton" layoutX="35.0" layoutY="67.0" mnemonicParsing="false" onAction="#onCreateGameButtonClick" text="CREATE GAME" AnchorPane.leftAnchor="35.0" />
+                  <Button fx:id="leaderboardButton" layoutX="35.0" layoutY="159.0" mnemonicParsing="false" onAction="#onLeaderboardButtonClick" text="Leaderboard" AnchorPane.leftAnchor="35.0" />
+                  <Button fx:id="logoutButton" layoutX="35.0" layoutY="191.0" mnemonicParsing="false" onAction="#onLogoutButtonClick" text="Log Out" AnchorPane.leftAnchor="35.0" />
+                  <Button fx:id="quitButton" layoutX="35.0" layoutY="222.0" mnemonicParsing="false" onAction="#onQuitButtonClick" text="Quit Game" AnchorPane.leftAnchor="35.0" />
+                  <Hyperlink fx:id="changePasswordLink" layoutX="203.0" layoutY="224.0" onAction="#onChangePasswordLinkClick" text="Change Password" AnchorPane.rightAnchor="14.0" />
+                  <Button fx:id="joinGameButton" layoutX="35.0" layoutY="99.0" mnemonicParsing="false" onAction="#onJoinGameButtonClick" text="JOIN GAME" AnchorPane.leftAnchor="35.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+   </children>
+</HBox>
