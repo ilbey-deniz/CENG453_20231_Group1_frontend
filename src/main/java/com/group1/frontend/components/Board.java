@@ -30,20 +30,23 @@ public class Board {
 //    • Roads will connect hexagon tiles, forming a network of paths between them.
 //    • Roads will also extend along the outer edges of the hexagons, creating a border around the entire board.
     public void generateRandomBoard() {
-          for(double[] tileCoordinate : TILE_COORDINATES) { double x = tileCoordinate[0];   double y = tileCoordinate[1];   if( tileCoordinate[0] == 0 && tileCoordinate[1] == 0){
+        HashMap<ResourceType, Integer> tileResourceTypes = new HashMap<>(TILE_RESOURCE_TYPES);
+        HashMap<Integer, Integer> tileDiceNumbers = new HashMap<> (TILE_DICE_NUMBERS);
+
+        for(double[] tileCoordinate : TILE_COORDINATES) { double x = tileCoordinate[0];   double y = tileCoordinate[1];   if( tileCoordinate[0] == 0 && tileCoordinate[1] == 0){
                 // TODO: Not assign number to desert.
                 Tile tile = new Tile(7, ResourceType.DESERT, x, y);
                 tiles.add(tile);
                 continue;
             }
-            ResourceType randomResourceType = getRandomKey(TILE_RESOURCE_TYPES);    TILE_RESOURCE_TYPES.put(randomResourceType, TILE_RESOURCE_TYPES.get(randomResourceType) - 1);
-            Integer randomDiceNumber = getRandomKey(TILE_DICE_NUMBERS);
-            TILE_DICE_NUMBERS.put(randomDiceNumber, TILE_DICE_NUMBERS.get(randomDiceNumber) - 1);
-            if(TILE_RESOURCE_TYPES.get(randomResourceType) == 0){
-                TILE_RESOURCE_TYPES.remove(randomResourceType);
+            ResourceType randomResourceType = getRandomKey(tileResourceTypes);tileResourceTypes.put(randomResourceType, tileResourceTypes.get(randomResourceType) - 1);
+            Integer randomDiceNumber = getRandomKey(tileDiceNumbers);
+            tileDiceNumbers.put(randomDiceNumber, tileDiceNumbers.get(randomDiceNumber) - 1);
+            if(tileResourceTypes.get(randomResourceType) == 0){
+                tileResourceTypes.remove(randomResourceType);
             }
-            if(TILE_DICE_NUMBERS.get(randomDiceNumber) == 0){
-                TILE_DICE_NUMBERS.remove(randomDiceNumber);
+            if(tileDiceNumbers.get(randomDiceNumber) == 0){
+                tileDiceNumbers.remove(randomDiceNumber);
             }
             assert randomDiceNumber != null;
             Tile tile = new Tile(randomDiceNumber, randomResourceType, x, y);
