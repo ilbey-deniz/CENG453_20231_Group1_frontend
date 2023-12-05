@@ -1,16 +1,16 @@
 package com.group1.frontend.components;
 
-import com.group1.frontend.enums.ResourceType;
+import com.group1.frontend.enums.TileType;
 
 public class Tile {
     private int diceNumber;
-    private ResourceType resourceType;
+    private TileType resourceType;
 
     // center coordinates of the tile
     private double xCoordinate;
     private double yCoordinate;
 
-    public Tile(int diceNumber, ResourceType resourceType, double xCoordinate, double yCoordinate) {
+    public Tile(int diceNumber, TileType resourceType, double xCoordinate, double yCoordinate) {
         this.diceNumber = diceNumber;
         this.resourceType = resourceType;
         this.xCoordinate = xCoordinate;
@@ -25,11 +25,11 @@ public class Tile {
         return diceNumber;
     }
 
-    public void setResourceType(ResourceType resourceType) {
+    public void setResourceType(TileType resourceType) {
         this.resourceType = resourceType;
     }
 
-    public ResourceType getResourceType() {
+    public TileType getResourceType() {
         return resourceType;
     }
 

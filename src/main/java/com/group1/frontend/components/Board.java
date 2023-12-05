@@ -1,8 +1,7 @@
 package com.group1.frontend.components;
 
-import com.group1.frontend.enums.ResourceType;
+import com.group1.frontend.enums.TileType;
 
-import java.io.DataOutput;
 import java.util.*;
 
 import static com.group1.frontend.constants.BoardConstants.*;
@@ -32,11 +31,11 @@ public class Board {
     public void generateRandomBoard() {
           for(double[] tileCoordinate : TILE_COORDINATES) { double x = tileCoordinate[0];   double y = tileCoordinate[1];   if( tileCoordinate[0] == 0 && tileCoordinate[1] == 0){
                 // TODO: Not assign number to desert.
-                Tile tile = new Tile(7, ResourceType.DESERT, x, y);
+                Tile tile = new Tile(7, TileType.DESERT, x, y);
                 tiles.add(tile);
                 continue;
             }
-            ResourceType randomResourceType = getRandomKey(TILE_RESOURCE_TYPES);    TILE_RESOURCE_TYPES.put(randomResourceType, TILE_RESOURCE_TYPES.get(randomResourceType) - 1);
+            TileType randomResourceType = getRandomKey(TILE_RESOURCE_TYPES);    TILE_RESOURCE_TYPES.put(randomResourceType, TILE_RESOURCE_TYPES.get(randomResourceType) - 1);
             Integer randomDiceNumber = getRandomKey(TILE_DICE_NUMBERS);
             TILE_DICE_NUMBERS.put(randomDiceNumber, TILE_DICE_NUMBERS.get(randomDiceNumber) - 1);
             if(TILE_RESOURCE_TYPES.get(randomResourceType) == 0){
@@ -86,6 +85,12 @@ public class Board {
             groupedCorners.add(groupedCorner);
         }
     }
+//    public void printAllCornerOfIsOccupied() {
+//        for (Corner corner : points) {
+//            System.out.println(corner.getIsOccupied());
+//        }
+//
+//    }
 
 
     public List<Tile> getTiles() {

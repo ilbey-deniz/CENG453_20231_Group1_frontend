@@ -1,6 +1,6 @@
 package com.group1.frontend.constants;
 
-import com.group1.frontend.enums.ResourceType;
+import com.group1.frontend.enums.TileType;
 import javafx.stage.Screen;
 
 import java.util.*;
@@ -24,12 +24,12 @@ public final class BoardConstants {
 
     public static final String BACKGROUND_ISLAND_COLOR = "#fff7d0";
 
-    public static HashMap<ResourceType, Integer> TILE_RESOURCE_TYPES = new HashMap<>(Map.of(
-        ResourceType.HILLS, 3,
-        ResourceType.MOUNTAIN, 3,
-        ResourceType.FOREST, 4,
-        ResourceType.FIELDS, 4,
-        ResourceType.PASTURE, 4
+    public static HashMap<TileType, Integer> TILE_RESOURCE_TYPES = new HashMap<>(Map.of(
+        TileType.HILLS, 3,
+        TileType.MOUNTAIN, 3,
+        TileType.FOREST, 4,
+        TileType.FIELDS, 4,
+        TileType.PASTURE, 4
     ));
 
     public static HashMap<Integer, Integer> TILE_DICE_NUMBERS = new HashMap<> (Map.of(
