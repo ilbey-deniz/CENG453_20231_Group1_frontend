@@ -11,7 +11,7 @@ public final class BoardConstants {
     public static final double WINDOW_HEIGHT = Screen.getScreens().get(0).getBounds().getHeight()-77;
     public static final double xStartOffset = WINDOW_WIDTH/2; // offsets the entire field to the right
     public static final double yStartOffset = WINDOW_HEIGHT/2; // offsets the entire fiels downwards
-    public static double TILE_HEIGHT = 150;
+    public static double TILE_HEIGHT = WINDOW_HEIGHT / 6.0; // height of the tile
     public static final double V = Math.sqrt(3) / 2.0;
     public static final double V2 = Math.sqrt(3);
 
