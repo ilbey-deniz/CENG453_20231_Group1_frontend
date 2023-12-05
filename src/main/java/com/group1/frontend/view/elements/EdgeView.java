@@ -3,7 +3,6 @@ package com.group1.frontend.view.elements;
 import com.group1.frontend.components.Edge;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
 
 import static com.group1.frontend.constants.BoardConstants.*;
 
@@ -11,6 +10,8 @@ public class EdgeView extends Polygon {
 
     double XScale = TILE_HEIGHT*V2/4*1.10;
     double YScale = TILE_HEIGHT*1/4*1.10;
+
+    double rectangleWidth = TILE_HEIGHT*V2/4*0.075;
 
     public EdgeView(Edge edge) {
         double firstXCoordinate = edge.getFirstXCoordinate() * XScale  + xStartOffset;
@@ -21,18 +22,18 @@ public class EdgeView extends Polygon {
         //  With precision error, it may not work
         if (firstXCoordinate == secondXCoordinate) {
             getPoints().addAll(
-                    firstXCoordinate - 4.8, firstYCoordinate,
-                    firstXCoordinate + 4.8, firstYCoordinate,
-                    secondXCoordinate + 4.8, secondYCoordinate,
-                    secondXCoordinate - 4.8, secondYCoordinate
+                    firstXCoordinate - rectangleWidth*0.95, firstYCoordinate,
+                    firstXCoordinate + rectangleWidth*0.95, firstYCoordinate,
+                    secondXCoordinate + rectangleWidth*0.95, secondYCoordinate,
+                    secondXCoordinate - rectangleWidth*0.95, secondYCoordinate
                     );
         }
         else{
             getPoints().addAll(
-                    firstXCoordinate, firstYCoordinate - 5,
-                    firstXCoordinate, firstYCoordinate + 5,
-                    secondXCoordinate, secondYCoordinate + 5,
-                    secondXCoordinate, secondYCoordinate - 5
+                    firstXCoordinate, firstYCoordinate - rectangleWidth,
+                    firstXCoordinate, firstYCoordinate + rectangleWidth,
+                    secondXCoordinate, secondYCoordinate + rectangleWidth,
+                    secondXCoordinate, secondYCoordinate - rectangleWidth
             );
         }
         setFill(Color.PURPLE);
