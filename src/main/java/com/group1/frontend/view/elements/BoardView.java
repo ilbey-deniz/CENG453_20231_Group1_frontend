@@ -10,18 +10,35 @@ import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-import static com.group1.frontend.constants.BoardConstants.TILE_HEIGHT;
+import static com.group1.frontend.constants.BoardConstants.*;
+import static com.group1.frontend.constants.BoardConstants.V;
 import static com.group1.frontend.utils.BoardUtilityFunctions.mapIntToNumberAsset;
 
 public class BoardView extends AnchorPane {
 
+    private Board board;
     public BoardView(Board board) throws FileNotFoundException {
+        this.board = board;
         board.generateRandomBoard();
+
+        Polygon backgroundIsland = new Polygon();
+        double backgroundScaleConstant = TILE_HEIGHT*2.75;
+        backgroundIsland.getPoints().addAll(
+                xStartOffset - (backgroundScaleConstant/2), yStartOffset - (V * backgroundScaleConstant),
+                xStartOffset - backgroundScaleConstant, yStartOffset,
+                xStartOffset - (backgroundScaleConstant/2), yStartOffset + (V * backgroundScaleConstant),
+                xStartOffset + (backgroundScaleConstant/2), yStartOffset + (V * backgroundScaleConstant),
+                xStartOffset + backgroundScaleConstant, yStartOffset,
+                xStartOffset + (backgroundScaleConstant/2), yStartOffset - (V * backgroundScaleConstant)
+        );
+        backgroundIsland.setFill(Color.valueOf("#fff7d0"));
+        getChildren().add(backgroundIsland);
 
         List<Tile> tiles = board.getTiles();
         for (Tile tile : tiles) {
@@ -33,16 +50,22 @@ public class BoardView extends AnchorPane {
             getChildren().add(c);
         }
 
-        for(Corner point : board.getPoints()){
-            CornerView cornerView = new CornerView(point);
-            getChildren().add(cornerView);
-        }
-
         for(Edge edge : board.getEdges()){
             EdgeView edgeView = new EdgeView(edge);
             getChildren().add(edgeView);
         }
 
+        for(Corner point : board.getPoints()){
+            CornerView cornerView = new CornerView(point);
+            getChildren().add(cornerView);
+        }
+
+
+
         setBackground(Background.fill(Color.valueOf("#4fa6eb")));
+
+//        setOnMouseClicked(e -> {
+//           board.printAllCornerOfIsOccupied();
+//        });
     }
 }
