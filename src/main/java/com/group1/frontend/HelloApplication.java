@@ -26,8 +26,8 @@ public class HelloApplication extends Application {
     }
 
     public void start(Stage primaryStage) throws IOException {
-        justGame(primaryStage);
-        //wholeThing(primaryStage);
+        //justGame(primaryStage);
+        wholeThing(primaryStage);
 
 //        primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
 //            TILE_HEIGHT = TILE_HEIGHT * (double) newVal / (double) oldVal;
@@ -50,7 +50,7 @@ public class HelloApplication extends Application {
         service.setBackendURL("http://localhost:8080/api");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("login-view.fxml"));
         //FXMLLoader loader = new FXMLLoader(getClass().getResource("login-view.fxml"));
-        Scene content = new Scene(loader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
+        Scene content = new Scene(loader.load(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
         Controller loginController = loader.getController();
         loginController.construct(primaryStage, service);

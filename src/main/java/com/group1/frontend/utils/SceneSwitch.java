@@ -15,7 +15,15 @@ public class SceneSwitch {
             //TODO: change main class name
             Class<?> c = Class.forName("com.group1.frontend.HelloApplication");
             FXMLLoader loader = new FXMLLoader(c.getResource(sceneName));
-            Scene scene = new Scene(loader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
+            Scene scene;
+            if(sceneName.equals("board-view.fxml")) {
+                scene = new Scene(loader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
+                stage.setMaximized(true);
+            }
+            else {
+                scene = new Scene(loader.load(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
+                stage.setMaximized(false);
+            }
 
             Controller controller = loader.getController();
             controller.construct(stage, service);
