@@ -35,6 +35,6 @@ public class BoardView extends AnchorPane {
             getChildren().add(edgeView);
         }
 
-        setBackground(Background.fill(Color.LIGHTSKYBLUE));
+        setBackground(Background.fill(Color.valueOf("#4fa6eb")));
     }
 }
