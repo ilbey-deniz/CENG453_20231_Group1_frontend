@@ -19,4 +19,8 @@ public class BoardUtilityFunctions {
         // Retrieve the random key
         return (K) keysArray[randomIndex];
     }
+
+    public static String mapIntToNumberAsset(Integer number){
+        return "src/main/resources/assets/" + number.toString() + ".png";
+    }
 }
