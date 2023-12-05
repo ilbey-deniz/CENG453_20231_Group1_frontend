@@ -26,8 +26,8 @@ public class HelloApplication extends Application {
     }
 
     public void start(Stage primaryStage) throws IOException {
-        //justGame(primaryStage);
-        wholeThing(primaryStage);
+        justGame(primaryStage);
+        //wholeThing(primaryStage);
 
 //        primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
 //            TILE_HEIGHT = TILE_HEIGHT * (double) newVal / (double) oldVal;
