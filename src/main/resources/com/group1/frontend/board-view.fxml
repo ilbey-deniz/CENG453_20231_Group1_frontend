@@ -96,19 +96,19 @@
                   <Image url="@../../../assets/dice_3.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="secondDiceImage" fitHeight="76.0" fitWidth="76.0" layoutX="81.0" onMouseClicked="#onDiceImageClick" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="secondDiceImage" fitHeight="76.0" fitWidth="76.0" layoutX="81.0" onMouseClicked="#onDiceImageClick" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0">
                <image>
                   <Image url="@../../../assets/dice_5.png" />
                </image>
             </ImageView>
          </children>
       </AnchorPane>
-      <Label fx:id="statusLabel" alignment="CENTER" layoutX="240.0" layoutY="24.0" prefHeight="35.0" prefWidth="800.0" text="STATUS LABEL Lorem ipsum" textAlignment="CENTER" textFill="#b50000">
+      <Label fx:id="statusLabel" alignment="CENTER" layoutX="240.0" layoutY="24.0" text="STATUS LABEL Lorem ipsum" textAlignment="CENTER" textFill="#b50000" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="240.0" AnchorPane.topAnchor="24.0">
          <font>
             <Font size="24.0" />
          </font>
       </Label>
-      <AnchorPane layoutX="1156.0" layoutY="630.0" prefHeight="76.0" prefWidth="116.0">
+      <AnchorPane layoutX="1156.0" layoutY="630.0" prefHeight="76.0" prefWidth="116.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0">
          <children>
             <Button fx:id="endTourButton" layoutY="38.0" mnemonicParsing="false" onAction="#onEndTourButtonClick" prefHeight="36.0" prefWidth="116.0" text="End Tour">
                <font>
