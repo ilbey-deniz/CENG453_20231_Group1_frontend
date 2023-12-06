@@ -8,6 +8,7 @@ import com.group1.frontend.events.EdgeClickedEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.TextFlow;
@@ -27,6 +28,12 @@ public class BoardController extends Controller{
     @FXML
     private TextField chatTextField;
 
+    @FXML
+    private ImageView firstDiceImage;
+
+    @FXML
+    private ImageView secondDiceImage;
+
     private Game game;
 
     BoardView boardView;
@@ -40,24 +47,8 @@ public class BoardController extends Controller{
             game.setBoard(new Board());
             boardView = new BoardView(game.getBoard());
             hexagonPane.getChildren().add(boardView);
-            hexagonPane.addEventHandler(CornerClickedEvent.CORNER_CLICKED, event -> {
-                System.out.println("EDGE COUNT: " + game.getBoard().getEdges().size());
-                System.out.println("Corner clicked: " + event.getCorner().getXCoordinate() + ", " + event.getCorner().getYCoordinate());
-//                board.getAdjacentEdgesOfCorner(event.getCorner()).forEach(edge -> {
-//                    boardView.getEdgeView(edge).occupyEdge();
-//
-//                });
-            });
-            hexagonPane.addEventHandler(EdgeClickedEvent.EDGE_CLICKED, event -> {
-                System.out.println("Edge clicked: " + event.getEdge().toString());
-//                board.getAdjacentCornersOfEdge(event.getEdge()).forEach(corner -> {
-//                    try {
-//                        boardView.getCornerView(corner).occupyCorner();
-//                    } catch (FileNotFoundException e) {
-//                        e.printStackTrace();
-//                    }
-//                });
-            });
+            hexagonPane.addEventHandler(CornerClickedEvent.CORNER_CLICKED, this::handleCornerClickEvent);
+            hexagonPane.addEventHandler(EdgeClickedEvent.EDGE_CLICKED, this::handleEdgeClickEvent);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -77,6 +68,32 @@ public class BoardController extends Controller{
 
     public void onLeaveButtonClick() {
         sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
+    }
+
+    public void handleCornerClickEvent(CornerClickedEvent event) {
+        System.out.println("EDGE COUNT: " + game.getBoard().getEdges().size());
+        System.out.println("Corner clicked: " + event.getCorner().getXCoordinate() + ", " + event.getCorner().getYCoordinate());
+            game.getBoard().getAdjacentEdgesOfCorner(event.getCorner()).forEach(edge -> {
+                boardView.getEdgeView(edge).occupyEdge();
+
+            });
+    }
+    public void handleEdgeClickEvent(EdgeClickedEvent event) {
+        System.out.println("Edge clicked: " + event.getEdge().toString());
+        game.getBoard().getAdjacentCornersOfEdge(event.getEdge()).forEach(corner -> {
+            try {
+                boardView.getCornerView(corner).occupyCorner();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void onDiceImageClick(MouseEvent event) {
+        //dice roll animation
+        int firstDiceRoll = (int) (Math.random() * 6) + 1;
+        int secondDiceRoll = (int) (Math.random() * 6) + 1;
+
     }
 
 }
