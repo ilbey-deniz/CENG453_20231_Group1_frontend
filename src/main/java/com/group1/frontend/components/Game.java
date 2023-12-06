@@ -18,6 +18,9 @@ public class Game {
         this.currentPlayer = players.get(0);
         this.turnNumber = 0;
     }
+    public Game() {
+
+    }
 
     public void setPlayers(List<Player> players) {
         this.players = players;
