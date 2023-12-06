@@ -2,20 +2,25 @@ package com.group1.frontend.controllers;
 
 import com.group1.frontend.components.Board;
 import com.group1.frontend.components.Game;
+import com.group1.frontend.utils.BoardUtilityFunctions;
 import com.group1.frontend.view.elements.BoardView;
 import com.group1.frontend.events.CornerClickedEvent;
 import com.group1.frontend.events.EdgeClickedEvent;
+import com.group1.frontend.utils.BoardUtilityFunctions;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.TextFlow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.util.Pair;
 
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class BoardController extends Controller{
@@ -89,11 +94,10 @@ public class BoardController extends Controller{
         });
     }
 
-    public void onDiceImageClick(MouseEvent event) {
-        //dice roll animation
-        int firstDiceRoll = (int) (Math.random() * 6) + 1;
-        int secondDiceRoll = (int) (Math.random() * 6) + 1;
-
+    public void onDiceImageClick(MouseEvent event) throws FileNotFoundException, InterruptedException {
+        Pair<Integer, Integer> dicePair = game.rollDice();
+        firstDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getKey()));
+        secondDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getValue()));
     }
 
 }

@@ -3,6 +3,7 @@ package com.group1.frontend.components;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.enums.TileType;
+import javafx.util.Pair;
 
 import java.util.List;
 
@@ -11,6 +12,8 @@ public class Game {
     private Board board;
     private Player currentPlayer;
     private int turnNumber;
+
+    private Pair<Integer, Integer> currentDiceRoll;
 
     public Game(List<Player> players, Board board) {
         this.players = players;
@@ -140,6 +143,10 @@ public class Game {
         }
     }
 
-
-
+    public Pair<Integer, Integer> rollDice() {
+        int dice1 = (int) (Math.random() * 6) + 1;
+        int dice2 = (int) (Math.random() * 6) + 1;
+        currentDiceRoll = new Pair<>(dice1, dice2);
+        return new Pair<>(dice1, dice2);
+    }
 }

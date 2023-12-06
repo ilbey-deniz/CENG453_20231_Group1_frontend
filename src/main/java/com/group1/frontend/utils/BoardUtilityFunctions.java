@@ -1,7 +1,11 @@
 package com.group1.frontend.utils;
 
+import javafx.scene.image.Image;
+
+import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.Random;
+import java.io.FileInputStream;
 
 import static com.group1.frontend.constants.BoardConstants.PLAYER_COLORS;
 
@@ -41,5 +45,17 @@ public class BoardUtilityFunctions {
         }
 
         return "src/main/resources/assets/" + buildingType + getRandomKey(PLAYER_COLORS) + ".png";
+    }
+
+    public static String getRandomDiceAsset(){
+        int diceRoll = (int) (Math.random() * 6) + 1;
+        String diceType = "dice_" + diceRoll;
+        diceType = "src/main/resources/assets/" + diceType + ".png";
+        return diceType;
+    }
+    public static Image getDiceImage(int diceRoll) throws FileNotFoundException {
+        String diceType = "dice_" + diceRoll;
+        diceType = "src/main/resources/assets/" + diceType + ".png";
+        return new Image(new FileInputStream(diceType));
     }
 }

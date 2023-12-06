@@ -93,12 +93,12 @@
          <children>
             <ImageView fx:id="firstDiceImage" fitHeight="86.0" fitWidth="76.0" onMouseClicked="#onDiceImageClick" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@assets/dice_3.png" />
+                  <Image url="@../../../assets/dice_3.png" />
                </image>
             </ImageView>
             <ImageView fx:id="secondDiceImage" fitHeight="76.0" fitWidth="76.0" layoutX="81.0" onMouseClicked="#onDiceImageClick" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@assets/dice_5.png" />
+                  <Image url="@../../../assets/dice_5.png" />
                </image>
             </ImageView>
          </children>
