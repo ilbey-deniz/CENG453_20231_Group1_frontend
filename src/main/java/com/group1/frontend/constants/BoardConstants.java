@@ -9,6 +9,8 @@ public final class BoardConstants {
 
     public static final double WINDOW_WIDTH = Screen.getScreens().get(0).getBounds().getWidth();
     public static final double WINDOW_HEIGHT = Screen.getScreens().get(0).getBounds().getHeight()-77;
+    public static final int DEFAULT_WIDTH = 640;
+    public static final int DEFAULT_HEIGHT = 480;
     public static final double xStartOffset = WINDOW_WIDTH/2; // offsets the entire field to the right
     public static final double yStartOffset = WINDOW_HEIGHT/2; // offsets the entire fiels downwards
     public static double TILE_HEIGHT = WINDOW_HEIGHT / 6.0; // height of the tile
@@ -16,10 +18,10 @@ public final class BoardConstants {
     public static final double V2 = Math.sqrt(3);
 
     public static final Map<String , String > PLAYER_COLORS = new HashMap<>(Map.of(
-        "red", "#9c4300",
+        "red", "#ff4f4f",
         "blue", "#4fa6eb",
-        "green", "#517d19",
-        "yellow", "#f0ad00"
+        "green", "#00ff00",
+        "yellow", "#ffff00"
     ));
 
     public static final String BACKGROUND_ISLAND_COLOR = "#fff7d0";

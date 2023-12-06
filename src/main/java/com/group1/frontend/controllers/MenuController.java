@@ -10,7 +10,7 @@ public class MenuController extends Controller{
 
     @FXML
     protected void onCreateGameButtonClick() {
-        sceneSwitch.switchToScene(stage, service, "game-view.fxml");
+        sceneSwitch.switchToScene(stage, service, "board-view.fxml");
 
     }
 
