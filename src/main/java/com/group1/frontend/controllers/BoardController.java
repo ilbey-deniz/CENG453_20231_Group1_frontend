@@ -26,21 +26,37 @@ public class BoardController extends Controller{
     @FXML
     private TextField chatTextField;
 
+    Board board = new Board();
+    BoardView boardView = new BoardView(board);
+
+    public BoardController() throws FileNotFoundException {
+    }
 
 
-    public void initialize() {
-
+    public void init() {
         try {
-            Board board = new Board();
-            BoardView boardView = new BoardView(board);
+
             hexagonPane.getChildren().add(boardView);
             hexagonPane.addEventHandler(CornerClickedEvent.CORNER_CLICKED, event -> {
+                System.out.println(board.getEdges().size());
+                System.out.println(board.getPoints().size());
                 System.out.println("Corner clicked: " + event.getCorner().getXCoordinate() + ", " + event.getCorner().getYCoordinate());
+//                board.getAdjacentEdgesOfCorner(event.getCorner()).forEach(edge -> {
+//                    boardView.getEdgeView(edge).occupyEdge();
+//
+//                });
             });
             hexagonPane.addEventHandler(EdgeClickedEvent.EDGE_CLICKED, event -> {
                 System.out.println("Edge clicked: " + event.getEdge().toString());
+//                board.getAdjacentCornersOfEdge(event.getEdge()).forEach(corner -> {
+//                    try {
+//                        boardView.getCornerView(corner).occupyCorner();
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                    }
+//                });
             });
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

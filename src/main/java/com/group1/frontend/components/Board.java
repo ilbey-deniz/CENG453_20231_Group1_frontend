@@ -10,6 +10,8 @@ import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomKey;
 public class Board {
     private final List<Tile> tiles = new ArrayList<>();
     private List<Corner> points = new ArrayList<>();
+
+    //TODO: Edges are duplicated. Need to fix this.
     private List<Edge> roads = new ArrayList<>();
 
     Set<List<Double>> corners = new HashSet<>();
@@ -109,12 +111,20 @@ public class Board {
     }
 
     public List<Corner> getAdjacentCornersOfEdge(Edge e) {
-        //TODO: Imlement this
-        return null;
+        //for first coordinate pair
+        List<Corner> adjacentCorners = new ArrayList<>();
+        for(Corner corner : points) {
+            if (corner.getXCoordinate() == e.getFirstXCoordinate() && corner.getYCoordinate() == e.getFirstYCoordinate()) {
+                adjacentCorners.add(corner);
+            } else if (corner.getXCoordinate() == e.getSecondXCoordinate() && corner.getYCoordinate() == e.getSecondYCoordinate()) {
+                adjacentCorners.add(corner);
+            }
+        }
+        return adjacentCorners;
+
     }
 
     public List<Edge> getAdjacentEdgesOfCorner(Corner c) {
-        // TODO: implement
         List<Edge> adjacentEdges = new ArrayList<>();
         for(Edge edge : roads) {
             if (edge.getFirstXCoordinate() == c.getXCoordinate() && edge.getFirstYCoordinate() == c.getYCoordinate()) {
@@ -123,6 +133,6 @@ public class Board {
                 adjacentEdges.add(edge);
             }
         }
-            return null;
+            return adjacentEdges;
     }
 }

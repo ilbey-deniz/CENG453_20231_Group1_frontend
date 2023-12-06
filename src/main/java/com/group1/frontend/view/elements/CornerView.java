@@ -47,6 +47,10 @@ public CornerView(Corner corner) {
         setFill(new ImagePattern(image));
         corner.setIsOccupied(true);
     }
+
+    public Corner getCorner() {
+        return corner;
+    }
 }
 
 

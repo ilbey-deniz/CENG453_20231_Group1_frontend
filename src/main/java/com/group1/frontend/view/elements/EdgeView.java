@@ -58,5 +58,7 @@ public class EdgeView extends Polygon {
         edge.setOccupied(true);
     }
 
-
+    public Edge getEdge() {
+        return edge;
+    }
 }

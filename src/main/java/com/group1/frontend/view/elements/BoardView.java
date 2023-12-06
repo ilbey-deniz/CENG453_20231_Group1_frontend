@@ -24,6 +24,9 @@ import static com.group1.frontend.utils.BoardUtilityFunctions.mapIntToNumberAsse
 
 public class BoardView extends AnchorPane {
 
+    List<EdgeView> edgeViews = new java.util.ArrayList<>();
+    List<CornerView> cornerViews = new java.util.ArrayList<>();
+
     public BoardView(Board board) throws FileNotFoundException {
         board.generateRandomBoard();
 
@@ -52,11 +55,13 @@ public class BoardView extends AnchorPane {
 
         for(Edge edge : board.getEdges()){
             EdgeView edgeView = new EdgeView(edge);
+            edgeViews.add(edgeView);
             getChildren().add(edgeView);
         }
 
         for(Corner point : board.getPoints()){
             CornerView cornerView = new CornerView(point);
+            cornerViews.add(cornerView);
             getChildren().add(cornerView);
         }
 
@@ -69,4 +74,23 @@ public class BoardView extends AnchorPane {
 //           board.printAllCornerOfIsOccupied();
 //        });
     }
+
+    public EdgeView getEdgeView(Edge edge) {
+        for (EdgeView edgeView : edgeViews) {
+            if (edgeView.getEdge().equals(edge)) {
+                return edgeView;
+            }
+        }
+        return null;
+    }
+
+    public CornerView getCornerView(Corner corner) {
+        for (CornerView cornerView : cornerViews) {
+            if (cornerView.getCorner().equals(corner)) {
+                return cornerView;
+            }
+        }
+        return null;
+    }
+
 }
