@@ -24,6 +24,7 @@ import javafx.util.Pair;
 
 import java.io.FileNotFoundException;
 
+import static com.group1.frontend.constants.BoardConstants.TURN_TIME;
 import static com.group1.frontend.utils.BoardUtilityFunctions.secondsToTime;
 
 
@@ -80,7 +81,7 @@ public class BoardController extends Controller{
         try {
             game = new Game();
             game.setBoard(new Board());
-            Timer timer = new Timer(5*60);
+            Timer timer = new Timer(TURN_TIME);
             boardView = new BoardView(game.getBoard());
             hexagonPane.getChildren().add(boardView);
             hexagonPane.getChildren().add(timer);
@@ -143,6 +144,9 @@ public class BoardController extends Controller{
         statusLabel.setText("Time's up!");
         writeToGameUpdates("Time's up!");
         //TODO:restart timer
+        timer = new Timer(TURN_TIME);
+        hexagonPane.getChildren().add(timer);
+        timer.start();
     }
 
 

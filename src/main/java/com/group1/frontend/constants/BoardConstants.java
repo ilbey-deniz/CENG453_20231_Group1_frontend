@@ -6,6 +6,8 @@ import javafx.stage.Screen;
 import java.util.*;
 
 public final class BoardConstants {
+
+    public static final int TURN_TIME = 5;
     public static final int DEFAULT_WIDTH = 1280;
     public static final int DEFAULT_HEIGHT = 720;
     //public static final double WINDOW_WIDTH = Screen.getScreens().get(0).getBounds().getWidth();

@@ -37,5 +37,18 @@ public class Timer extends AnchorPane{
     public void start() {
         leftTime.play();
     }
+    public void stop() {
+        leftTime.stop();
+    }
+    public void pause() {
+        leftTime.pause();
+    }
+    public void resume() {
+        leftTime.play();
+    }
+    public void restart() {
+        leftTime.stop();
+        leftTime.play();
+    }
 
 }
