@@ -107,19 +107,17 @@ public class BoardController extends Controller{
     public void handleCornerClickEvent(CornerClickedEvent event) {
         System.out.println("EDGE COUNT: " + game.getBoard().getEdges().size());
         System.out.println("Corner clicked: " + event.getCorner().getXCoordinate() + ", " + event.getCorner().getYCoordinate());
-            game.getBoard().getAdjacentEdgesOfCorner(event.getCorner()).forEach(edge -> {
-                boardView.getEdgeView(edge).occupyEdge();
+            game.getBoard().getAdjacentTilesOfCorner(event.getCorner()).forEach(tile -> {
+                boardView.getTileView(tile);
+//                boardView.getTileView(tile).highlight();
 
+                System.out.println("Resource Type of tile: " + tile.getResourceType().toString());
             });
     }
     public void handleEdgeClickEvent(EdgeClickedEvent event) {
         System.out.println("Edge clicked: " + event.getEdge().toString());
-        game.getBoard().getAdjacentCornersOfEdge(event.getEdge()).forEach(corner -> {
-            try {
-                boardView.getCornerView(corner).occupyCorner();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+        game.getBoard().getAdjacentEdgesOfEdge(event.getEdge()).forEach(edge -> {
+            boardView.getEdgeView(edge).occupyEdge();
         });
     }
 

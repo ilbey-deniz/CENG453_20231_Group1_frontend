@@ -51,15 +51,4 @@ public class Building {
     public Corner getCorner() {
         return corner;
     }
-
-
-
-
-    // TODO: move this to game class
-//    public void buildCityFromSettlement() {
-//        // resource logic implemented in Player or Game class
-//        if(buildingType == BuildingType.SETTLEMENT) {
-//            buildingType = BuildingType.CITY;
-//        }
-//    }
 }

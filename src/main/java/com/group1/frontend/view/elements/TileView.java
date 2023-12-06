@@ -18,9 +18,12 @@ public class TileView extends Polygon {
     private double boardXCoordinate;
     private double boardYCoordinate;
 
+    Tile tile;
+
     public TileView(Tile tile) throws FileNotFoundException {
-        double xCoordinate = tile.getxCoordinate() * TILE_HEIGHT*V2/2 * 1.10 + xStartOffset;
-        double yCoordinate = tile.getyCoordinate() * TILE_HEIGHT*3/4 * 1.10 + yStartOffset;
+        this.tile = tile;
+        double xCoordinate = tile.getXCoordinate() * TILE_HEIGHT*V2/2 * 1.10 + xStartOffset;
+        double yCoordinate = tile.getYCoordinate() * TILE_HEIGHT*3/4 * 1.10 + yStartOffset;
         this.boardXCoordinate = xCoordinate;
         this.boardYCoordinate = yCoordinate;
         getPoints().addAll(
@@ -60,5 +63,12 @@ public class TileView extends Polygon {
         this.boardYCoordinate = boardYCoordinate;
     }
 
+    public Tile getTile() {
+        return tile;
+    }
 
+    public void highlight() {
+        setStrokeWidth(5);
+        setStroke(Color.valueOf("#ff0000"));
+    }
 }

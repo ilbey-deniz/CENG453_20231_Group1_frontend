@@ -26,6 +26,7 @@ public class BoardView extends AnchorPane {
 
     List<EdgeView> edgeViews = new java.util.ArrayList<>();
     List<CornerView> cornerViews = new java.util.ArrayList<>();
+    List<TileView> tileViews = new java.util.ArrayList<>();
 
     public BoardView(Board board) throws FileNotFoundException {
         board.generateRandomBoard();
@@ -79,6 +80,15 @@ public class BoardView extends AnchorPane {
         for (EdgeView edgeView : edgeViews) {
             if (edgeView.getEdge().equals(edge)) {
                 return edgeView;
+            }
+        }
+        return null;
+    }
+
+    public TileView getTileView(Tile tile) {
+        for (TileView tileView : tileViews) {
+            if (tileView.getTile().equals(tile)) {
+                return tileView;
             }
         }
         return null;

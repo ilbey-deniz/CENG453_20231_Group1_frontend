@@ -152,4 +152,54 @@ public class Board {
         }
             return adjacentEdges;
     }
+
+    public List<Edge> getAdjacentEdgesOfEdge(Edge e){
+        List<Edge> adjacentEdges = new ArrayList<>();
+        for(Edge edge : roads) {
+            if (edge.getFirstXCoordinate() == e.getFirstXCoordinate() && edge.getFirstYCoordinate() == e.getFirstYCoordinate()) {
+                adjacentEdges.add(edge);
+            } else if (edge.getSecondXCoordinate() == e.getSecondXCoordinate() && edge.getSecondYCoordinate() == e.getSecondYCoordinate()) {
+                adjacentEdges.add(edge);
+            } else if (edge.getFirstXCoordinate() == e.getSecondXCoordinate() && edge.getFirstYCoordinate() == e.getSecondYCoordinate()) {
+                adjacentEdges.add(edge);
+            } else if (edge.getSecondXCoordinate() == e.getFirstXCoordinate() && edge.getSecondYCoordinate() == e.getFirstYCoordinate()) {
+                adjacentEdges.add(edge);
+            }
+        }
+        return adjacentEdges;
+    }
+
+    public List<Tile> getAdjacentTilesOfCorner(Corner c) {
+        // TODO: implement this by detecting center of tile
+        //  (2 possible arrangement upward, downward), then find the tile by using its center value
+        List<Tile> adjacentTiles = new ArrayList<>();
+        int mod = ((int) c.getYCoordinate())%3;
+        if(mod < 0){
+            mod += 3;
+        }
+        for(Tile tile : tiles) {
+            if (mod == 1){  // need to look at upward, left down, right down
+                double topYCoordinate = (c.getYCoordinate() + 2.0) / 3;
+                double topXCoordinate = c.getXCoordinate() / 2.0;
+                if(tile.getXCoordinate() == topXCoordinate && tile.getYCoordinate() == topYCoordinate){
+                    adjacentTiles.add(tile);
+                } else if (tile.getXCoordinate() == topXCoordinate-0.5 && tile.getYCoordinate() == topYCoordinate - 1) {
+                    adjacentTiles.add(tile);
+                } else if (tile.getXCoordinate() == topXCoordinate+0.5 && tile.getYCoordinate() == topYCoordinate - 1) {
+                    adjacentTiles.add(tile);
+                }
+            } else if (mod == 2) { //  need to look at downward, left up, right up
+                double bottomYCoordinate = (c.getYCoordinate() - 2.0) / 3;
+                double bottomXCoordinate = c.getXCoordinate() / 2.0;
+                if(tile.getXCoordinate() == bottomXCoordinate && tile.getYCoordinate() == bottomYCoordinate){
+                    adjacentTiles.add(tile);
+                } else if (tile.getXCoordinate() == bottomXCoordinate-0.5 && tile.getYCoordinate() == bottomYCoordinate + 1) {
+                    adjacentTiles.add(tile);
+                } else if (tile.getXCoordinate() == bottomXCoordinate+0.5 && tile.getYCoordinate() == bottomYCoordinate + 1) {
+                    adjacentTiles.add(tile);
+                }
+            }
+        }
+        return adjacentTiles;
+    }
 }

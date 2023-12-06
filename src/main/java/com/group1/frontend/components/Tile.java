@@ -36,14 +36,14 @@ public class Tile {
     public void setXCoordinate(double xCoordinate) {
         this.xCoordinate = xCoordinate;
     }
-    public double getxCoordinate() {
+    public double getXCoordinate() {
         return xCoordinate;
     }
 
     public void setYCoordinate(double yCoordinate) {
         this.yCoordinate = yCoordinate;
     }
-    public double getyCoordinate() {
+    public double getYCoordinate() {
         return yCoordinate;
     }
 }
