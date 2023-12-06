@@ -54,7 +54,7 @@ public class EdgeView extends Polygon {
         setFill(Color.valueOf(getRandomColor()));
         setStroke(Color.BLACK);
         setStrokeWidth(1);
-        edge.setIsOccupied(true);
+        edge.setOccupied(true);
     }
 
 

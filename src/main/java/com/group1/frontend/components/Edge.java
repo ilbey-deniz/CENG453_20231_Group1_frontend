@@ -1,5 +1,7 @@
 package com.group1.frontend.components;
 
+
+
 public class Edge {
     private double firstXCoordinate;
     private double firstYCoordinate;
@@ -32,6 +34,7 @@ public class Edge {
     public void setFirstXCoordinate(double firstXCoordinate) {
         this.firstXCoordinate = firstXCoordinate;
     }
+
     public double getFirstXCoordinate() {
         return firstXCoordinate;
     }
@@ -74,6 +77,14 @@ public class Edge {
 
     public Player getOwner() {
         return owner;
+    }
+
+    public void setOccupied(boolean occupied) {
+        isOccupied = occupied;
+    }
+
+    public boolean isOccupied() {
+        return isOccupied;
     }
 
 
