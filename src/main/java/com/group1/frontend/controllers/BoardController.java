@@ -139,6 +139,9 @@ public class BoardController extends Controller{
 
     public void handleOneTickEvent(TimeEvent event) {
         leftTimeLabel.setText(secondsToTime(event.getRemainingSeconds()));
+        if(event.getRemainingSeconds() <= 10){
+            leftTimeLabel.setStyle("-fx-text-fill: red");
+        }
     }
     public void handleTimesUpEvent(TimeEvent event) {
         statusLabel.setText("Time's up!");
@@ -147,8 +150,9 @@ public class BoardController extends Controller{
         hexagonPane.getChildren().remove(timer);
         timer = new Timer(TURN_TIME);
         hexagonPane.getChildren().add(timer);
-        System.out.println(hexagonPane.getChildren().size());
+        leftTimeLabel.setStyle("-fx-text-fill: black");
         timer.start();
+
     }
 
 
