@@ -58,4 +58,10 @@ public class BoardUtilityFunctions {
         diceType = "src/main/resources/assets/" + diceType + ".png";
         return new Image(new FileInputStream(diceType));
     }
+
+    public static String secondsToTime(int seconds){
+        int minutes = seconds / 60;
+        seconds = seconds % 60;
+        return String.format("%d:%02d", minutes, seconds);
+    }
 }

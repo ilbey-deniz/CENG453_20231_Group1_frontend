@@ -2,19 +2,18 @@ package com.group1.frontend.controllers;
 
 import com.group1.frontend.components.Board;
 import com.group1.frontend.components.Game;
+import com.group1.frontend.events.TimeEvent;
 import com.group1.frontend.utils.BoardUtilityFunctions;
 import com.group1.frontend.view.elements.BoardView;
 import com.group1.frontend.events.CornerClickedEvent;
 import com.group1.frontend.events.EdgeClickedEvent;
-import com.group1.frontend.utils.BoardUtilityFunctions;
+import com.group1.frontend.utils.Timer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -23,8 +22,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.util.Pair;
 
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+
+import static com.group1.frontend.utils.BoardUtilityFunctions.secondsToTime;
+
 
 public class BoardController extends Controller{
     @FXML
@@ -63,8 +64,12 @@ public class BoardController extends Controller{
     @FXML
     private ScrollPane gameUpdatesScrollPane;
 
+    @FXML
+    private Label leftTimeLabel;
+
 
     private Game game;
+    private Timer timer;
 
     BoardView boardView;
 
@@ -75,14 +80,22 @@ public class BoardController extends Controller{
         try {
             game = new Game();
             game.setBoard(new Board());
+            Timer timer = new Timer(5*60);
             boardView = new BoardView(game.getBoard());
             hexagonPane.getChildren().add(boardView);
+            hexagonPane.getChildren().add(timer);
+
             hexagonPane.addEventHandler(CornerClickedEvent.CORNER_CLICKED, this::handleCornerClickEvent);
             hexagonPane.addEventHandler(EdgeClickedEvent.EDGE_CLICKED, this::handleEdgeClickEvent);
+            hexagonPane.addEventHandler(TimeEvent.TIMES_UP, this::handleTimesUpEvent);
+            hexagonPane.addEventHandler(TimeEvent.ONE_TICK, this::handleOneTickEvent);
+
             for(int i = 0; i < 19; i++){
                 writeToGameUpdates("");
             }
-            gameUpdatesTextFlow.getChildren().add(new Text("Welcome to Catan!\n"));
+            writeToGameUpdates("Welcome to Catan!");
+            timer.start();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -123,6 +136,16 @@ public class BoardController extends Controller{
         });
     }
 
+    public void handleOneTickEvent(TimeEvent event) {
+        leftTimeLabel.setText(secondsToTime(event.getRemainingSeconds()));
+    }
+    public void handleTimesUpEvent(TimeEvent event) {
+        statusLabel.setText("Time's up!");
+        writeToGameUpdates("Time's up!");
+        //TODO:restart timer
+    }
+
+
     public void onDiceImageClick() throws FileNotFoundException{
         try {
             Pair<Integer, Integer> dicePair = game.rollDice();
@@ -144,5 +167,4 @@ public class BoardController extends Controller{
         gameUpdatesTextFlow.getChildren().add(new Text(message + "\n"));
         gameUpdatesScrollPane.setVvalue(1.0);
     }
-
 }
