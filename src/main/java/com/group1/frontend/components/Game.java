@@ -110,7 +110,12 @@ public class Game {
 
     private boolean isCornerAvailableToBuild(Corner c) {
         // check 3 of adjacent edge is occupied by player. If yes, return true.
-
+        List<Edge> adjacentEdges = board.getAdjacentEdgesOfCorner(c);
+        for(Edge edge : adjacentEdges) {
+            if (edge.getOwner() == currentPlayer) {
+                return true;
+            }
+        }
         return false;
     }
 
