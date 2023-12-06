@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #4fa6eb;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.group1.frontend.controllers.BoardController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #4fa6eb;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.group1.frontend.controllers.BoardController">
    <children>
       <AnchorPane fx:id="hexagonPane" />
       <AnchorPane layoutX="386.0" layoutY="14.0" prefHeight="247.0" prefWidth="200.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
@@ -23,6 +28,65 @@
       <AnchorPane layoutX="11.0" layoutY="14.0" onDragDetected="#onLeaveButtonClick" prefHeight="27.0" prefWidth="55.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
          <children>
             <Button fx:id="leaveButton" layoutX="5.0" layoutY="2.0" mnemonicParsing="false" onAction="#onLeaveButtonClick" text="Leave" />
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="14.0" layoutY="556.0" prefHeight="150.0" prefWidth="261.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="97.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@assets/grain.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="97.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@assets/wool.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="195.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@assets/lumber.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="291.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@assets/ore.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="389.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@assets/brick.png" />
+               </image>
+            </ImageView>
+            <Circle fill="#ffffffab" layoutX="48.0" layoutY="126.0" radius="24.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label fx:id="grainLabel" alignment="CENTER" layoutX="25.0" layoutY="109.0" prefHeight="35.0" prefWidth="47.0" text="4" textAlignment="CENTER">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Circle fill="#ffffffab" layoutX="146.0" layoutY="126.0" radius="24.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label fx:id="woolLabel" alignment="CENTER" layoutX="123.0" layoutY="109.0" prefHeight="35.0" prefWidth="47.0" text="3-2" textAlignment="CENTER">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Circle fill="#ffffffab" layoutX="244.0" layoutY="126.0" radius="24.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label fx:id="lumberLabel" alignment="CENTER" layoutX="221.0" layoutY="109.0" prefHeight="35.0" prefWidth="47.0" text="1-1" textAlignment="CENTER">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Circle fill="#ffffffab" layoutX="340.0" layoutY="127.0" radius="24.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label fx:id="oreLabel" alignment="CENTER" layoutX="317.0" layoutY="110.0" prefHeight="35.0" prefWidth="47.0" text="0" textAlignment="CENTER">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Circle fill="#ffffffab" layoutX="438.0" layoutY="128.0" radius="24.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label fx:id="brickLabel" alignment="CENTER" layoutX="415.0" layoutY="111.0" prefHeight="35.0" prefWidth="47.0" text="0" textAlignment="CENTER">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </children>
