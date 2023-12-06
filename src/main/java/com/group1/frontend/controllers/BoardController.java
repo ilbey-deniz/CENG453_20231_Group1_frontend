@@ -10,6 +10,7 @@ import com.group1.frontend.utils.BoardUtilityFunctions;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -59,6 +60,9 @@ public class BoardController extends Controller{
     @FXML
     private Label statusLabel;
 
+    @FXML
+    private ScrollPane gameUpdatesScrollPane;
+
 
     private Game game;
 
@@ -75,6 +79,9 @@ public class BoardController extends Controller{
             hexagonPane.getChildren().add(boardView);
             hexagonPane.addEventHandler(CornerClickedEvent.CORNER_CLICKED, this::handleCornerClickEvent);
             hexagonPane.addEventHandler(EdgeClickedEvent.EDGE_CLICKED, this::handleEdgeClickEvent);
+            for(int i = 0; i < 19; i++){
+                writeToGameUpdates("");
+            }
             gameUpdatesTextFlow.getChildren().add(new Text("Welcome to Catan!\n"));
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,7 +90,7 @@ public class BoardController extends Controller{
 
     public void onSendButtonClick() {
         String message = chatTextField.getText();
-        gameUpdatesTextFlow.getChildren().add(new Text(message + "\n"));
+        writeToGameUpdates(message);
         chatTextField.clear();
     }
 
@@ -122,7 +129,7 @@ public class BoardController extends Controller{
             firstDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getKey()));
             secondDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getValue()));
             statusLabel.setText("Dice rolled: " + (dicePair.getKey() + dicePair.getValue()));
-            gameUpdatesTextFlow.getChildren().add(new Text("Dice rolled: " + (dicePair.getKey() + dicePair.getValue()) + "\n"));
+            writeToGameUpdates("Dice rolled: " + (dicePair.getKey() + dicePair.getValue()));
         } catch (Exception e) {
             statusLabel.setText(e.getMessage());
         }
@@ -130,7 +137,12 @@ public class BoardController extends Controller{
     public void onEndTourButtonClick(ActionEvent event){
         game.endTurn();
         statusLabel.setText("Turn ended");
-        gameUpdatesTextFlow.getChildren().add(new Text("Turn ended\n"));
+        writeToGameUpdates("Turn ended");
+    }
+
+    private void writeToGameUpdates(String message) {
+        gameUpdatesTextFlow.getChildren().add(new Text(message + "\n"));
+        gameUpdatesScrollPane.setVvalue(1.0);
     }
 
 }
