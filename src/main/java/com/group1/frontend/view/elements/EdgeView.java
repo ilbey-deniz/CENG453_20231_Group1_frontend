@@ -1,6 +1,7 @@
 package com.group1.frontend.view.elements;
 
 import com.group1.frontend.components.Edge;
+import com.group1.frontend.events.EdgeClickedEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
@@ -42,7 +43,10 @@ public class EdgeView extends Polygon {
         }
         setFill(Color.TRANSPARENT);
 
-        setOnMouseClicked(e -> occupyEdge());
+        setOnMouseClicked(e -> {
+            this.occupyEdge();
+            getParent().fireEvent(new EdgeClickedEvent(this.edge));
+        });
 
     }
 

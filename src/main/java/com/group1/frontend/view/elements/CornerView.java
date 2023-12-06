@@ -5,6 +5,8 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import com.group1.frontend.events.CornerClickedEvent;
+
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,6 +35,7 @@ public CornerView(Corner corner) {
     setOnMouseClicked(e -> {
         try {
             this.occupyCorner();
+            getParent().fireEvent(new CornerClickedEvent(this.corner));
         } catch (FileNotFoundException ex) {
             throw new RuntimeException(ex);
         }
