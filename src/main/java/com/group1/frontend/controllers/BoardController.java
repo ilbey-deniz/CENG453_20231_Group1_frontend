@@ -81,7 +81,7 @@ public class BoardController extends Controller{
         try {
             game = new Game();
             game.setBoard(new Board());
-            Timer timer = new Timer(TURN_TIME);
+            timer = new Timer(TURN_TIME);
             boardView = new BoardView(game.getBoard());
             hexagonPane.getChildren().add(boardView);
             hexagonPane.getChildren().add(timer);
@@ -143,9 +143,11 @@ public class BoardController extends Controller{
     public void handleTimesUpEvent(TimeEvent event) {
         statusLabel.setText("Time's up!");
         writeToGameUpdates("Time's up!");
-        //TODO:restart timer
+
+        hexagonPane.getChildren().remove(timer);
         timer = new Timer(TURN_TIME);
         hexagonPane.getChildren().add(timer);
+        System.out.println(hexagonPane.getChildren().size());
         timer.start();
     }
 
