@@ -9,11 +9,13 @@ import com.group1.frontend.events.EdgeClickedEvent;
 import com.group1.frontend.utils.BoardUtilityFunctions;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -39,6 +41,25 @@ public class BoardController extends Controller{
     @FXML
     private ImageView secondDiceImage;
 
+    @FXML
+    private Label grainLabel;
+
+    @FXML
+    private Label lumberLabel;
+
+    @FXML
+    private Label woolLabel;
+
+    @FXML
+    private Label brickLabel;
+
+    @FXML
+    private Label oreLabel;
+
+    @FXML
+    private Label statusLabel;
+
+
     private Game game;
 
     BoardView boardView;
@@ -46,7 +67,7 @@ public class BoardController extends Controller{
     public BoardController() throws FileNotFoundException {
     }
 
-    public void initialize() {
+    public void init() {
         try {
             game = new Game();
             game.setBoard(new Board());
@@ -54,6 +75,7 @@ public class BoardController extends Controller{
             hexagonPane.getChildren().add(boardView);
             hexagonPane.addEventHandler(CornerClickedEvent.CORNER_CLICKED, this::handleCornerClickEvent);
             hexagonPane.addEventHandler(EdgeClickedEvent.EDGE_CLICKED, this::handleEdgeClickEvent);
+            gameUpdatesTextFlow.getChildren().add(new Text("Welcome to Catan!\n"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -61,7 +83,7 @@ public class BoardController extends Controller{
 
     public void onSendButtonClick() {
         String message = chatTextField.getText();
-        gameUpdatesTextFlow.getChildren().add(new javafx.scene.text.Text(message + "\n"));
+        gameUpdatesTextFlow.getChildren().add(new Text(message + "\n"));
         chatTextField.clear();
     }
 
@@ -94,10 +116,21 @@ public class BoardController extends Controller{
         });
     }
 
-    public void onDiceImageClick(MouseEvent event) throws FileNotFoundException, InterruptedException {
-        Pair<Integer, Integer> dicePair = game.rollDice();
-        firstDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getKey()));
-        secondDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getValue()));
+    public void onDiceImageClick() throws FileNotFoundException{
+        try {
+            Pair<Integer, Integer> dicePair = game.rollDice();
+            firstDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getKey()));
+            secondDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getValue()));
+            statusLabel.setText("Dice rolled: " + (dicePair.getKey() + dicePair.getValue()));
+            gameUpdatesTextFlow.getChildren().add(new Text("Dice rolled: " + (dicePair.getKey() + dicePair.getValue()) + "\n"));
+        } catch (Exception e) {
+            statusLabel.setText(e.getMessage());
+        }
+    }
+    public void onEndTourButtonClick(ActionEvent event){
+        game.endTurn();
+        statusLabel.setText("Turn ended");
+        gameUpdatesTextFlow.getChildren().add(new Text("Turn ended\n"));
     }
 
 }

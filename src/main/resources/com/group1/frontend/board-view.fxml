@@ -110,7 +110,7 @@
       </Label>
       <AnchorPane layoutX="1156.0" layoutY="630.0" prefHeight="76.0" prefWidth="116.0">
          <children>
-            <Button fx:id="endTourButton" layoutY="38.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="116.0" text="End Tour">
+            <Button fx:id="endTourButton" layoutY="38.0" mnemonicParsing="false" onAction="#onEndTourButtonClick" prefHeight="36.0" prefWidth="116.0" text="End Tour">
                <font>
                   <Font size="16.0" />
                </font>
