@@ -9,5 +9,6 @@ module com.group1.frontend {
     exports com.group1.frontend;
     exports com.group1.frontend.controllers;
     exports com.group1.frontend.utils;
+    exports com.group1.frontend.events;
     opens com.group1.frontend.controllers to javafx.fxml;
 }

@@ -41,6 +41,7 @@ public class BoardController extends Controller{
             boardView = new BoardView(game.getBoard());
             hexagonPane.getChildren().add(boardView);
             hexagonPane.addEventHandler(CornerClickedEvent.CORNER_CLICKED, event -> {
+                System.out.println("EDGE COUNT: " + game.getBoard().getEdges().size());
                 System.out.println("Corner clicked: " + event.getCorner().getXCoordinate() + ", " + event.getCorner().getYCoordinate());
 //                board.getAdjacentEdgesOfCorner(event.getCorner()).forEach(edge -> {
 //                    boardView.getEdgeView(edge).occupyEdge();

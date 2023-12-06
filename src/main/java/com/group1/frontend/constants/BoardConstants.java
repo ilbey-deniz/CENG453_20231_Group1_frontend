@@ -6,11 +6,13 @@ import javafx.stage.Screen;
 import java.util.*;
 
 public final class BoardConstants {
+    public static final int DEFAULT_WIDTH = 1280;
+    public static final int DEFAULT_HEIGHT = 720;
+    //public static final double WINDOW_WIDTH = Screen.getScreens().get(0).getBounds().getWidth();
+    //public static final double WINDOW_HEIGHT = Screen.getScreens().get(0).getBounds().getHeight()-77;
+    public static final double WINDOW_WIDTH = DEFAULT_WIDTH;
+    public static final double WINDOW_HEIGHT = DEFAULT_HEIGHT;
 
-    public static final double WINDOW_WIDTH = Screen.getScreens().get(0).getBounds().getWidth();
-    public static final double WINDOW_HEIGHT = Screen.getScreens().get(0).getBounds().getHeight()-77;
-    public static final int DEFAULT_WIDTH = 640;
-    public static final int DEFAULT_HEIGHT = 480;
     public static final double xStartOffset = WINDOW_WIDTH/2; // offsets the entire field to the right
     public static final double yStartOffset = WINDOW_HEIGHT/2; // offsets the entire fiels downwards
     public static double TILE_HEIGHT = WINDOW_HEIGHT / 6.0; // height of the tile
