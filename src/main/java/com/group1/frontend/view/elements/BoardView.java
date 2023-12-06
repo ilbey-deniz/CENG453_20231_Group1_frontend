@@ -4,6 +4,7 @@ import com.group1.frontend.components.Board;
 import com.group1.frontend.components.Corner;
 import com.group1.frontend.components.Edge;
 import com.group1.frontend.components.Tile;
+import com.group1.frontend.events.CornerClickedEvent;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -23,9 +24,7 @@ import static com.group1.frontend.utils.BoardUtilityFunctions.mapIntToNumberAsse
 
 public class BoardView extends AnchorPane {
 
-    private Board board;
     public BoardView(Board board) throws FileNotFoundException {
-        this.board = board;
         board.generateRandomBoard();
 
         Polygon backgroundIsland = new Polygon();
@@ -60,6 +59,7 @@ public class BoardView extends AnchorPane {
             CornerView cornerView = new CornerView(point);
             getChildren().add(cornerView);
         }
+
 
 
 

@@ -2,8 +2,12 @@ package com.group1.frontend.controllers;
 
 import com.group1.frontend.components.Board;
 import com.group1.frontend.view.elements.BoardView;
+import com.group1.frontend.events.CornerClickedEvent;
+import com.group1.frontend.events.EdgeClickedEvent;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.TextFlow;
 import javafx.scene.input.KeyCode;
@@ -23,10 +27,19 @@ public class BoardController extends Controller{
     private TextField chatTextField;
 
 
-    @Override
-    public void init() {
+
+    public void initialize() {
+
         try {
-            hexagonPane.getChildren().add(new BoardView(new Board()));
+            Board board = new Board();
+            BoardView boardView = new BoardView(board);
+            hexagonPane.getChildren().add(boardView);
+            hexagonPane.addEventHandler(CornerClickedEvent.CORNER_CLICKED, event -> {
+                System.out.println("Corner clicked: " + event.getCorner().getXCoordinate() + ", " + event.getCorner().getYCoordinate());
+            });
+            hexagonPane.addEventHandler(EdgeClickedEvent.EDGE_CLICKED, event -> {
+                System.out.println("Edge clicked: " + event.getEdge().toString());
+            });
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

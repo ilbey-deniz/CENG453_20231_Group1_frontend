@@ -11,6 +11,8 @@ public class Building {
     Player owner;
     List<Tile> tiles;
     Corner corner;
+
+    //TODO: gerek var mı?
     Map<Integer, ResourceType> diceToResourceMap;
 
     public Building(BuildingType buildingType, Player owner, List<Tile> tiles, Corner corner, Map<Integer, ResourceType> diceToResourceMap) {
