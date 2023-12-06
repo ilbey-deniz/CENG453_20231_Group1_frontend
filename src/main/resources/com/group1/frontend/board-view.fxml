@@ -7,7 +7,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Ellipse?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
@@ -30,61 +30,99 @@
             <Button fx:id="leaveButton" layoutX="5.0" layoutY="2.0" mnemonicParsing="false" onAction="#onLeaveButtonClick" text="Leave" />
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="14.0" layoutY="556.0" prefHeight="150.0" prefWidth="261.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0">
+      <AnchorPane layoutX="14.0" layoutY="556.0" prefHeight="138.0" prefWidth="362.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0">
          <children>
-            <ImageView fitHeight="150.0" fitWidth="97.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="115.0" fitWidth="88.0" layoutX="5.0" layoutY="21.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@assets/grain.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="97.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="115.0" fitWidth="88.0" layoutX="79.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@assets/wool.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="195.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="115.0" fitWidth="88.0" layoutX="153.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@assets/lumber.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="291.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="115.0" fitWidth="88.0" layoutX="227.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@assets/ore.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="389.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="115.0" fitWidth="88.0" layoutX="302.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@assets/brick.png" />
                </image>
             </ImageView>
-            <Circle fill="#ffffffab" layoutX="48.0" layoutY="126.0" radius="24.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="grainLabel" alignment="CENTER" layoutX="25.0" layoutY="109.0" prefHeight="35.0" prefWidth="47.0" text="4" textAlignment="CENTER">
+            <Ellipse fill="#ffffffb2" layoutX="42.0" layoutY="118.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label fx:id="grainLabel" alignment="CENTER" layoutX="19.0" layoutY="102.0" prefHeight="35.0" prefWidth="47.0" text="4" textAlignment="CENTER">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <Circle fill="#ffffffab" layoutX="146.0" layoutY="126.0" radius="24.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="woolLabel" alignment="CENTER" layoutX="123.0" layoutY="109.0" prefHeight="35.0" prefWidth="47.0" text="3-2" textAlignment="CENTER">
+            <Ellipse fill="#ffffffb2" layoutX="116.0" layoutY="118.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label fx:id="woolLabel" alignment="CENTER" layoutX="93.0" layoutY="101.0" prefHeight="35.0" prefWidth="47.0" text="3-2" textAlignment="CENTER">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <Circle fill="#ffffffab" layoutX="244.0" layoutY="126.0" radius="24.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="lumberLabel" alignment="CENTER" layoutX="221.0" layoutY="109.0" prefHeight="35.0" prefWidth="47.0" text="1-1" textAlignment="CENTER">
+            <Ellipse fill="#ffffffb2" layoutX="190.0" layoutY="120.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label fx:id="lumberLabel" alignment="CENTER" layoutX="166.0" layoutY="102.0" prefHeight="35.0" prefWidth="47.0" text="1-1" textAlignment="CENTER">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <Circle fill="#ffffffab" layoutX="340.0" layoutY="127.0" radius="24.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="oreLabel" alignment="CENTER" layoutX="317.0" layoutY="110.0" prefHeight="35.0" prefWidth="47.0" text="0" textAlignment="CENTER">
+            <Ellipse fill="#ffffffb2" layoutX="264.0" layoutY="120.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label fx:id="oreLabel" alignment="CENTER" layoutX="241.0" layoutY="103.0" prefHeight="35.0" prefWidth="47.0" text="0" textAlignment="CENTER">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <Circle fill="#ffffffab" layoutX="438.0" layoutY="128.0" radius="24.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="brickLabel" alignment="CENTER" layoutX="415.0" layoutY="111.0" prefHeight="35.0" prefWidth="47.0" text="0" textAlignment="CENTER">
+            <Ellipse fill="#ffffffb2" layoutX="339.0" layoutY="118.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label fx:id="brickLabel" alignment="CENTER" layoutX="316.0" layoutY="101.0" prefHeight="35.0" prefWidth="47.0" text="2" textAlignment="CENTER">
                <font>
                   <Font size="24.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="988.0" layoutY="630.0" prefHeight="68.0" prefWidth="147.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="135.0">
+         <children>
+            <ImageView fx:id="firstDiceImage" fitHeight="86.0" fitWidth="76.0" onMouseClicked="#onDiceImageClick" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@assets/dice_3.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="secondDiceImage" fitHeight="76.0" fitWidth="76.0" layoutX="81.0" onMouseClicked="#onDiceImageClick" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@assets/dice_5.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+      <Label fx:id="statusLabel" alignment="CENTER" layoutX="240.0" layoutY="24.0" prefHeight="35.0" prefWidth="800.0" text="STATUS LABEL Lorem ipsum" textAlignment="CENTER" textFill="#b50000">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <AnchorPane layoutX="1156.0" layoutY="630.0" prefHeight="76.0" prefWidth="116.0">
+         <children>
+            <Button fx:id="endTourButton" layoutY="38.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="116.0" text="End Tour">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+            <Label layoutY="2.0" text="Time Left:">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <Label fx:id="lefTimeLabel" layoutX="80.0" layoutY="2.0" text="5:00">
+               <font>
+                  <Font name="System Bold" size="16.0" />
                </font>
             </Label>
          </children>
