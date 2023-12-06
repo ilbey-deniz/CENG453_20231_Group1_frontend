@@ -49,8 +49,9 @@ public class HelloApplication extends Application {
         //service.setBackendURL("https://backend-qdu1.onrender.com/api");
         service.setBackendURL("http://localhost:8080/api");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("board-view.fxml"));
+        Scene content = new Scene(loader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
         //FXMLLoader loader = new FXMLLoader(getClass().getResource("login-view.fxml"));
-        Scene content = new Scene(loader.load(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        //Scene content = new Scene(loader.load(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
         Controller loginController = loader.getController();
         loginController.construct(primaryStage, service);
