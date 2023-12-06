@@ -17,6 +17,7 @@ public class Board {
     Set<List<Double>> corners = new HashSet<>();
     List<List<List<Double>>> groupedCorners = new ArrayList<>();
 
+
     public Board() {
 
     }
@@ -58,14 +59,17 @@ public class Board {
             Corner corner = new Corner(cornerCoordinates.get(0), cornerCoordinates.get(1));
             points.add(corner);
         }
-
+        Set<List<Double>> nonDuplicateEdges = new HashSet<>();
         for(List<List<Double>> groupedCorner : groupedCorners){
             for(int i = 0; i < groupedCorner.size(); i++){
-                Edge edge = new Edge(groupedCorner.get(i).get(0), groupedCorner.get(i).get(1),
+                nonDuplicateEdges.add(Arrays.asList(groupedCorner.get(i).get(0), groupedCorner.get(i).get(1),
                         groupedCorner.get((i+1)%groupedCorner.size()).get(0),
-                        groupedCorner.get((i+1)%groupedCorner.size()).get(1));
-                roads.add(edge);
+                        groupedCorner.get((i+1)%groupedCorner.size()).get(1)));
             }
+        }
+        for (List<Double> edgesCoordinates : nonDuplicateEdges){
+            Edge edge = new Edge(edgesCoordinates.get(0), edgesCoordinates.get(1), edgesCoordinates.get(2), edgesCoordinates.get(3));
+            roads.add(edge);
         }
     }
 
