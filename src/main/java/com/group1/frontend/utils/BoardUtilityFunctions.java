@@ -30,7 +30,7 @@ public class BoardUtilityFunctions {
         return PLAYER_COLORS.get(getRandomKey(PLAYER_COLORS));
     }
 
-    public  static String getRandomBuildingAsset(){
+    public static String getRandomBuildingAsset(){
         Random random = new Random();
         String buildingType;
         if(random.nextBoolean()){

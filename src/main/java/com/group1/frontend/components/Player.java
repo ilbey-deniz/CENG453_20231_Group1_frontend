@@ -11,12 +11,10 @@ public class Player {
     List<Roads> roads;
     String color;
     String name;
-    Integer victoryPoints;
 
     public Player(String name, String color) {
         this.name = name;
         this.color = color;
-        this.victoryPoints = 0;
     }
 
     public Map<ResourceType, Integer> getResources() {
@@ -59,13 +57,7 @@ public class Player {
         return name;
     }
 
-    public void setVictoryPoints(Integer victoryPoints) {
-        this.victoryPoints = victoryPoints;
-    }
 
-    public Integer getVictoryPoints() {
-        return victoryPoints;
-    }
 
 
 

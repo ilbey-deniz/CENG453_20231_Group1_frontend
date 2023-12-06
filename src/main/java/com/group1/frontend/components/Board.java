@@ -107,4 +107,22 @@ public class Board {
     public List<Edge> getEdges() {
         return roads;
     }
+
+    public List<Corner> getAdjacentCornersOfEdge(Edge e) {
+        //TODO: Imlement this
+        return null;
+    }
+
+    public List<Edge> getAdjacentEdgesOfCorner(Corner c) {
+        // TODO: implement
+        List<Edge> adjacentEdges = new ArrayList<>();
+        for(Edge edge : roads) {
+            if (edge.getFirstXCoordinate() == c.getXCoordinate() && edge.getFirstYCoordinate() == c.getYCoordinate()) {
+                adjacentEdges.add(edge);
+            } else if (edge.getSecondXCoordinate() == c.getXCoordinate() && edge.getSecondYCoordinate() == c.getYCoordinate()) {
+                adjacentEdges.add(edge);
+            }
+        }
+            return null;
+    }
 }

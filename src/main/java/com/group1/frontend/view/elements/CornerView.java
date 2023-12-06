@@ -43,6 +43,7 @@ public CornerView(Corner corner) {
 }
     public void occupyCorner() throws FileNotFoundException {
         Image image = new Image(new FileInputStream(getRandomBuildingAsset()));
+        // TODO get the building asset according to player
         setFill(new ImagePattern(image));
         corner.setIsOccupied(true);
     }
