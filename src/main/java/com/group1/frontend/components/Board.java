@@ -59,12 +59,25 @@ public class Board {
             Corner corner = new Corner(cornerCoordinates.get(0), cornerCoordinates.get(1));
             points.add(corner);
         }
+        // create a sorted set to remove duplicate edges from the list
         Set<List<Double>> nonDuplicateEdges = new HashSet<>();
         for(List<List<Double>> groupedCorner : groupedCorners){
             for(int i = 0; i < groupedCorner.size(); i++){
-                nonDuplicateEdges.add(Arrays.asList(groupedCorner.get(i).get(0), groupedCorner.get(i).get(1),
-                        groupedCorner.get((i+1)%groupedCorner.size()).get(0),
-                        groupedCorner.get((i+1)%groupedCorner.size()).get(1)));
+                List<Double> edgeCoordinates = new ArrayList<>();
+                if(groupedCorner.get(i).get(1) > groupedCorner.get((i+1)%groupedCorner.size()).get(1)){
+                    edgeCoordinates.add(groupedCorner.get((i+1)%groupedCorner.size()).get(0));
+                    edgeCoordinates.add(groupedCorner.get((i+1)%groupedCorner.size()).get(1));
+                    edgeCoordinates.add(groupedCorner.get(i).get(0));
+                    edgeCoordinates.add(groupedCorner.get(i).get(1));
+                    nonDuplicateEdges.add(edgeCoordinates);
+                    continue;
+                }
+                edgeCoordinates.add(groupedCorner.get(i).get(0));
+                edgeCoordinates.add(groupedCorner.get(i).get(1));
+                edgeCoordinates.add(groupedCorner.get((i+1)%groupedCorner.size()).get(0));
+                edgeCoordinates.add(groupedCorner.get((i+1)%groupedCorner.size()).get(1));
+
+                nonDuplicateEdges.add(edgeCoordinates);
             }
         }
         for (List<Double> edgesCoordinates : nonDuplicateEdges){
