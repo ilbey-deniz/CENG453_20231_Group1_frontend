@@ -63,26 +63,26 @@
                   <Font size="24.0" />
                </font>
             </Label>
-            <Ellipse fill="#ffffffb2" layoutX="116.0" layoutY="118.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="woolLabel" alignment="CENTER" layoutX="93.0" layoutY="101.0" prefHeight="35.0" prefWidth="47.0" text="3-2" textAlignment="CENTER">
+            <Ellipse fill="#ffffffb2" layoutX="112.0" layoutY="118.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label fx:id="woolLabel" alignment="CENTER" layoutX="89.0" layoutY="101.0" prefHeight="35.0" prefWidth="47.0" text="3-2" textAlignment="CENTER">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <Ellipse fill="#ffffffb2" layoutX="190.0" layoutY="120.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="lumberLabel" alignment="CENTER" layoutX="166.0" layoutY="102.0" prefHeight="35.0" prefWidth="47.0" text="1-1" textAlignment="CENTER">
+            <Ellipse fill="#ffffffb2" layoutX="184.0" layoutY="118.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label fx:id="lumberLabel" alignment="CENTER" layoutX="160.0" layoutY="100.0" prefHeight="35.0" prefWidth="47.0" text="1-1" textAlignment="CENTER">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <Ellipse fill="#ffffffb2" layoutX="264.0" layoutY="120.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="oreLabel" alignment="CENTER" layoutX="241.0" layoutY="103.0" prefHeight="35.0" prefWidth="47.0" text="0" textAlignment="CENTER">
+            <Ellipse fill="#ffffffb2" layoutX="260.0" layoutY="118.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label fx:id="oreLabel" alignment="CENTER" layoutX="237.0" layoutY="101.0" prefHeight="35.0" prefWidth="47.0" text="0" textAlignment="CENTER">
                <font>
                   <Font size="24.0" />
                </font>
             </Label>
-            <Ellipse fill="#ffffffb2" layoutX="339.0" layoutY="118.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="brickLabel" alignment="CENTER" layoutX="316.0" layoutY="101.0" prefHeight="35.0" prefWidth="47.0" text="2" textAlignment="CENTER">
+            <Ellipse fill="#ffffffb2" layoutX="335.0" layoutY="118.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label fx:id="brickLabel" alignment="CENTER" layoutX="312.0" layoutY="101.0" prefHeight="35.0" prefWidth="47.0" text="2" textAlignment="CENTER">
                <font>
                   <Font size="24.0" />
                </font>
@@ -103,7 +103,7 @@
             </ImageView>
          </children>
       </AnchorPane>
-      <Label fx:id="statusLabel" alignment="CENTER" layoutX="240.0" layoutY="24.0" text="STATUS LABEL Lorem ipsum" textAlignment="CENTER" textFill="#b50000" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="240.0" AnchorPane.topAnchor="24.0">
+      <Label fx:id="statusLabel" alignment="CENTER" layoutX="240.0" layoutY="24.0" textAlignment="CENTER" textFill="#b50000" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="240.0" AnchorPane.topAnchor="24.0">
          <font>
             <Font size="24.0" />
          </font>
