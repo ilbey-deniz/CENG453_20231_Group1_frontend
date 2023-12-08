@@ -19,7 +19,7 @@ import java.util.Objects;
 
 import static com.group1.frontend.constants.BoardConstants.*;
 
-public class HelloApplication extends Application {
+public class MainApplication extends Application {
 
     public static void main(String[] args) {
         launch(args);

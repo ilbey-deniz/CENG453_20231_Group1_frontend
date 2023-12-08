@@ -11,7 +11,6 @@ public class Board {
     private final List<Tile> tiles = new ArrayList<>();
     private List<Corner> points = new ArrayList<>();
 
-    //TODO: Edges are duplicated. Need to fix this.
     private List<Edge> roads = new ArrayList<>();
 
     Set<List<Double>> corners = new HashSet<>();
@@ -170,8 +169,6 @@ public class Board {
     }
 
     public List<Tile> getAdjacentTilesOfCorner(Corner c) {
-        // TODO: implement this by detecting center of tile
-        //  (2 possible arrangement upward, downward), then find the tile by using its center value
         List<Tile> adjacentTiles = new ArrayList<>();
         int mod = ((int) c.getYCoordinate())%3;
         if(mod < 0){

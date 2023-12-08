@@ -12,8 +12,7 @@ public class SceneSwitch {
 
     public void switchToScene(Stage stage, Service service, String sceneName) {
         try {
-            //TODO: change main class name
-            Class<?> c = Class.forName("com.group1.frontend.HelloApplication");
+            Class<?> c = Class.forName("com.group1.frontend.MainApplication");
             FXMLLoader loader = new FXMLLoader(c.getResource(sceneName));
             Scene scene;
             if(sceneName.equals("board-view.fxml")) {

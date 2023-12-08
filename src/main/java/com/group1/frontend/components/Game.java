@@ -106,7 +106,7 @@ public class Game {
             currentPlayer.resources.put(ResourceType.GRAIN, currentPlayer.resources.get(ResourceType.GRAIN) - 1);
             c.setIsOccupied(true);
             c.setOwner(currentPlayer);
-            currentPlayer.buildings.add(new Building(BuildingType.SETTLEMENT, currentPlayer, getTilesFromCorner(c), c));
+            currentPlayer.buildings.add(new Building(BuildingType.SETTLEMENT, currentPlayer, board.getAdjacentTilesOfCorner(c), c));
             return "Settlement built successfully";
 
         }
@@ -121,11 +121,6 @@ public class Game {
             }
         }
         return false;
-    }
-
-    private List<Tile> getTilesFromCorner(Corner c) {
-        // TODO: implement this
-        return null;
     }
 
     public String handleBuildCity(Corner c) {
