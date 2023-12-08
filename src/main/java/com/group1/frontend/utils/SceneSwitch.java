@@ -1,5 +1,6 @@
 package com.group1.frontend.utils;
 
+import com.group1.frontend.constants.ApplicationConstants;
 import com.group1.frontend.controllers.Controller;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,7 +13,7 @@ public class SceneSwitch {
 
     public void switchToScene(Stage stage, Service service, String sceneName) {
         try {
-            Class<?> c = Class.forName("com.group1.frontend.MainApplication");
+            Class<?> c = Class.forName(ApplicationConstants.MAIN_CLASS);
             FXMLLoader loader = new FXMLLoader(c.getResource(sceneName));
             Scene scene;
             if(sceneName.equals("board-view.fxml")) {
