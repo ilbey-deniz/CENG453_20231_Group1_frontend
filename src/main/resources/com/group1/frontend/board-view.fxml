@@ -89,7 +89,7 @@
             </Label>
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="1109.0" layoutY="552.0" prefHeight="68.0" prefWidth="147.0" AnchorPane.rightAnchor="14.0">
+      <AnchorPane layoutX="1109.0" layoutY="552.0" prefHeight="68.0" prefWidth="147.0" AnchorPane.bottomAnchor="92.0" AnchorPane.rightAnchor="14.0">
          <children>
             <ImageView fx:id="firstDiceImage" fitHeight="86.0" fitWidth="76.0" onMouseClicked="#onDiceImageClick" pickOnBounds="true" preserveRatio="true">
                <image>
