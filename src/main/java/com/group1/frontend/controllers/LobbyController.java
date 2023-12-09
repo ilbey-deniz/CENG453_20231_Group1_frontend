@@ -24,6 +24,9 @@ public class LobbyController extends Controller{
     @FXML
     private Button addCpuPlayerButton;
     @FXML
+    private Button backButton;
+
+    @FXML
     private Label statusLabel;
     @FXML
     private Label roomCodeLabel;

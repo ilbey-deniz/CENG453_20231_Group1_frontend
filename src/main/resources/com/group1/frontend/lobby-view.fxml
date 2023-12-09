@@ -46,6 +46,7 @@
             <Button fx:id="readyButton" alignment="CENTER_RIGHT" layoutX="430.0" layoutY="288.0" mnemonicParsing="false" text="Ready!" textAlignment="CENTER" />
             <Label fx:id="statusLabel" layoutX="33.0" layoutY="311.0" text="STATUS_LABEL" textFill="RED" />
             <Button fx:id="addCpuPlayerButton" layoutX="300.0" layoutY="289.0" mnemonicParsing="false" text="Add CPU Player" />
+            <Button fx:id="backButton" layoutX="29.0" layoutY="384.0" mnemonicParsing="false" text="Back" />
          </children>
       </AnchorPane>
    </children>
