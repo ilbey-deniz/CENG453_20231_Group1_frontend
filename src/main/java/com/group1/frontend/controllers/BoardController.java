@@ -263,13 +263,7 @@ public class BoardController extends Controller{
 
     }
     public void onSettlementButtonClick(ActionEvent event){
-        highlightedCorners.forEach(corner -> {
-            try {
-                boardView.getCornerView(corner).unhighlight();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+        removeHighlight();
         if(game.getCurrentPlayer().getResources().get(ResourceType.LUMBER) < 1 ||
                 game.getCurrentPlayer().getResources().get(ResourceType.BRICK) < 1 ||
                 game.getCurrentPlayer().getResources().get(ResourceType.WOOL) < 1 ||
@@ -295,13 +289,7 @@ public class BoardController extends Controller{
 
     }
     public void onRoadButtonClick(ActionEvent event){
-        highlightedEdges.forEach(edge -> {
-            try {
-                boardView.getEdgeView(edge).unhighlight();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+        removeHighlight();
         if(game.getCurrentPlayer().getResources().get(ResourceType.LUMBER) < 1 ||
                 game.getCurrentPlayer().getResources().get(ResourceType.BRICK) < 1){
             statusLabel.setText("Not enough resources to build a road");
@@ -312,8 +300,25 @@ public class BoardController extends Controller{
         //highlight all edges that are available to build a road
         game.getAvailableEdges().forEach(edge -> {
             boardView.getEdgeView(edge).highlight();
+            highlightedEdges.add(edge);
         });
 
+    }
+    public void removeHighlight(){
+        highlightedEdges.forEach(edge -> {
+            try {
+                boardView.getEdgeView(edge).unhighlight();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        highlightedCorners.forEach(corner -> {
+            try {
+                boardView.getCornerView(corner).unhighlight();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
 }
