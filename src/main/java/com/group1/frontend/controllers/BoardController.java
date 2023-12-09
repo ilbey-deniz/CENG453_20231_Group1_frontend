@@ -131,11 +131,8 @@ public class BoardController extends Controller{
                 //place random settlements and one road for each player
                 Corner randomCorner = game.getBoard().getRandomCorner();
                 game.placeSettlement(randomCorner, player);
-                try {
-                    boardView.getCornerView(randomCorner).occupyCorner(player.getColor(), BuildingType.SETTLEMENT);
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
+                boardView.getCornerView(randomCorner).occupyCorner(player.getColor(), BuildingType.SETTLEMENT);
+
                 List<Edge> possibleEdges = game.getBoard().getAdjacentEdgesOfCorner(randomCorner);
                 Edge randomEdge = possibleEdges.get((int) (Math.random() * possibleEdges.size()));
                 game.placeRoad(randomEdge, player);

@@ -50,17 +50,22 @@ public CornerView(Corner corner) {
         setFill(new ImagePattern(image));
         corner.setIsOccupied(true);
     }
-    public void occupyCorner(String color, BuildingType buildingType) throws FileNotFoundException {
-        Image image = null;
-        if(buildingType == BuildingType.SETTLEMENT){
-            image = new Image(new FileInputStream(getSettlementAsset(color)));
+    public void occupyCorner(String color, BuildingType buildingType){
+        try{
+            Image image = null;
+            if(buildingType == BuildingType.SETTLEMENT){
+                image = new Image(new FileInputStream(getSettlementAsset(color)));
+            }
+            else if(buildingType == BuildingType.CITY){
+                image = new Image(new FileInputStream(getCityAsset(color)));
+            }
+            assert image != null;
+            setFill(new ImagePattern(image));
+            corner.setIsOccupied(true);
         }
-        else if(buildingType == BuildingType.CITY){
-            image = new Image(new FileInputStream(getCityAsset(color)));
+        catch (FileNotFoundException e){
+            e.printStackTrace();
         }
-        assert image != null;
-        setFill(new ImagePattern(image));
-        corner.setIsOccupied(true);
     }
 
     public void highlight() {
