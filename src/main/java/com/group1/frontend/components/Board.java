@@ -140,6 +140,21 @@ public class Board {
 
     }
 
+    //TODO: too inefficient, need to fix
+    public List<Corner> getAdjacentCornersOfCorner(Corner c){
+        List<Corner> adjacentCorners = new ArrayList<>();
+        List<Edge> adjacentEdges = getAdjacentEdgesOfCorner(c);
+        for(Edge edge : adjacentEdges) {
+            List<Corner> corners = getAdjacentCornersOfEdge(edge);
+            for(Corner corner : corners) {
+                if (!adjacentCorners.contains(corner)) {
+                    adjacentCorners.add(corner);
+                }
+            }
+        }
+        return adjacentCorners;
+    }
+
     public List<Edge> getAdjacentEdgesOfCorner(Corner c) {
         List<Edge> adjacentEdges = new ArrayList<>();
         for(Edge edge : roads) {

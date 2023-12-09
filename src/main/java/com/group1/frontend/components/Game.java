@@ -2,10 +2,11 @@ package com.group1.frontend.components;
 
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.ResourceType;
-import com.group1.frontend.enums.TileType;
 import com.group1.frontend.exceptions.DiceAlreadyRolledException;
 import javafx.util.Pair;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Game {
@@ -32,6 +33,15 @@ public class Game {
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public void addPlayer(Player player) {
+        players.add(player);
+    }
+
+    public void removePlayer(Player player) {
+        //TODO: if that is a real player, replace it with a CPU player
+        players.remove(player);
     }
 
     public void setBoard(Board board) {
@@ -74,7 +84,7 @@ public class Game {
             currentPlayer.resources.put(ResourceType.LUMBER, currentPlayer.resources.get(ResourceType.LUMBER) - 1);
             e.setOccupied(true);
             e.setOwner(currentPlayer);
-            currentPlayer.roads.add(new Roads(currentPlayer, e));
+            currentPlayer.roads.add(new Road(currentPlayer, e));
             return "Road built successfully";
 
         }
@@ -139,6 +149,49 @@ public class Game {
         }
     }
 
+    //1. get player's road list
+    //2. for each road, getAdjacentEdgesOfEdge and check if they are not occupied. if not occupied, add to availableEdges HashSet
+    //TODO: getAdjacentEdgesOfEdge function finds same edge multiple times, bad performance
+    //TODO: storing availableEdges for each player as a HashSet is better
+    public List<Edge> getAvailableEdges() {
+        HashSet<Edge> availableEdges = new HashSet<>();
+        for(Road road : currentPlayer.roads) {
+            List<Edge> adjacentEdges = board.getAdjacentEdgesOfEdge(road.getEdge());
+            for(Edge edge : adjacentEdges) {
+                if (!edge.isOccupied()) {
+                    availableEdges.add(edge);
+                }
+            }
+        }
+        return new ArrayList<>(availableEdges);
+    }
+
+    //1.get player's road list
+    //2.for each road, getAdjacentCornersOfEdge and check if they are not occupied. if not occupied, add to availableCorners HashSet
+    //3.get every building's list (all players')
+    //4.for each building's corners, getAdjacentCornersOfCorner and remove them from availableCorners HashSet
+
+    public List<Corner> getAvailableCorners() {
+        HashSet<Corner> availableCorners = new HashSet<>();
+        for(Road road : currentPlayer.roads) {
+            List<Corner> adjacentCorners = board.getAdjacentCornersOfEdge(road.getEdge());
+            for(Corner corner : adjacentCorners) {
+                if (!corner.getIsOccupied()) {
+                    availableCorners.add(corner);
+                }
+            }
+        }
+        for(Player player : players) {
+            for(Building building : player.buildings) {
+                List<Corner> adjacentCorners = board.getAdjacentCornersOfCorner(building.getCorner());
+                for(Corner corner : adjacentCorners) {
+                    availableCorners.remove(corner);
+                }
+            }
+        }
+        return new ArrayList<>(availableCorners);
+    }
+
 
     public Pair<Integer, Integer> rollDice() throws DiceAlreadyRolledException {
         if (currentDiceRoll != null) {
@@ -155,4 +208,5 @@ public class Game {
         //currentPlayer = players.get((players.indexOf(currentPlayer) + 1) % players.size());
         turnNumber++;
     }
+
 }

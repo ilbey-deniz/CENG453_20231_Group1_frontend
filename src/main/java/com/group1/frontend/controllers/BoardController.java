@@ -1,13 +1,16 @@
 package com.group1.frontend.controllers;
 
 import com.group1.frontend.components.Board;
+import com.group1.frontend.components.Corner;
 import com.group1.frontend.components.Game;
+import com.group1.frontend.components.Tile;
 import com.group1.frontend.events.TimeEvent;
 import com.group1.frontend.utils.BoardUtilityFunctions;
 import com.group1.frontend.view.elements.BoardView;
 import com.group1.frontend.events.CornerClickedEvent;
 import com.group1.frontend.events.EdgeClickedEvent;
 import com.group1.frontend.utils.Timer;
+import com.group1.frontend.view.elements.TileView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -23,6 +26,7 @@ import javafx.util.Pair;
 
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 import static com.group1.frontend.constants.BoardConstants.TURN_TIME;
 import static com.group1.frontend.utils.BoardUtilityFunctions.secondsToTime;
@@ -121,12 +125,17 @@ public class BoardController extends Controller{
     public void handleCornerClickEvent(CornerClickedEvent event) {
         System.out.println("EDGE COUNT: " + game.getBoard().getEdges().size());
         System.out.println("Corner clicked: " + event.getCorner().getXCoordinate() + ", " + event.getCorner().getYCoordinate());
-            game.getBoard().getAdjacentTilesOfCorner(event.getCorner()).forEach(tile -> {
-                boardView.getTileView(tile);
-//                boardView.getTileView(tile).highlight();
+        //TODO: highlight adjacent tiles, inefficient
+//        List<Tile> adjacentTiles = game.getBoard().getAdjacentTilesOfCorner(event.getCorner());
+//        boardView.getChildren().forEach(child -> {
+//            if(child instanceof TileView){
+//                TileView tileView = (TileView) child;
+//                if(adjacentTiles.contains(tileView.getTile())){
+//                    tileView.highlight();
+//                }
+//            }
+//        });
 
-                System.out.println("Resource Type of tile: " + tile.getResourceType().toString());
-            });
     }
     public void handleEdgeClickEvent(EdgeClickedEvent event) {
         System.out.println("Edge clicked: " + event.getEdge().toString());
