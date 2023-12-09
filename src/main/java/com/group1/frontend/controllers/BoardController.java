@@ -73,23 +73,6 @@ public class BoardController extends Controller{
     @FXML
     private Label leftTimeLabel;
 
-    @FXML
-    private Button tradeButton;
-
-    @FXML
-    private Button settlementButton;
-
-    @FXML
-    private Button cityButton;
-
-    @FXML
-    private Button roadButton;
-
-    @FXML
-    private Button endTourButton;
-
-
-
     private Game game;
     private Timer timer;
 
@@ -201,4 +184,18 @@ public class BoardController extends Controller{
         gameUpdatesTextFlow.getChildren().add(new Text(message + "\n"));
         gameUpdatesScrollPane.setVvalue(1.0);
     }
+
+    public void onTradeButtonClick(){
+
+    }
+    public void onSettlementButtonClick(ActionEvent event){
+
+    }
+    public void onCityButtonClick(ActionEvent event){
+
+    }
+    public void onRoadButtonClick(ActionEvent event){
+
+    }
+
 }
