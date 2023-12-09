@@ -13,6 +13,7 @@ import com.group1.frontend.utils.Timer;
 import com.group1.frontend.view.elements.TileView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -71,6 +72,22 @@ public class BoardController extends Controller{
 
     @FXML
     private Label leftTimeLabel;
+
+    @FXML
+    private Button tradeButton;
+
+    @FXML
+    private Button settlementButton;
+
+    @FXML
+    private Button cityButton;
+
+    @FXML
+    private Button roadButton;
+
+    @FXML
+    private Button endTourButton;
+
 
 
     private Game game;
