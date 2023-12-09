@@ -8,17 +8,21 @@ import static com.group1.frontend.constants.BoardConstants.*;
 import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomKey;
 
 public class Board {
-    private final List<Tile> tiles = new ArrayList<>();
-    private List<Corner> points = new ArrayList<>();
+    private final List<Tile> tiles;
+    private final List<Corner> points;
 
-    private List<Edge> roads = new ArrayList<>();
+    private final List<Edge> roads;
 
-    Set<List<Double>> corners = new HashSet<>();
-    List<List<List<Double>>> groupedCorners = new ArrayList<>();
+    Set<List<Double>> corners;
+    List<List<List<Double>>> groupedCorners;
 
 
     public Board() {
-
+        tiles = new ArrayList<>();
+        points = new ArrayList<>();
+        roads = new ArrayList<>();
+        corners = new HashSet<>();
+        groupedCorners = new ArrayList<>();
     }
 
 //    The game board will consist of 19 hexagons, distributed as follows: 1
@@ -213,5 +217,11 @@ public class Board {
             }
         }
         return adjacentTiles;
+    }
+
+    public Corner getRandomCorner() {
+        Integer a = points.size();
+        Random random = new Random();
+        return points.get(random.nextInt(points.size()));
     }
 }

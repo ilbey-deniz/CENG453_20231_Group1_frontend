@@ -46,6 +46,12 @@ public class BoardUtilityFunctions {
 
         return "src/main/resources/assets/" + buildingType + getRandomKey(PLAYER_COLORS) + ".png";
     }
+    public static String getSettlementAsset(String color){
+        return "src/main/resources/assets/house_" + color + ".png";
+    }
+    public static String getCityAsset(String color){
+        return "src/main/resources/assets/city_" + color + ".png";
+    }
 
     public static String getRandomDiceAsset(){
         int diceRoll = (int) (Math.random() * 6) + 1;

@@ -1,9 +1,8 @@
 package com.group1.frontend.controllers;
 
-import com.group1.frontend.components.Board;
-import com.group1.frontend.components.Corner;
-import com.group1.frontend.components.Game;
-import com.group1.frontend.components.Tile;
+import com.group1.frontend.components.*;
+import com.group1.frontend.enums.BuildingType;
+import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.events.TimeEvent;
 import com.group1.frontend.utils.BoardUtilityFunctions;
 import com.group1.frontend.view.elements.BoardView;
@@ -13,10 +12,7 @@ import com.group1.frontend.utils.Timer;
 import com.group1.frontend.view.elements.TileView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
@@ -27,8 +23,11 @@ import javafx.util.Pair;
 
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
+import static com.group1.frontend.constants.BoardConstants.PLAYER_COLORS;
 import static com.group1.frontend.constants.BoardConstants.TURN_TIME;
 import static com.group1.frontend.utils.BoardUtilityFunctions.secondsToTime;
 
@@ -73,20 +72,97 @@ public class BoardController extends Controller{
     @FXML
     private Label leftTimeLabel;
 
+    @FXML
+    private Button endTourButton;
+
+    @FXML
+    private ToggleButton tradeToggleButton;
+
+    @FXML
+    private ToggleButton settlementToggleButton;
+
+    @FXML
+    private ToggleButton cityToggleButton;
+
+    @FXML
+    private ToggleButton roadToggleButton;
+
+
+    private HashSet<Edge> highlightedEdges;
+    private HashSet<Corner> highlightedCorners;
+
     private Game game;
     private Timer timer;
 
     BoardView boardView;
 
-    public BoardController() throws FileNotFoundException {
+    public BoardController(){
+        highlightedEdges = new HashSet<>();
+        highlightedCorners = new HashSet<>();
     }
 
     public void init() {
         try {
             game = new Game();
-            game.setBoard(new Board());
+            Board board = new Board();
+            game.setBoard(board);
+            boardView = new BoardView(board);
+            //populate with mock players
+            Player p1 = new Player("red", "iplikçi nedim", true);
+            Player p2 = new Player("yellow", "laz ziya", true);
+            Player p3 = new Player("green", "tombalacı mehmet", true);
+            Player p4 = new Player("blue", "karahanlı", false);
+
+            game.addPlayer(p1);
+            game.addPlayer(p2);
+            game.addPlayer(p3);
+            game.addPlayer(p4);
+            game.setCurrentPlayer(p4);
+
+            game.getCurrentPlayer().addResource(ResourceType.GRAIN, 10);
+            game.getCurrentPlayer().addResource(ResourceType.LUMBER, 10);
+            game.getCurrentPlayer().addResource(ResourceType.WOOL, 10);
+            game.getCurrentPlayer().addResource(ResourceType.BRICK, 10);
+            game.getCurrentPlayer().addResource(ResourceType.ORE, 0);
+
+            game.getCurrentPlayer().getResources().forEach((resourceType, integer) -> {
+                switch (resourceType){
+                    case GRAIN:
+                        grainLabel.setText(integer.toString());
+                        break;
+                    case LUMBER:
+                        lumberLabel.setText(integer.toString());
+                        break;
+                    case WOOL:
+                        woolLabel.setText(integer.toString());
+                        break;
+                    case BRICK:
+                        brickLabel.setText(integer.toString());
+                        break;
+                    case ORE:
+                        oreLabel.setText(integer.toString());
+                        break;
+                }
+            });
+
+            game.getPlayers().forEach(player -> {
+                //place random settlements and one road for each player
+                Corner randomCorner = game.getBoard().getRandomCorner();
+                game.placeSettlement(randomCorner, player);
+                try {
+                    boardView.getCornerView(randomCorner).occupyCorner(player.getColor(), BuildingType.SETTLEMENT);
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                List<Edge> possibleEdges = game.getBoard().getAdjacentEdgesOfCorner(randomCorner);
+                Edge randomEdge = possibleEdges.get((int) (Math.random() * possibleEdges.size()));
+                game.placeRoad(randomEdge, player);
+                boardView.getEdgeView(randomEdge).occupyEdge(PLAYER_COLORS.get(player.getColor()));
+
+            });
+
             timer = new Timer(TURN_TIME);
-            boardView = new BoardView(game.getBoard());
+
             hexagonPane.getChildren().add(boardView);
             hexagonPane.getChildren().add(timer);
 
@@ -123,9 +199,8 @@ public class BoardController extends Controller{
     }
 
     public void handleCornerClickEvent(CornerClickedEvent event) {
-        System.out.println("EDGE COUNT: " + game.getBoard().getEdges().size());
-        System.out.println("Corner clicked: " + event.getCorner().getXCoordinate() + ", " + event.getCorner().getYCoordinate());
         //TODO: highlight adjacent tiles, inefficient
+
 //        List<Tile> adjacentTiles = game.getBoard().getAdjacentTilesOfCorner(event.getCorner());
 //        boardView.getChildren().forEach(child -> {
 //            if(child instanceof TileView){
@@ -138,9 +213,8 @@ public class BoardController extends Controller{
 
     }
     public void handleEdgeClickEvent(EdgeClickedEvent event) {
-        System.out.println("Edge clicked: " + event.getEdge().toString());
         game.getBoard().getAdjacentEdgesOfEdge(event.getEdge()).forEach(edge -> {
-            boardView.getEdgeView(edge).occupyEdge();
+            boardView.getEdgeView(edge).occupyEdge(PLAYER_COLORS.get(game.getCurrentPlayer().getColor()));
         });
     }
 
@@ -163,7 +237,7 @@ public class BoardController extends Controller{
     }
 
 
-    public void onDiceImageClick() throws FileNotFoundException{
+    public void onDiceImageClick(){
         try {
             Pair<Integer, Integer> dicePair = game.rollDice();
             firstDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getKey()));
@@ -189,12 +263,56 @@ public class BoardController extends Controller{
 
     }
     public void onSettlementButtonClick(ActionEvent event){
+        highlightedCorners.forEach(corner -> {
+            try {
+                boardView.getCornerView(corner).unhighlight();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        if(game.getCurrentPlayer().getResources().get(ResourceType.LUMBER) < 1 ||
+                game.getCurrentPlayer().getResources().get(ResourceType.BRICK) < 1 ||
+                game.getCurrentPlayer().getResources().get(ResourceType.WOOL) < 1 ||
+                game.getCurrentPlayer().getResources().get(ResourceType.GRAIN) < 1){
+            statusLabel.setText("Not enough resources to build a settlement");
+            writeToGameUpdates("Not enough resources to build a settlement");
+            return;
+        }
+        statusLabel.setText("Select a corner to build a settlement");
+        //highlight all corners that are available to build a settlement
+        game.getAvailableCorners().forEach(corner -> {
+            try {
+                boardView.getCornerView(corner).highlight();
+                highlightedCorners.add(corner);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
 
     }
     public void onCityButtonClick(ActionEvent event){
 
     }
     public void onRoadButtonClick(ActionEvent event){
+        highlightedEdges.forEach(edge -> {
+            try {
+                boardView.getEdgeView(edge).unhighlight();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        if(game.getCurrentPlayer().getResources().get(ResourceType.LUMBER) < 1 ||
+                game.getCurrentPlayer().getResources().get(ResourceType.BRICK) < 1){
+            statusLabel.setText("Not enough resources to build a road");
+            writeToGameUpdates("Not enough resources to build a road");
+            return;
+        }
+        statusLabel.setText("Select an edge to build a road");
+        //highlight all edges that are available to build a road
+        game.getAvailableEdges().forEach(edge -> {
+            boardView.getEdgeView(edge).highlight();
+        });
 
     }
 

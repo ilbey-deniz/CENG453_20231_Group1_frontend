@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -129,7 +131,7 @@
       </AnchorPane>
       <AnchorPane layoutX="771.0" layoutY="628.0" prefHeight="80.0" prefWidth="328.0" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="200.0">
          <children>
-            <Button fx:id="tradeButton" layoutX="8.0" layoutY="4.0" mnemonicParsing="false" onAction="#onTradeButtonClick">
+            <ToggleButton fx:id="tradeToggleButton" layoutX="8.0" layoutY="5.0" mnemonicParsing="false" onAction="#onTradeButtonClick">
                <graphic>
                   <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -137,8 +139,11 @@
                      </image>
                   </ImageView>
                </graphic>
-            </Button>
-            <Button fx:id="roadButton" layoutX="88.0" layoutY="4.0" mnemonicParsing="false" onAction="#onRoadButtonClick">
+               <toggleGroup>
+                  <ToggleGroup fx:id="playerAction" />
+               </toggleGroup>
+            </ToggleButton>
+            <ToggleButton fx:id="roadToggleButton" layoutX="88.0" layoutY="5.0" mnemonicParsing="false" onAction="#onRoadButtonClick" toggleGroup="$playerAction">
                <graphic>
                   <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -146,8 +151,8 @@
                      </image>
                   </ImageView>
                </graphic>
-            </Button>
-            <Button fx:id="settlementButton" layoutX="168.0" layoutY="4.0" mnemonicParsing="false" onAction="#onSettlementButtonClick">
+            </ToggleButton>
+            <ToggleButton fx:id="settlementToggleButton" layoutX="168.0" layoutY="5.0" mnemonicParsing="false" onAction="#onSettlementButtonClick" toggleGroup="$playerAction">
                <graphic>
                   <ImageView fitHeight="64.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -155,8 +160,8 @@
                      </image>
                   </ImageView>
                </graphic>
-            </Button>
-            <Button fx:id="cityButton" layoutX="248.0" layoutY="4.0" mnemonicParsing="false" onAction="#onCityButtonClick">
+            </ToggleButton>
+            <ToggleButton fx:id="cityToggleButton" layoutX="248.0" layoutY="5.0" mnemonicParsing="false" onAction="#onCityButtonClick" toggleGroup="$playerAction">
                <graphic>
                   <ImageView fitHeight="109.0" fitWidth="64.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -164,7 +169,7 @@
                      </image>
                   </ImageView>
                </graphic>
-            </Button>
+            </ToggleButton>
          </children>
       </AnchorPane>
    </children>

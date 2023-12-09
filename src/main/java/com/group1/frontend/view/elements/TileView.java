@@ -4,6 +4,7 @@ import com.group1.frontend.components.Tile;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 
 
@@ -69,6 +70,6 @@ public class TileView extends Polygon {
 
     public void highlight() {
         setStrokeWidth(5);
-        setStroke(Color.valueOf("#ff0000"));
+        setStroke(Paint.valueOf(HIGHLIGHT_STROKE_COLOR));
     }
 }

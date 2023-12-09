@@ -1,19 +1,20 @@
 package com.group1.frontend.constants;
 
 import com.group1.frontend.enums.TileType;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 
 import java.util.*;
 
 public final class BoardConstants {
 
-    public static final int TURN_TIME = 5;
+    public static final int TURN_TIME = 5*60;
     public static final int DEFAULT_WIDTH = 1280;
     public static final int DEFAULT_HEIGHT = 720;
-    //public static final double WINDOW_WIDTH = Screen.getScreens().get(0).getBounds().getWidth();
-    //public static final double WINDOW_HEIGHT = Screen.getScreens().get(0).getBounds().getHeight()-77;
-    public static final double WINDOW_WIDTH = DEFAULT_WIDTH;
-    public static final double WINDOW_HEIGHT = DEFAULT_HEIGHT;
+    public static final double WINDOW_WIDTH = Screen.getScreens().get(0).getBounds().getWidth();
+    public static final double WINDOW_HEIGHT = Screen.getScreens().get(0).getBounds().getHeight()-77;
+    //public static final double WINDOW_WIDTH = DEFAULT_WIDTH;
+    //public static final double WINDOW_HEIGHT = DEFAULT_HEIGHT;
 
     public static final double xStartOffset = WINDOW_WIDTH/2; // offsets the entire field to the right
     public static final double yStartOffset = WINDOW_HEIGHT/2; // offsets the entire fiels downwards
@@ -29,6 +30,8 @@ public final class BoardConstants {
     ));
 
     public static final String BACKGROUND_ISLAND_COLOR = "#fff7d0";
+    public static final String HIGHLIGHT_FILL_COLOR = Color.BLACK.toString();
+    public static final String HIGHLIGHT_STROKE_COLOR = Color.RED.toString();
 
     public static HashMap<TileType, Integer> TILE_RESOURCE_TYPES = new HashMap<>(Map.of(
         TileType.HILLS, 3,

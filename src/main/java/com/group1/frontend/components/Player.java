@@ -2,29 +2,33 @@ package com.group1.frontend.components;
 
 import com.group1.frontend.enums.ResourceType;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Player {
-    Map<ResourceType, Integer> resources;
+    HashMap<ResourceType, Integer> resources;
     List<Building> buildings;
     HashSet<Road> roads;
     String color;
     String name;
     Boolean cpu;
 
-    public Player(String name, String color, Boolean cpu) {
+    public Player(String color, String name, Boolean cpu) {
         this.name = name;
         this.color = color;
         this.cpu = cpu;
+        this.buildings = new ArrayList<>();
+        this.roads = new HashSet<>();
+        this.resources = new HashMap<>();
+        for (ResourceType resourceType : ResourceType.values()) {
+            resources.put(resourceType, 0);
+        }
     }
 
     public Map<ResourceType, Integer> getResources() {
         return resources;
     }
 
-    public void setResources(Map<ResourceType, Integer> resources) {
+    public void setResources(HashMap<ResourceType, Integer> resources) {
         this.resources = resources;
     }
 
@@ -65,6 +69,10 @@ public class Player {
     }
     public Boolean isCpu() {
         return cpu;
+    }
+
+    public void addResource(ResourceType resourceType, int i) {
+        resources.put(resourceType, resources.get(resourceType) + i);
     }
 
     //checks before buying a building:

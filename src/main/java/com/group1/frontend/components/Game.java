@@ -24,7 +24,10 @@ public class Game {
         this.turnNumber = 0;
     }
     public Game() {
-
+        this.players = new ArrayList<>();
+        this.board = new Board();
+        this.currentPlayer = null;
+        this.turnNumber = 0;
     }
 
     public void setPlayers(List<Player> players) {
@@ -37,6 +40,9 @@ public class Game {
 
     public void addPlayer(Player player) {
         players.add(player);
+    }
+    public void addPlayer(String color, String name, Boolean cpu) {
+        players.add(new Player(name, color, cpu));
     }
 
     public void removePlayer(Player player) {
@@ -209,4 +215,15 @@ public class Game {
         turnNumber++;
     }
 
+    public void placeSettlement(Corner corner, Player player) {
+        corner.setIsOccupied(true);
+        corner.setOwner(player);
+        player.buildings.add(new Building(BuildingType.SETTLEMENT, player, board.getAdjacentTilesOfCorner(corner), corner));
+    }
+
+    public void placeRoad(Edge edge, Player player) {
+        edge.setOccupied(true);
+        edge.setOwner(player);
+        player.roads.add(new Road(player, edge));
+    }
 }
