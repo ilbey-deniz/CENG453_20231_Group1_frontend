@@ -125,25 +125,7 @@ public class BoardController extends Controller{
             game.getCurrentPlayer().addResource(ResourceType.BRICK, 10);
             game.getCurrentPlayer().addResource(ResourceType.ORE, 0);
 
-            game.getCurrentPlayer().getResources().forEach((resourceType, integer) -> {
-                switch (resourceType){
-                    case GRAIN:
-                        grainLabel.setText(integer.toString());
-                        break;
-                    case LUMBER:
-                        lumberLabel.setText(integer.toString());
-                        break;
-                    case WOOL:
-                        woolLabel.setText(integer.toString());
-                        break;
-                    case BRICK:
-                        brickLabel.setText(integer.toString());
-                        break;
-                    case ORE:
-                        oreLabel.setText(integer.toString());
-                        break;
-                }
-            });
+            setResourceLabels(game.getCurrentPlayer());
 
             game.getPlayers().forEach(player -> {
                 //place random settlements and one road for each player
@@ -317,6 +299,28 @@ public class BoardController extends Controller{
                 boardView.getCornerView(corner).unhighlight();
             } catch (Exception e) {
                 throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public void setResourceLabels(Player player){
+        player.getResources().forEach((resourceType, integer) -> {
+            switch (resourceType){
+                case GRAIN:
+                    grainLabel.setText(integer.toString());
+                    break;
+                case LUMBER:
+                    lumberLabel.setText(integer.toString());
+                    break;
+                case WOOL:
+                    woolLabel.setText(integer.toString());
+                    break;
+                case BRICK:
+                    brickLabel.setText(integer.toString());
+                    break;
+                case ORE:
+                    oreLabel.setText(integer.toString());
+                    break;
             }
         });
     }
