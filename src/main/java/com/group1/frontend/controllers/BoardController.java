@@ -4,6 +4,7 @@ import com.group1.frontend.components.*;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.events.TimeEvent;
+import com.group1.frontend.exceptions.DiceAlreadyRolledException;
 import com.group1.frontend.utils.BoardUtilityFunctions;
 import com.group1.frontend.view.elements.BoardView;
 import com.group1.frontend.events.CornerClickedEvent;
@@ -120,7 +121,7 @@ public class BoardController extends Controller{
             game.getCurrentPlayer().addResource(ResourceType.LUMBER, 10);
             game.getCurrentPlayer().addResource(ResourceType.WOOL, 10);
             game.getCurrentPlayer().addResource(ResourceType.BRICK, 10);
-            game.getCurrentPlayer().addResource(ResourceType.ORE, 0);
+            game.getCurrentPlayer().addResource(ResourceType.ORE, 10);
 
             setResourceLabels(game.getCurrentPlayer());
 
@@ -132,6 +133,11 @@ public class BoardController extends Controller{
                         road.getEdge()).occupyEdge(PLAYER_COLORS.get(player.getColor())));
                 player.getBuildings().forEach(building -> boardView.getCornerView(
                         building.getCorner()).occupyCorner(player.getColor(), building.getBuildingType()));
+                player.addResource(ResourceType.GRAIN, 10);
+                player.addResource(ResourceType.LUMBER, 10);
+                player.addResource(ResourceType.WOOL, 10);
+                player.addResource(ResourceType.BRICK, 10);
+                player.addResource(ResourceType.ORE, 20);
             });
             setResourceLabels(game.getCurrentPlayer());
 
@@ -139,6 +145,7 @@ public class BoardController extends Controller{
 
             hexagonPane.getChildren().add(boardView);
             hexagonPane.getChildren().add(timer);
+            hexagonPane.getChildren().add(game);
 
             hexagonPane.addEventHandler(CornerClickedEvent.CORNER_CLICKED, this::handleCornerClickEvent);
             hexagonPane.addEventHandler(EdgeClickedEvent.EDGE_CLICKED, this::handleEdgeClickEvent);
@@ -197,7 +204,7 @@ public class BoardController extends Controller{
             removeHighlight();
 
             //build the settlement
-            game.placeSettlement(event.getCorner(), game.getCurrentPlayer());
+            game.placeSettlement(event.getCorner());
             statusLabel.setText("Settlement built");
             boardView.getCornerView(event.getCorner()).occupyCorner(game.getCurrentPlayer().getColor(), BuildingType.SETTLEMENT);
 
@@ -221,7 +228,7 @@ public class BoardController extends Controller{
             removeHighlight();
 
             //build the road
-            game.placeRoad(event.getEdge(), game.getCurrentPlayer());
+            game.placeRoad(event.getEdge());
             statusLabel.setText("Road built");
             boardView.getEdgeView(event.getEdge()).occupyEdge(PLAYER_COLORS.get(game.getCurrentPlayer().getColor()));
 
@@ -258,11 +265,14 @@ public class BoardController extends Controller{
             secondDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getValue()));
             statusLabel.setText("Dice rolled: " + (dicePair.getKey() + dicePair.getValue()));
             writeToGameUpdates("Dice rolled: " + (dicePair.getKey() + dicePair.getValue()));
+            game.distributeResources(dicePair.getKey() + dicePair.getValue());
+            setResourceLabels(game.getCurrentPlayer());
         } catch (Exception e) {
             statusLabel.setText(e.getMessage());
         }
+
     }
-    public void onEndTourButtonClick(ActionEvent event){
+    public void onEndTourButtonClick(ActionEvent event) throws DiceAlreadyRolledException {
         game.endTurn();
         statusLabel.setText("Turn ended");
         writeToGameUpdates("Turn ended");

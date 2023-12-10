@@ -1,17 +1,21 @@
 package com.group1.frontend.components;
 
 import com.group1.frontend.enums.BuildingType;
+import com.group1.frontend.events.DiceRolledEvent;
+import com.group1.frontend.events.TurnEndedEvent;
 import com.group1.frontend.exceptions.DiceAlreadyRolledException;
+import javafx.scene.layout.AnchorPane;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.group1.frontend.constants.BoardConstants.REQUIRED_RESOURCES;
 
-public class Game {
+public class Game extends AnchorPane {
     private List<Player> players;
     private Board board;
 
@@ -146,15 +150,6 @@ public class Game {
         return new ArrayList<>(availableCorners);
     }
 
-    // set each player current player at for loop
-    // for each player, get random building from board.points
-    // for each point, check if it is available to build
-    // if available, build settlement
-    // ! Be careful about checking nearby buildings.
-    // If there is a building nearby, it should not be available to build
-    // find the adjacent edges of the settlement
-    // for each edge, check if it is available to build
-    // if available, build road one of the adjacent edges randomly.
     public void createInitialBuildings() {
         for(Player player : players) {
             player.setCpu(true);
@@ -200,16 +195,20 @@ public class Game {
         currentDiceRoll = null;
         //currentPlayer = players.get((players.indexOf(currentPlayer) + 1) % players.size());
         turnNumber++;
+        currentPlayer = players.get(turnNumber % players.size());
+        TurnEndedEvent turnEndedEvent = new TurnEndedEvent();
+        getParent().fireEvent(turnEndedEvent);
     }
 
-    public void placeSettlement(Corner corner, Player player) {
+    public void placeSettlement(Corner corner) {
         corner.setIsOccupied(true);
-        corner.setOwner(player);
-        REQUIRED_RESOURCES.get(BuildingType.SETTLEMENT).forEach(player::removeResource);
-        Building building = new Building(BuildingType.SETTLEMENT, player, board.getAdjacentTilesOfCorner(corner), corner);
-        player.buildings.add(building);
+        corner.setOwner(currentPlayer);
+        REQUIRED_RESOURCES.get(BuildingType.SETTLEMENT).forEach(currentPlayer::removeResource);
+        Building building = new Building(BuildingType.SETTLEMENT, currentPlayer, board.getAdjacentTilesOfCorner(corner), corner);
+        currentPlayer.buildings.add(building);
         occupiedBuildings.add(building);
     }
+
     public void placeSettlementForFree(Corner corner, Player player) {
         corner.setIsOccupied(true);
         corner.setOwner(player);
@@ -224,16 +223,67 @@ public class Game {
         }
     }
 
-    public void placeRoad(Edge edge, Player player) {
+    public void placeRoad(Edge edge) {
         edge.setOccupied(true);
-        edge.setOwner(player);
-        REQUIRED_RESOURCES.get(BuildingType.ROAD).forEach(player::removeResource);
-        player.roads.add(new Road(player, edge));
+        edge.setOwner(currentPlayer);
+        REQUIRED_RESOURCES.get(BuildingType.ROAD).forEach(currentPlayer::removeResource);
+        currentPlayer.roads.add(new Road(currentPlayer, edge));
     }
 
     public void placeRoadForFree(Edge randomEdge, Player player) {
         randomEdge.setOccupied(true);
         randomEdge.setOwner(player);
         player.roads.add(new Road(player, randomEdge));
+    }
+
+    public void distributeResources(int diceRoll) {
+        for(Building building : occupiedBuildings) {
+            if (building.getCorner().getIsOccupied()) {
+                for(Tile tile : board.getAdjacentTilesOfCorner(building.getCorner())) {
+                    if (tile.getDiceNumber() == diceRoll) {
+                        if (building.getBuildingType() == BuildingType.CITY) {
+                            building.getOwner().addResource(tile.getTileType().getResourceType(), 2);
+                        }
+                        else {
+                            building.getOwner().addResource(tile.getTileType().getResourceType(), 1);
+                        }
+                    }
+                }
+                // TODO: fire optainedResouce event to parent
+            }
+        }
+    }
+
+    public void autoPlayCpuPlayer() throws DiceAlreadyRolledException {
+        if(currentPlayer.isCpu()){
+            Pair<Integer, Integer> dice = rollDice();
+            DiceRolledEvent diceRolledEvent = new DiceRolledEvent(dice.getKey() + dice.getValue());
+            distributeResources(dice.getKey() + dice.getValue());
+            getParent().fireEvent(diceRolledEvent);
+
+            //TODO: give resource to player according to dice roll result.
+            if(currentPlayer.hasEnoughResources(BuildingType.CITY)){
+//               currentPlayer.getBuildings()
+//                TODO: placeCity onto one of the random existing settlement
+            }
+            if(currentPlayer.hasEnoughResources(BuildingType.SETTLEMENT)){
+                List<Corner> availableCorners = getAvailableCorners();
+                if(availableCorners.size() > 0){
+                    Corner randomCorner = availableCorners.get((int) (Math.random() * availableCorners.size()));
+                    placeSettlement(randomCorner);
+                }
+            }
+            Random random = new Random();
+            if(random.nextGaussian() > 0.5){
+                if(currentPlayer.hasEnoughResources(BuildingType.ROAD)){
+                    List<Edge> availableEdges = getAvailableEdges();
+                    if(availableEdges.size() > 0){
+                        Edge randomEdge = availableEdges.get((int) (Math.random() * availableEdges.size()));
+                        placeRoad(randomEdge);
+                    }
+                }
+            }
+            endTurn();
+        }
     }
 }
