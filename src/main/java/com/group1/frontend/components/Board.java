@@ -8,43 +8,38 @@ import static com.group1.frontend.constants.BoardConstants.*;
 import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomKey;
 
 public class Board {
-    private final List<Tile> tiles;
-    private final List<Corner> points;
+    private final HashMap<List<Double> ,Tile> tiles;
+    private final HashMap<List<Double> ,Corner> points;
 
     private final List<Edge> roads;
 
-    Set<List<Double>> corners;
-    List<List<List<Double>>> groupedCorners;
+    private final Set<List<Double>> corners;
+    private final List<List<List<Double>>> groupedCorners;
 
 
     public Board() {
-        tiles = new ArrayList<>();
-        points = new ArrayList<>();
+        tiles = new HashMap<>();
+        points = new HashMap<>();
         roads = new ArrayList<>();
         corners = new HashSet<>();
         groupedCorners = new ArrayList<>();
     }
 
-//    The game board will consist of 19 hexagons, distributed as follows: 1
-//    desert, 3 hills, 3 mountains, 4 forests, 4 fields, and 4 pasture tiles.
-//    • Each resource tile, excluding the desert, will be randomly placed on the
-//    board, with the desert positioned at the center of the map.
-//    • A number will be assigned to each resource tile, except the desert. This
-//    includes one each of 2, 3, 11, and 12, and two each of 4, 5, 6, 7, 8, 9, and 10.
-//    • Each tile provides resources, excluding the desert.
-//    • Roads will connect hexagon tiles, forming a network of paths between them.
-//    • Roads will also extend along the outer edges of the hexagons, creating a border around the entire board.
     public void generateRandomBoard() {
         HashMap<TileType, Integer> tileResourceTypes = new HashMap<>(TILE_RESOURCE_TYPES);
         HashMap<Integer, Integer> tileDiceNumbers = new HashMap<> (TILE_DICE_NUMBERS);
 
-        for(double[] tileCoordinate : TILE_COORDINATES) { double x = tileCoordinate[0];   double y = tileCoordinate[1];   if( tileCoordinate[0] == 0 && tileCoordinate[1] == 0){
+        for(double[] tileCoordinate : TILE_COORDINATES) {
+            double x = tileCoordinate[0];   double y = tileCoordinate[1];
+
+            if( tileCoordinate[0] == 0 && tileCoordinate[1] == 0){
                 // TODO: Not assign number to desert.
                 Tile tile = new Tile(7, TileType.DESERT, x, y);
-                tiles.add(tile);
+                tiles.put(Arrays.asList(x, y), tile);
                 continue;
             }
-            TileType randomResourceType = getRandomKey(tileResourceTypes);tileResourceTypes.put(randomResourceType, tileResourceTypes.get(randomResourceType) - 1);
+            TileType randomResourceType = getRandomKey(tileResourceTypes);
+            tileResourceTypes.put(randomResourceType, tileResourceTypes.get(randomResourceType) - 1);
             Integer randomDiceNumber = getRandomKey(tileDiceNumbers);
             tileDiceNumbers.put(randomDiceNumber, tileDiceNumbers.get(randomDiceNumber) - 1);
             if(tileResourceTypes.get(randomResourceType) == 0){
@@ -55,12 +50,12 @@ public class Board {
             }
             assert randomDiceNumber != null;
             Tile tile = new Tile(randomDiceNumber, randomResourceType, x, y);
-            tiles.add(tile);
+            tiles.put(Arrays.asList(x, y),tile);
         }
         getCornersFromTileCoordinates();
         for (List<Double> cornerCoordinates : corners) {
             Corner corner = new Corner(cornerCoordinates.get(0), cornerCoordinates.get(1));
-            points.add(corner);
+            points.put(cornerCoordinates, corner);
         }
         // create a sorted set to remove duplicate edges from the list
         Set<List<Double>> nonDuplicateEdges = new HashSet<>();
@@ -110,36 +105,30 @@ public class Board {
             groupedCorners.add(groupedCorner);
         }
     }
-//    public void printAllCornerOfIsOccupied() {
-//        for (Corner corner : points) {
-//            System.out.println(corner.getIsOccupied());
-//        }
-//
-//    }
 
 
-    public List<Tile> getTiles() {
+    public HashMap<List<Double>, Tile> getTilesAsMap() {
         return tiles;
     }
 
+    public List<Tile> getTiles() {
+        return new ArrayList<>(tiles.values());
+    }
+
+
     public List<Corner> getPoints() {
-        return points;
+        return new ArrayList<>(points.values());
     }
 
     public List<Edge> getEdges() {
-        return roads;
+        return this.roads;
     }
 
     public List<Corner> getAdjacentCornersOfEdge(Edge e) {
         //for first coordinate pair
         List<Corner> adjacentCorners = new ArrayList<>();
-        for(Corner corner : points) {
-            if (corner.getXCoordinate() == e.getFirstXCoordinate() && corner.getYCoordinate() == e.getFirstYCoordinate()) {
-                adjacentCorners.add(corner);
-            } else if (corner.getXCoordinate() == e.getSecondXCoordinate() && corner.getYCoordinate() == e.getSecondYCoordinate()) {
-                adjacentCorners.add(corner);
-            }
-        }
+        adjacentCorners.add(points.get(Arrays.asList(e.getFirstXCoordinate(), e.getFirstYCoordinate())));
+        adjacentCorners.add(points.get(Arrays.asList(e.getSecondXCoordinate(), e.getSecondYCoordinate())));
         return adjacentCorners;
 
     }
@@ -161,7 +150,7 @@ public class Board {
 
     public List<Edge> getAdjacentEdgesOfCorner(Corner c) {
         List<Edge> adjacentEdges = new ArrayList<>();
-        for(Edge edge : roads) {
+        for(Edge edge : getEdges()) {
             if (edge.getFirstXCoordinate() == c.getXCoordinate() && edge.getFirstYCoordinate() == c.getYCoordinate()) {
                 adjacentEdges.add(edge);
             } else if (edge.getSecondXCoordinate() == c.getXCoordinate() && edge.getSecondYCoordinate() == c.getYCoordinate()) {
@@ -171,9 +160,10 @@ public class Board {
             return adjacentEdges;
     }
 
+
     public List<Edge> getAdjacentEdgesOfEdge(Edge e){
         List<Edge> adjacentEdges = new ArrayList<>();
-        for(Edge edge : roads) {
+        for(Edge edge : getEdges()) {
             if (edge.getFirstXCoordinate() == e.getFirstXCoordinate() && edge.getFirstYCoordinate() == e.getFirstYCoordinate()) {
                 adjacentEdges.add(edge);
             } else if (edge.getSecondXCoordinate() == e.getSecondXCoordinate() && edge.getSecondYCoordinate() == e.getSecondYCoordinate()) {
@@ -193,35 +183,50 @@ public class Board {
         if(mod < 0){
             mod += 3;
         }
-        for(Tile tile : tiles) {
-            if (mod == 1){  // need to look at upward, left down, right down
-                double topYCoordinate = (c.getYCoordinate() + 2.0) / 3;
-                double topXCoordinate = c.getXCoordinate() / 2.0;
-                if(tile.getXCoordinate() == topXCoordinate && tile.getYCoordinate() == topYCoordinate){
-                    adjacentTiles.add(tile);
-                } else if (tile.getXCoordinate() == topXCoordinate-0.5 && tile.getYCoordinate() == topYCoordinate - 1) {
-                    adjacentTiles.add(tile);
-                } else if (tile.getXCoordinate() == topXCoordinate+0.5 && tile.getYCoordinate() == topYCoordinate - 1) {
-                    adjacentTiles.add(tile);
-                }
-            } else if (mod == 2) { //  need to look at downward, left up, right up
-                double bottomYCoordinate = (c.getYCoordinate() - 2.0) / 3;
-                double bottomXCoordinate = c.getXCoordinate() / 2.0;
-                if(tile.getXCoordinate() == bottomXCoordinate && tile.getYCoordinate() == bottomYCoordinate){
-                    adjacentTiles.add(tile);
-                } else if (tile.getXCoordinate() == bottomXCoordinate-0.5 && tile.getYCoordinate() == bottomYCoordinate + 1) {
-                    adjacentTiles.add(tile);
-                } else if (tile.getXCoordinate() == bottomXCoordinate+0.5 && tile.getYCoordinate() == bottomYCoordinate + 1) {
-                    adjacentTiles.add(tile);
-                }
+        if (mod == 1) {
+            double topYCoordinate = (c.getYCoordinate() + 2.0) / 3;
+            double topXCoordinate = c.getXCoordinate() / 2.0;
+            Tile tileToAdd = tiles.get(Arrays.asList(topXCoordinate, topYCoordinate));
+            if(tileToAdd != null){
+                adjacentTiles.add(tileToAdd);
+//                System.out.println(tileToAdd.getResourceType());
             }
+            Tile tileToAdd2 = tiles.get(Arrays.asList(topXCoordinate-0.5, topYCoordinate-1));
+            if (tileToAdd2 != null) {
+                adjacentTiles.add(tileToAdd2);
+//                System.out.println(tileToAdd2.getResourceType());
+            }
+            Tile tileToAdd3 = tiles.get(Arrays.asList(topXCoordinate+0.5, topYCoordinate-1));
+            if (tileToAdd3 != null) {
+                adjacentTiles.add(tileToAdd3);
+//                System.out.println(tileToAdd3.getResourceType());
+            }
+            return adjacentTiles;
+        } else if (mod == 2) {
+            double bottomYCoordinate = (c.getYCoordinate() - 2.0) / 3;
+            double bottomXCoordinate = c.getXCoordinate() / 2.0;
+            Tile tileToAdd = tiles.get(Arrays.asList(bottomXCoordinate, bottomYCoordinate));
+            if(tileToAdd != null){
+                adjacentTiles.add(tileToAdd);
+//                System.out.println(tileToAdd.getResourceType());
+            }
+            Tile tileToAdd2 = tiles.get(Arrays.asList(bottomXCoordinate-0.5, bottomYCoordinate+1));
+            if (tileToAdd2 != null) {
+                adjacentTiles.add(tileToAdd2);
+//                System.out.println(tileToAdd2.getResourceType());
+            }
+            Tile tileToAdd3 = tiles.get(Arrays.asList(bottomXCoordinate+0.5, bottomYCoordinate+1));
+            if (tileToAdd3 != null) {
+                adjacentTiles.add(tileToAdd3);
+//                System.out.println(tileToAdd3.getResourceType());
+            }
+            return adjacentTiles;
         }
         return adjacentTiles;
     }
 
     public Corner getRandomCorner() {
-        Integer a = points.size();
-        Random random = new Random();
-        return points.get(random.nextInt(points.size()));
+        List<Double> randomCornerPoint = getRandomKey(points);
+        return points.get(randomCornerPoint);
     }
 }
