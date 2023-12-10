@@ -36,12 +36,7 @@ public CornerView(Corner corner) {
 //    this.boardXCoordinate = xCoordinate;
 //    this.boardYCoordinate = yCoordinate;
     setOnMouseClicked(e -> {
-        try {
-            this.occupyCorner();
-            getParent().fireEvent(new CornerClickedEvent(this.corner));
-        } catch (FileNotFoundException ex) {
-            throw new RuntimeException(ex);
-        }
+        getParent().fireEvent(new CornerClickedEvent(this.corner));
     });
 }
     public void occupyCorner() throws FileNotFoundException {

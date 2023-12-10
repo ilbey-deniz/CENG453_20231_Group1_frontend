@@ -135,7 +135,7 @@ public class BoardController extends Controller{
 
                 List<Edge> possibleEdges = game.getBoard().getAdjacentEdgesOfCorner(randomCorner);
                 Edge randomEdge = possibleEdges.get((int) (Math.random() * possibleEdges.size()));
-                game.placeRoad(randomEdge, player);
+                game.placeRoadForFree(randomEdge, player);
                 boardView.getEdgeView(randomEdge).occupyEdge(PLAYER_COLORS.get(player.getColor()));
 
             });
@@ -192,9 +192,29 @@ public class BoardController extends Controller{
 
     }
     public void handleEdgeClickEvent(EdgeClickedEvent event) {
-        game.getBoard().getAdjacentEdgesOfEdge(event.getEdge()).forEach(edge -> {
-            boardView.getEdgeView(edge).occupyEdge(PLAYER_COLORS.get(game.getCurrentPlayer().getColor()));
-        });
+        //chech roadToggleButton is selected
+        if(roadToggleButton.isSelected()){
+            //check if the edge is available to build a road
+            if(!game.getAvailableEdges().contains(event.getEdge())){
+                statusLabel.setText("You can't build a road here");
+                writeToGameUpdates("You can't build a road here");
+                return;
+            }
+
+            //unhighlight all edges
+            removeHighlight();
+
+            //build the road
+            game.placeRoad(event.getEdge(), game.getCurrentPlayer());
+            statusLabel.setText("Road built");
+            writeToGameUpdates("Road built");
+            boardView.getEdgeView(event.getEdge()).occupyEdge(PLAYER_COLORS.get(game.getCurrentPlayer().getColor()));
+
+            //unselect the roadToggleButton
+            roadToggleButton.setSelected(false);
+            //update resource labels
+            setResourceLabels(game.getCurrentPlayer());
+        }
     }
 
     public void handleOneTickEvent(TimeEvent event) {
@@ -298,6 +318,8 @@ public class BoardController extends Controller{
                 throw new RuntimeException(e);
             }
         });
+        highlightedEdges.clear();
+        highlightedCorners.clear();
     }
 
     public void setResourceLabels(Player player){

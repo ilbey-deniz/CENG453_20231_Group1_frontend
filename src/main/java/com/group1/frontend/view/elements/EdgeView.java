@@ -44,7 +44,7 @@ public class EdgeView extends Polygon {
         setFill(Color.TRANSPARENT);
 
         setOnMouseClicked(e -> {
-            this.occupyEdge();
+            //this.occupyEdge();
             getParent().fireEvent(new EdgeClickedEvent(this.edge));
         });
 

@@ -75,6 +75,10 @@ public class Player {
         resources.put(resourceType, resources.get(resourceType) + i);
     }
 
+    public void removeResource(ResourceType resourceType, int i) {
+        resources.put(resourceType, resources.get(resourceType) - i);
+    }
+
     //checks before buying a building:
     // 1. if player has enough resources
     // 2. if player has road connected to the corner

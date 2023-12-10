@@ -224,6 +224,14 @@ public class Game {
     public void placeRoad(Edge edge, Player player) {
         edge.setOccupied(true);
         edge.setOwner(player);
+        player.removeResource(ResourceType.BRICK, 1);
+        player.removeResource(ResourceType.LUMBER, 1);
         player.roads.add(new Road(player, edge));
+    }
+
+    public void placeRoadForFree(Edge randomEdge, Player player) {
+        randomEdge.setOccupied(true);
+        randomEdge.setOwner(player);
+        player.roads.add(new Road(player, randomEdge));
     }
 }
