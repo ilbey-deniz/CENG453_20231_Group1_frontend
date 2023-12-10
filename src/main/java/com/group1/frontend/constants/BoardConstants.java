@@ -32,7 +32,7 @@ public final class BoardConstants {
     ));
 
     public static final String BACKGROUND_ISLAND_COLOR = "#fff7d0";
-    public static final String HIGHLIGHT_FILL_COLOR = Color.BLACK.toString();
+    public static final String HIGHLIGHT_FILL_COLOR = Color.DARKGREY.toString();
     public static final String HIGHLIGHT_STROKE_COLOR = Color.RED.toString();
 
     public static HashMap<TileType, Integer> TILE_RESOURCE_TYPES = new HashMap<>(Map.of(
