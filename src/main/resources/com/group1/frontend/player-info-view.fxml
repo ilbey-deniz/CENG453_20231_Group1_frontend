@@ -4,14 +4,16 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Ellipse?>
+<?import javafx.scene.text.Font?>
 
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="169.0" prefWidth="300.0" style="-fx-background-color: WHITE;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane prefHeight="89.0" prefWidth="300.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label alignment="CENTER" layoutY="14.0" prefHeight="17.0" prefWidth="77.0" style="-fx-alignment: center;" text="PlayerName" textAlignment="CENTER" />
-            <ImageView fitHeight="48.0" fitWidth="48.0" layoutX="15.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
+            <Label fx:id="playerNameLabel" alignment="CENTER" layoutY="14.0" prefHeight="17.0" prefWidth="77.0" style="-fx-alignment: center;" text="PlayerName" textAlignment="CENTER" />
+            <ImageView fx:id="playerImageView" fitHeight="48.0" fitWidth="48.0" layoutX="15.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../assets/red.png" />
                </image>
@@ -21,13 +23,21 @@
                   <Image url="@../../../assets/trophy.png" />
                </image>
             </ImageView>
-            <Label layoutX="150.0" layoutY="47.0" text="0" />
-            <ImageView fitHeight="48.0" fitWidth="48.0" layoutX="199.0" layoutY="33.0" pickOnBounds="true" preserveRatio="true">
+            <Label fx:id="victoryPointsLabel" layoutX="146.0" layoutY="43.0" text="0">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="64.0" fitWidth="64.0" layoutX="180.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../../../assets/road.png" />
                </image>
             </ImageView>
-            <Label layoutX="259.0" layoutY="48.0" text="0" />
+            <Label fx:id="longestRoadLabel" layoutX="258.0" layoutY="43.0" text="0">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
       <AnchorPane layoutY="82.0" prefHeight="89.0" prefWidth="300.0">
@@ -37,26 +47,56 @@
                   <Image url="@assets/grain.png" />
                </image>
             </ImageView>
+            <Ellipse fill="#ffffffd4" layoutX="34.0" layoutY="67.0" radiusX="24.0" radiusY="16.0" stroke="TRANSPARENT" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label alignment="CENTER" layoutX="15.0" layoutY="55.0" prefHeight="25.0" prefWidth="39.0" text="0" textAlignment="CENTER">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
             <ImageView fitHeight="69.0" fitWidth="48.0" layoutX="73.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@assets/wool.png" />
                </image>
             </ImageView>
+            <Ellipse fill="#ffffffd4" layoutX="93.0" layoutY="67.0" radiusX="24.0" radiusY="16.0" stroke="TRANSPARENT" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label alignment="CENTER" layoutX="74.0" layoutY="55.0" prefHeight="25.0" prefWidth="39.0" text="0" textAlignment="CENTER">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
             <ImageView fitHeight="69.0" fitWidth="48.0" layoutX="130.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@assets/lumber.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="69.0" fitWidth="48.0" layoutX="246.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@assets/brick.png" />
-               </image>
-            </ImageView>
+            <Ellipse fill="#ffffffd4" layoutX="150.0" layoutY="68.0" radiusX="24.0" radiusY="16.0" stroke="TRANSPARENT" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label alignment="CENTER" layoutX="131.0" layoutY="56.0" prefHeight="25.0" prefWidth="39.0" text="0" textAlignment="CENTER">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
             <ImageView fitHeight="69.0" fitWidth="48.0" layoutX="189.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@assets/ore.png" />
                </image>
             </ImageView>
+            <Ellipse fill="#ffffffd4" layoutX="209.0" layoutY="69.0" radiusX="24.0" radiusY="16.0" stroke="TRANSPARENT" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label alignment="CENTER" layoutX="190.0" layoutY="57.0" prefHeight="25.0" prefWidth="39.0" text="0" textAlignment="CENTER">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="69.0" fitWidth="48.0" layoutX="246.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@assets/brick.png" />
+               </image>
+            </ImageView>
+            <Ellipse fill="#ffffffd4" layoutX="266.0" layoutY="70.0" radiusX="24.0" radiusY="16.0" stroke="TRANSPARENT" strokeType="INSIDE" strokeWidth="0.0" />
+            <Label alignment="CENTER" layoutX="247.0" layoutY="58.0" prefHeight="25.0" prefWidth="39.0" text="0" textAlignment="CENTER">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </children>
