@@ -51,7 +51,7 @@ public class MainApplication extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("board-view.fxml"));
         //Scene content = new Scene(loader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
         //FXMLLoader loader = new FXMLLoader(getClass().getResource("login-view.fxml"));
-        Scene content = new Scene(loader.load(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        Scene content = new Scene(loader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
 
         Controller loginController = loader.getController();
         loginController.construct(primaryStage, service);
