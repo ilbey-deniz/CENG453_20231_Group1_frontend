@@ -223,6 +223,21 @@ public class Game extends AnchorPane {
         }
     }
 
+    public void placeCity(Corner corner) {
+
+        getBuildingFromCorner(corner).setBuildingType(BuildingType.CITY);
+        REQUIRED_RESOURCES.get(BuildingType.CITY).forEach(currentPlayer::removeResource);
+    }
+
+    public Building getBuildingFromCorner(Corner corner) {
+        for(Building building : occupiedBuildings) {
+            if (building.getCorner().equals(corner)) {
+                return building;
+            }
+        }
+        return null;
+    }
+
     public void placeRoad(Edge edge) {
         edge.setOccupied(true);
         edge.setOwner(currentPlayer);

@@ -63,6 +63,17 @@ public CornerView(Corner corner) {
         }
     }
 
+    public void highlightOccupied() {
+        setStrokeWidth(5);
+        setStroke(Color.valueOf(HIGHLIGHT_STROKE_COLOR));
+    }
+
+    public void unhighlightOccupied() {
+        setStrokeWidth(0);
+        setStroke(Color.TRANSPARENT);
+    }
+
+
     public void highlight() {
         setStrokeWidth(5);
         setStroke(Color.valueOf(HIGHLIGHT_STROKE_COLOR));

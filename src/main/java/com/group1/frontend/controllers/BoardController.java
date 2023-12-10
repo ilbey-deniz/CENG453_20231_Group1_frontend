@@ -89,12 +89,16 @@ public class BoardController extends Controller{
     private HashSet<Edge> highlightedEdges;
     private HashSet<Corner> highlightedCorners;
 
+    private final HashSet<Corner> highlightedBuildings;
+
+
     private Game game;
     private Timer timer;
 
     BoardView boardView;
 
     public BoardController(){
+        this.highlightedBuildings = new HashSet<>();
         highlightedEdges = new HashSet<>();
         highlightedCorners = new HashSet<>();
     }
@@ -209,6 +213,27 @@ public class BoardController extends Controller{
             setResourceLabels(game.getCurrentPlayer());
         }
 
+        if(cityToggleButton.isSelected()){
+            //check if the corner is available to build a city
+            if(!highlightedBuildings.contains(event.getCorner())){
+                statusLabel.setText("You can't build a city here");
+                return;
+            }
+
+            //unhighlight all corners
+            removeHighlight();
+
+            //build the city
+            game.placeCity(event.getCorner());
+            statusLabel.setText("City built");
+            boardView.getCornerView(event.getCorner()).occupyCorner(game.getCurrentPlayer().getColor(), BuildingType.CITY);
+
+            //unselect the cityToggleButton
+            cityToggleButton.setSelected(false);
+            //update resource labels
+            setResourceLabels(game.getCurrentPlayer());
+        }
+
     }
     public void handleEdgeClickEvent(EdgeClickedEvent event) {
         //chech roadToggleButton is selected
@@ -310,7 +335,30 @@ public class BoardController extends Controller{
 
     }
     public void onCityButtonClick(ActionEvent event){
-
+        removeHighlight();
+        if(!game.getCurrentPlayer().hasEnoughResources(BuildingType.CITY)){
+            statusLabel.setText("Not enough resources. You need 3 ore, 2 grain");
+            cityToggleButton.setSelected(false);
+            return;
+        }
+        statusLabel.setText("Select a settlement to build a city on it");
+        //highlight all corners that are available to build a city
+        List<Building> buildings = game.getCurrentPlayer().getBuildings();
+        if(buildings.isEmpty()){
+            statusLabel.setText("There is no valid corner to build a city");
+            cityToggleButton.setSelected(false);
+            return;
+        }
+        buildings.forEach(building -> {
+            if(building.getBuildingType() == BuildingType.SETTLEMENT){
+                try {
+                    boardView.getCornerView(building.getCorner()).highlightOccupied();
+                    highlightedBuildings.add(building.getCorner());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
     public void onRoadButtonClick(ActionEvent event){
         removeHighlight();
@@ -348,8 +396,16 @@ public class BoardController extends Controller{
                 throw new RuntimeException(e);
             }
         });
+        highlightedBuildings.forEach(corner -> {
+            try {
+                boardView.getCornerView(corner).unhighlightOccupied();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
         highlightedEdges.clear();
         highlightedCorners.clear();
+        highlightedBuildings.clear();
     }
 
     public void setResourceLabels(Player player){
