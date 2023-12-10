@@ -18,4 +18,15 @@ public enum TileType {
             case MOUNTAIN -> "src/main/resources/assets/mountain.png";
         };
     }
+
+    public ResourceType getResourceType() {
+        return switch (this) {
+            case FOREST -> ResourceType.LUMBER;
+            case HILLS -> ResourceType.BRICK;
+            case PASTURE -> ResourceType.WOOL;
+            case FIELDS -> ResourceType.GRAIN;
+            case DESERT -> null;
+            case MOUNTAIN -> ResourceType.ORE;
+        };
+    }
 }

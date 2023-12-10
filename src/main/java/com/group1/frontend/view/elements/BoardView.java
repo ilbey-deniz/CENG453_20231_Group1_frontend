@@ -4,7 +4,6 @@ import com.group1.frontend.components.Board;
 import com.group1.frontend.components.Corner;
 import com.group1.frontend.components.Edge;
 import com.group1.frontend.components.Tile;
-import com.group1.frontend.events.CornerClickedEvent;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
@@ -63,7 +62,7 @@ public class BoardView extends AnchorPane {
             getChildren().add(edgeView);
         }
 
-        for(Corner point : board.getPoints()){
+        for(Corner point : board.getCorners()){
             CornerView cornerView = new CornerView(point);
             cornerViews.add(cornerView);
             getChildren().add(cornerView);

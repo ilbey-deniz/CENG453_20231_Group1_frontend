@@ -37,8 +37,8 @@ public class TileView extends Polygon {
         );
         // set up the visuals and a click listener for the tile
 
-        if(tile.getResourceType() != null){
-            Image image = new Image(new FileInputStream(tile.getResourceType().getImagePath()));
+        if(tile.getTileType() != null){
+            Image image = new Image(new FileInputStream(tile.getTileType().getImagePath()));
             setFill(new ImagePattern(image));
         }
         setStrokeWidth(2);
@@ -68,8 +68,4 @@ public class TileView extends Polygon {
         return tile;
     }
 
-    public void highlight() {
-        setStrokeWidth(5);
-        setStroke(Paint.valueOf(HIGHLIGHT_STROKE_COLOR));
-    }
 }

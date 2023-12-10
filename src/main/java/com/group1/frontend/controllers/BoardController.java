@@ -124,18 +124,16 @@ public class BoardController extends Controller{
 
             setResourceLabels(game.getCurrentPlayer());
 
+            game.createInitialBuildings();
+
             game.getPlayers().forEach(player -> {
                 //place random settlements and one road for each player
-                Corner randomCorner = game.getBoard().getRandomCorner();
-                game.placeSettlementForFree(randomCorner, player);
-                boardView.getCornerView(randomCorner).occupyCorner(player.getColor(), BuildingType.SETTLEMENT);
-
-                List<Edge> possibleEdges = game.getBoard().getAdjacentEdgesOfCorner(randomCorner);
-                Edge randomEdge = possibleEdges.get((int) (Math.random() * possibleEdges.size()));
-                game.placeRoadForFree(randomEdge, player);
-                boardView.getEdgeView(randomEdge).occupyEdge(PLAYER_COLORS.get(player.getColor()));
-
+                player.getRoads().forEach(road -> boardView.getEdgeView(
+                        road.getEdge()).occupyEdge(PLAYER_COLORS.get(player.getColor())));
+                player.getBuildings().forEach(building -> boardView.getCornerView(
+                        building.getCorner()).occupyCorner(player.getColor(), building.getBuildingType()));
             });
+            setResourceLabels(game.getCurrentPlayer());
 
             timer = new Timer(TURN_TIME);
 

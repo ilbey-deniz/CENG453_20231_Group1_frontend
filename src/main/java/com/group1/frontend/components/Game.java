@@ -1,19 +1,21 @@
 package com.group1.frontend.components;
 
 import com.group1.frontend.enums.BuildingType;
-import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.exceptions.DiceAlreadyRolledException;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.group1.frontend.constants.BoardConstants.REQUIRED_RESOURCES;
 
 public class Game {
     private List<Player> players;
     private Board board;
+
+    private final HashSet<Building> occupiedBuildings;
     private Player currentPlayer;
     private int turnNumber;
 
@@ -24,12 +26,14 @@ public class Game {
         this.board = board;
         this.currentPlayer = players.get(0);
         this.turnNumber = 0;
+        this.occupiedBuildings = new HashSet<>();
     }
     public Game() {
         this.players = new ArrayList<>();
         this.board = new Board();
         this.currentPlayer = null;
         this.turnNumber = 0;
+        this.occupiedBuildings = new HashSet<>();
     }
 
     public void setPlayers(List<Player> players) {
@@ -77,27 +81,6 @@ public class Game {
     }
 
 
-    public String handleBuildRoad(Edge e) {
-        // TODO: Rerun CalculateLongestRoad() function.
-        if (currentPlayer.resources.get(ResourceType.BRICK) < 1 || currentPlayer.resources.get(ResourceType.LUMBER) < 1) {
-            return "Not enough resources to build road";
-        } else if (e.isOccupied()) {
-            return "Edge is already occupied";
-        }
-        else if (!isEdgeAvailableToBuild(e)) {
-            return "Edge is not adjacent to any of your buildings";
-        }
-        else {
-            currentPlayer.resources.put(ResourceType.BRICK, currentPlayer.resources.get(ResourceType.BRICK) - 1);
-            currentPlayer.resources.put(ResourceType.LUMBER, currentPlayer.resources.get(ResourceType.LUMBER) - 1);
-            e.setOccupied(true);
-            e.setOwner(currentPlayer);
-            currentPlayer.roads.add(new Road(currentPlayer, e));
-            return "Road built successfully";
-
-        }
-    }
-
     public boolean isEdgeAvailableToBuild(Edge e){
         // check whether edge is adjacent to another edge or corner building owned by player
         // first look at adjacent corners. whether they are occupied by opponent player we can not build.
@@ -106,30 +89,9 @@ public class Game {
         return false;
     }
 
-    public String handleBuildSettlement(Corner c) {
-        // TODO: after building settlement, check if player has longest road. Rerun CalculateLongestRoad() function
-        if (currentPlayer.resources.get(ResourceType.BRICK) < 1 || currentPlayer.resources.get(ResourceType.LUMBER) < 1
-                || currentPlayer.resources.get(ResourceType.WOOL) < 1 || currentPlayer.resources.get(ResourceType.GRAIN) < 1) {
-            return "Not enough resources to build settlement";
-        } else if (c.getIsOccupied()) {
-            return "Corner is already occupied";
-        }
-        else if (!isCornerAvailableToBuild(c)) {
-            return "Corner is not adjacent to any of your buildings";
-        }
-        else {
-            currentPlayer.resources.put(ResourceType.BRICK, currentPlayer.resources.get(ResourceType.BRICK) - 1);
-            currentPlayer.resources.put(ResourceType.LUMBER, currentPlayer.resources.get(ResourceType.LUMBER) - 1);
-            currentPlayer.resources.put(ResourceType.WOOL, currentPlayer.resources.get(ResourceType.WOOL) - 1);
-            currentPlayer.resources.put(ResourceType.GRAIN, currentPlayer.resources.get(ResourceType.GRAIN) - 1);
-            c.setIsOccupied(true);
-            c.setOwner(currentPlayer);
-            currentPlayer.buildings.add(new Building(BuildingType.SETTLEMENT, currentPlayer, board.getAdjacentTilesOfCorner(c), c));
-            return "Settlement built successfully";
 
-        }
-    }
 
+    // Wrong function. It does not check if the corner is adjacent to any of the player's buildings.
     private boolean isCornerAvailableToBuild(Corner c) {
         // check 3 of adjacent edge is occupied by player. If yes, return true.
         List<Edge> adjacentEdges = board.getAdjacentEdgesOfCorner(c);
@@ -139,22 +101,6 @@ public class Game {
             }
         }
         return false;
-    }
-
-    public String handleBuildCity(Corner c) {
-        if (currentPlayer.resources.get(ResourceType.ORE) < 3 || currentPlayer.resources.get(ResourceType.GRAIN) < 2) {
-            return "Not enough resources to build city";
-        } else if (c.getBuildingType() != BuildingType.SETTLEMENT || c.getOwner() != currentPlayer) {
-            return "Corner is not a settlement owned by current player";
-        }
-        else {
-            currentPlayer.resources.put(ResourceType.ORE, currentPlayer.resources.get(ResourceType.ORE) - 3);
-            currentPlayer.resources.put(ResourceType.GRAIN, currentPlayer.resources.get(ResourceType.GRAIN) - 2);
-            c.setBuildingType(BuildingType.CITY);
-            // TODO: update the buildingType of the building in currentPlayer.buildings
-            return "City built successfully";
-
-        }
     }
 
     //1. get player's road list
@@ -200,6 +146,45 @@ public class Game {
         return new ArrayList<>(availableCorners);
     }
 
+    // set each player current player at for loop
+    // for each player, get random building from board.points
+    // for each point, check if it is available to build
+    // if available, build settlement
+    // ! Be careful about checking nearby buildings.
+    // If there is a building nearby, it should not be available to build
+    // find the adjacent edges of the settlement
+    // for each edge, check if it is available to build
+    // if available, build road one of the adjacent edges randomly.
+    public void createInitialBuildings() {
+        for(Player player : players) {
+            player.setCpu(true);
+            Corner randomCorner = board.getCorners().get((int) (Math.random() * board.getCorners().size()));
+            while(!isCornerAvailableToInitialize(randomCorner)) {
+                randomCorner = board.getCorners().get((int) (Math.random() * board.getCorners().size()));
+            }
+            placeSettlementForFree(randomCorner, player);
+            List<Edge> adjacentEdges = board.getAdjacentEdgesOfCorner(randomCorner);
+            Edge randomEdge = adjacentEdges.get((int) (Math.random() * adjacentEdges.size()));
+            placeRoadForFree(randomEdge, player);
+        }
+    }
+
+    private boolean isCornerAvailableToInitialize(Corner randomCorner) {
+        AtomicBoolean isAvailable = new AtomicBoolean(true);
+        occupiedBuildings.forEach(building -> {
+            if (building.getCorner().equals(randomCorner)) {
+                isAvailable.set(false);
+            }else {
+                List<Corner> adjacentCorners = board.getAdjacentCornersOfCorner(building.getCorner());
+                adjacentCorners.forEach(corner -> {
+                    if (corner.equals(randomCorner)) {
+                        isAvailable.set(false);
+                    }
+                });
+            }
+        });
+        return isAvailable.get();
+    }
 
     public Pair<Integer, Integer> rollDice() throws DiceAlreadyRolledException {
         if (currentDiceRoll != null) {
@@ -221,12 +206,22 @@ public class Game {
         corner.setIsOccupied(true);
         corner.setOwner(player);
         REQUIRED_RESOURCES.get(BuildingType.SETTLEMENT).forEach(player::removeResource);
-        player.buildings.add(new Building(BuildingType.SETTLEMENT, player, board.getAdjacentTilesOfCorner(corner), corner));
+        Building building = new Building(BuildingType.SETTLEMENT, player, board.getAdjacentTilesOfCorner(corner), corner);
+        player.buildings.add(building);
+        occupiedBuildings.add(building);
     }
     public void placeSettlementForFree(Corner corner, Player player) {
         corner.setIsOccupied(true);
         corner.setOwner(player);
-        player.buildings.add(new Building(BuildingType.SETTLEMENT, player, board.getAdjacentTilesOfCorner(corner), corner));
+        List<Tile> adjacentTiles = board.getAdjacentTilesOfCorner(corner);
+        Building building = new Building(BuildingType.SETTLEMENT, player, adjacentTiles, corner);
+        player.buildings.add(building);
+        occupiedBuildings.add(building);
+        for(Tile tile : adjacentTiles) {
+            if (tile.getDiceNumber() != 7){
+                player.addResource(tile.getTileType().getResourceType(), 1);
+            }
+        }
     }
 
     public void placeRoad(Edge edge, Player player) {

@@ -9,19 +9,18 @@ import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomKey;
 
 public class Board {
     private final HashMap<List<Double> ,Tile> tiles;
-    private final HashMap<List<Double> ,Corner> points;
+    private final HashMap<List<Double> ,Corner> corners;
+    private final List<Edge> edges;
 
-    private final List<Edge> roads;
-
-    private final Set<List<Double>> corners;
+    private final Set<List<Double>> points;
     private final List<List<List<Double>>> groupedCorners;
 
 
     public Board() {
         tiles = new HashMap<>();
-        points = new HashMap<>();
-        roads = new ArrayList<>();
-        corners = new HashSet<>();
+        corners = new HashMap<>();
+        edges = new ArrayList<>();
+        points = new HashSet<>();
         groupedCorners = new ArrayList<>();
     }
 
@@ -53,9 +52,9 @@ public class Board {
             tiles.put(Arrays.asList(x, y),tile);
         }
         getCornersFromTileCoordinates();
-        for (List<Double> cornerCoordinates : corners) {
+        for (List<Double> cornerCoordinates : points) {
             Corner corner = new Corner(cornerCoordinates.get(0), cornerCoordinates.get(1));
-            points.put(cornerCoordinates, corner);
+            corners.put(cornerCoordinates, corner);
         }
         // create a sorted set to remove duplicate edges from the list
         Set<List<Double>> nonDuplicateEdges = new HashSet<>();
@@ -80,7 +79,7 @@ public class Board {
         }
         for (List<Double> edgesCoordinates : nonDuplicateEdges){
             Edge edge = new Edge(edgesCoordinates.get(0), edgesCoordinates.get(1), edgesCoordinates.get(2), edgesCoordinates.get(3));
-            roads.add(edge);
+            edges.add(edge);
         }
     }
 
@@ -88,12 +87,12 @@ public class Board {
         for(double[] tileCoordinate : TILE_COORDINATES) {
             double x = tileCoordinate[0] * 2;
             double y = tileCoordinate[1] * 3;
-            corners.add(Arrays.asList(x, y-2));
-            corners.add(Arrays.asList(x-1, y-1));
-            corners.add(Arrays.asList(x-1, y+1));
-            corners.add(Arrays.asList(x, y+2));
-            corners.add(Arrays.asList(x+1, y+1));
-            corners.add(Arrays.asList(x+1, y-1));
+            points.add(Arrays.asList(x, y-2));
+            points.add(Arrays.asList(x-1, y-1));
+            points.add(Arrays.asList(x-1, y+1));
+            points.add(Arrays.asList(x, y+2));
+            points.add(Arrays.asList(x+1, y+1));
+            points.add(Arrays.asList(x+1, y-1));
 
             List<List<Double>> groupedCorner = new ArrayList<>();
             groupedCorner.add(Arrays.asList(x, y-2));
@@ -106,29 +105,24 @@ public class Board {
         }
     }
 
-
-    public HashMap<List<Double>, Tile> getTilesAsMap() {
-        return tiles;
-    }
-
     public List<Tile> getTiles() {
         return new ArrayList<>(tiles.values());
     }
 
 
-    public List<Corner> getPoints() {
-        return new ArrayList<>(points.values());
+    public List<Corner> getCorners() {
+        return new ArrayList<>(corners.values());
     }
 
     public List<Edge> getEdges() {
-        return this.roads;
+        return this.edges;
     }
 
     public List<Corner> getAdjacentCornersOfEdge(Edge e) {
         //for first coordinate pair
         List<Corner> adjacentCorners = new ArrayList<>();
-        adjacentCorners.add(points.get(Arrays.asList(e.getFirstXCoordinate(), e.getFirstYCoordinate())));
-        adjacentCorners.add(points.get(Arrays.asList(e.getSecondXCoordinate(), e.getSecondYCoordinate())));
+        adjacentCorners.add(corners.get(Arrays.asList(e.getFirstXCoordinate(), e.getFirstYCoordinate())));
+        adjacentCorners.add(corners.get(Arrays.asList(e.getSecondXCoordinate(), e.getSecondYCoordinate())));
         return adjacentCorners;
 
     }
@@ -142,15 +136,15 @@ public class Board {
         }
 
         if(mod == 1){
-            Corner cornerToAdd = points.get(Arrays.asList(c.getXCoordinate(), c.getYCoordinate()-2));
+            Corner cornerToAdd = corners.get(Arrays.asList(c.getXCoordinate(), c.getYCoordinate()-2));
             if(cornerToAdd != null){
                 adjacentCorners.add(cornerToAdd);
             }
-            Corner cornerToAdd2 = points.get(Arrays.asList(c.getXCoordinate()-1, c.getYCoordinate()+1));
+            Corner cornerToAdd2 = corners.get(Arrays.asList(c.getXCoordinate()-1, c.getYCoordinate()+1));
             if(cornerToAdd2 != null){
                 adjacentCorners.add(cornerToAdd2);
             }
-            Corner cornerToAdd3 = points.get(Arrays.asList(c.getXCoordinate()+1, c.getYCoordinate()+1));
+            Corner cornerToAdd3 = corners.get(Arrays.asList(c.getXCoordinate()+1, c.getYCoordinate()+1));
             if(cornerToAdd3 != null){
                 adjacentCorners.add(cornerToAdd3);
             }
@@ -159,15 +153,15 @@ public class Board {
         }
 
         if (mod == 2){
-            Corner cornerToAdd = points.get(Arrays.asList(c.getXCoordinate(), c.getYCoordinate()+2));
+            Corner cornerToAdd = corners.get(Arrays.asList(c.getXCoordinate(), c.getYCoordinate()+2));
             if(cornerToAdd != null){
                 adjacentCorners.add(cornerToAdd);
             }
-            Corner cornerToAdd2 = points.get(Arrays.asList(c.getXCoordinate()-1, c.getYCoordinate()-1));
+            Corner cornerToAdd2 = corners.get(Arrays.asList(c.getXCoordinate()-1, c.getYCoordinate()-1));
             if(cornerToAdd2 != null){
                 adjacentCorners.add(cornerToAdd2);
             }
-            Corner cornerToAdd3 = points.get(Arrays.asList(c.getXCoordinate()+1, c.getYCoordinate()-1));
+            Corner cornerToAdd3 = corners.get(Arrays.asList(c.getXCoordinate()+1, c.getYCoordinate()-1));
             if(cornerToAdd3 != null){
                 adjacentCorners.add(cornerToAdd3);
             }
@@ -254,8 +248,4 @@ public class Board {
         return adjacentTiles;
     }
 
-    public Corner getRandomCorner() {
-        List<Double> randomCornerPoint = getRandomKey(points);
-        return points.get(randomCornerPoint);
-    }
 }
