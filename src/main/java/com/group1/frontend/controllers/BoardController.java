@@ -9,7 +9,6 @@ import com.group1.frontend.view.elements.BoardView;
 import com.group1.frontend.events.CornerClickedEvent;
 import com.group1.frontend.events.EdgeClickedEvent;
 import com.group1.frontend.utils.Timer;
-import com.group1.frontend.view.elements.TileView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -22,8 +21,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.util.Pair;
 
 
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -130,7 +127,7 @@ public class BoardController extends Controller{
             game.getPlayers().forEach(player -> {
                 //place random settlements and one road for each player
                 Corner randomCorner = game.getBoard().getRandomCorner();
-                game.placeSettlement(randomCorner, player);
+                game.placeSettlementForFree(randomCorner, player);
                 boardView.getCornerView(randomCorner).occupyCorner(player.getColor(), BuildingType.SETTLEMENT);
 
                 List<Edge> possibleEdges = game.getBoard().getAdjacentEdgesOfCorner(randomCorner);
@@ -190,14 +187,35 @@ public class BoardController extends Controller{
 //            }
 //        });
 
+        //check settlementToggleButton is selected
+        if(settlementToggleButton.isSelected()){
+            //check if the corner is available to build a settlement
+            if(!highlightedCorners.contains(event.getCorner())){
+                statusLabel.setText("You can't build a settlement here");
+                return;
+            }
+
+            //unhighlight all corners
+            removeHighlight();
+
+            //build the settlement
+            game.placeSettlement(event.getCorner(), game.getCurrentPlayer());
+            statusLabel.setText("Settlement built");
+            boardView.getCornerView(event.getCorner()).occupyCorner(game.getCurrentPlayer().getColor(), BuildingType.SETTLEMENT);
+
+            //unselect the settlementToggleButton
+            settlementToggleButton.setSelected(false);
+            //update resource labels
+            setResourceLabels(game.getCurrentPlayer());
+        }
+
     }
     public void handleEdgeClickEvent(EdgeClickedEvent event) {
         //chech roadToggleButton is selected
         if(roadToggleButton.isSelected()){
             //check if the edge is available to build a road
-            if(!game.getAvailableEdges().contains(event.getEdge())){
+            if(!highlightedEdges.contains(event.getEdge())){
                 statusLabel.setText("You can't build a road here");
-                writeToGameUpdates("You can't build a road here");
                 return;
             }
 
@@ -207,7 +225,6 @@ public class BoardController extends Controller{
             //build the road
             game.placeRoad(event.getEdge(), game.getCurrentPlayer());
             statusLabel.setText("Road built");
-            writeToGameUpdates("Road built");
             boardView.getEdgeView(event.getEdge()).occupyEdge(PLAYER_COLORS.get(game.getCurrentPlayer().getColor()));
 
             //unselect the roadToggleButton
@@ -263,17 +280,21 @@ public class BoardController extends Controller{
     }
     public void onSettlementButtonClick(ActionEvent event){
         removeHighlight();
-        if(game.getCurrentPlayer().getResources().get(ResourceType.LUMBER) < 1 ||
-                game.getCurrentPlayer().getResources().get(ResourceType.BRICK) < 1 ||
-                game.getCurrentPlayer().getResources().get(ResourceType.WOOL) < 1 ||
-                game.getCurrentPlayer().getResources().get(ResourceType.GRAIN) < 1){
-            statusLabel.setText("Not enough resources to build a settlement");
-            writeToGameUpdates("Not enough resources to build a settlement");
+        if(!game.getCurrentPlayer().hasEnoughResources(BuildingType.SETTLEMENT)){
+            statusLabel.setText("Not enough resources. You need 1 brick, 1 lumber, 1 wool, 1 grain");
+            settlementToggleButton.setSelected(false);
             return;
         }
+
         statusLabel.setText("Select a corner to build a settlement");
         //highlight all corners that are available to build a settlement
-        game.getAvailableCorners().forEach(corner -> {
+        List<Corner> availableCorners = game.getAvailableCorners();
+        if(availableCorners.isEmpty()){
+            statusLabel.setText("There is no valid corner to build a settlement");
+            settlementToggleButton.setSelected(false);
+            return;
+        }
+        availableCorners.forEach(corner -> {
             try {
                 boardView.getCornerView(corner).highlight();
                 highlightedCorners.add(corner);
@@ -289,15 +310,20 @@ public class BoardController extends Controller{
     }
     public void onRoadButtonClick(ActionEvent event){
         removeHighlight();
-        if(game.getCurrentPlayer().getResources().get(ResourceType.LUMBER) < 1 ||
-                game.getCurrentPlayer().getResources().get(ResourceType.BRICK) < 1){
-            statusLabel.setText("Not enough resources to build a road");
-            writeToGameUpdates("Not enough resources to build a road");
+        if(!game.getCurrentPlayer().hasEnoughResources(BuildingType.ROAD)){
+            statusLabel.setText("Not enough resources. You need 1 brick, 1 lumber");
+            roadToggleButton.setSelected(false);
             return;
         }
         statusLabel.setText("Select an edge to build a road");
         //highlight all edges that are available to build a road
-        game.getAvailableEdges().forEach(edge -> {
+        List<Edge> availableEdges = game.getAvailableEdges();
+        if(availableEdges.isEmpty()){
+            statusLabel.setText("There is no valid edge to build a road");
+            roadToggleButton.setSelected(false);
+            return;
+        }
+        availableEdges.forEach(edge -> {
             boardView.getEdgeView(edge).highlight();
             highlightedEdges.add(edge);
         });

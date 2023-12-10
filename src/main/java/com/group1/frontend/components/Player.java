@@ -1,5 +1,7 @@
 package com.group1.frontend.components;
 
+import com.group1.frontend.constants.BoardConstants;
+import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.ResourceType;
 
 import java.util.*;
@@ -77,6 +79,16 @@ public class Player {
 
     public void removeResource(ResourceType resourceType, int i) {
         resources.put(resourceType, resources.get(resourceType) - i);
+    }
+
+    public boolean hasEnoughResources(BuildingType buildingType) {
+        HashMap<ResourceType, Integer> requiredResources = BoardConstants.REQUIRED_RESOURCES.get(buildingType);
+        for (ResourceType resourceType : requiredResources.keySet()) {
+            if (resources.get(resourceType) < requiredResources.get(resourceType)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     //checks before buying a building:

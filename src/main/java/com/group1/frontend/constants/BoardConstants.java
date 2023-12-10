@@ -1,5 +1,7 @@
 package com.group1.frontend.constants;
 
+import com.group1.frontend.enums.BuildingType;
+import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.enums.TileType;
 import javafx.scene.paint.Color;
 import javafx.stage.Screen;
@@ -39,6 +41,23 @@ public final class BoardConstants {
         TileType.FOREST, 4,
         TileType.FIELDS, 4,
         TileType.PASTURE, 4
+    ));
+
+    public static HashMap<BuildingType, HashMap<ResourceType, Integer>> REQUIRED_RESOURCES = new HashMap<>(Map.of(
+        BuildingType.SETTLEMENT, new HashMap<>(Map.of(
+            ResourceType.BRICK, 1,
+            ResourceType.LUMBER, 1,
+            ResourceType.WOOL, 1,
+            ResourceType.GRAIN, 1
+        )),
+        BuildingType.CITY, new HashMap<>(Map.of(
+            ResourceType.ORE, 3,
+            ResourceType.GRAIN, 2
+        )),
+        BuildingType.ROAD, new HashMap<>(Map.of(
+            ResourceType.BRICK, 1,
+            ResourceType.LUMBER, 1
+        ))
     ));
 
     public static HashMap<Integer, Integer> TILE_DICE_NUMBERS = new HashMap<> (Map.of(

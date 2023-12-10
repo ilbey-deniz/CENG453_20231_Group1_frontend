@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import static com.group1.frontend.constants.BoardConstants.REQUIRED_RESOURCES;
+
 public class Game {
     private List<Player> players;
     private Board board;
@@ -218,14 +220,19 @@ public class Game {
     public void placeSettlement(Corner corner, Player player) {
         corner.setIsOccupied(true);
         corner.setOwner(player);
+        REQUIRED_RESOURCES.get(BuildingType.SETTLEMENT).forEach(player::removeResource);
+        player.buildings.add(new Building(BuildingType.SETTLEMENT, player, board.getAdjacentTilesOfCorner(corner), corner));
+    }
+    public void placeSettlementForFree(Corner corner, Player player) {
+        corner.setIsOccupied(true);
+        corner.setOwner(player);
         player.buildings.add(new Building(BuildingType.SETTLEMENT, player, board.getAdjacentTilesOfCorner(corner), corner));
     }
 
     public void placeRoad(Edge edge, Player player) {
         edge.setOccupied(true);
         edge.setOwner(player);
-        player.removeResource(ResourceType.BRICK, 1);
-        player.removeResource(ResourceType.LUMBER, 1);
+        REQUIRED_RESOURCES.get(BuildingType.ROAD).forEach(player::removeResource);
         player.roads.add(new Road(player, edge));
     }
 
