@@ -133,17 +133,46 @@ public class Board {
 
     }
 
-    //TODO: too inefficient, need to fix
     public List<Corner> getAdjacentCornersOfCorner(Corner c){
         List<Corner> adjacentCorners = new ArrayList<>();
-        List<Edge> adjacentEdges = getAdjacentEdgesOfCorner(c);
-        for(Edge edge : adjacentEdges) {
-            List<Corner> corners = getAdjacentCornersOfEdge(edge);
-            for(Corner corner : corners) {
-                if (!adjacentCorners.contains(corner)) {
-                    adjacentCorners.add(corner);
-                }
+
+        int mod = ((int) c.getYCoordinate())%3;
+        if(mod < 0){
+            mod += 3;
+        }
+
+        if(mod == 1){
+            Corner cornerToAdd = points.get(Arrays.asList(c.getXCoordinate(), c.getYCoordinate()-2));
+            if(cornerToAdd != null){
+                adjacentCorners.add(cornerToAdd);
             }
+            Corner cornerToAdd2 = points.get(Arrays.asList(c.getXCoordinate()-1, c.getYCoordinate()+1));
+            if(cornerToAdd2 != null){
+                adjacentCorners.add(cornerToAdd2);
+            }
+            Corner cornerToAdd3 = points.get(Arrays.asList(c.getXCoordinate()+1, c.getYCoordinate()+1));
+            if(cornerToAdd3 != null){
+                adjacentCorners.add(cornerToAdd3);
+            }
+            adjacentCorners.forEach(corner -> System.out.println(corner.getXCoordinate() + " " + corner.getYCoordinate()));
+            return adjacentCorners;
+        }
+
+        if (mod == 2){
+            Corner cornerToAdd = points.get(Arrays.asList(c.getXCoordinate(), c.getYCoordinate()+2));
+            if(cornerToAdd != null){
+                adjacentCorners.add(cornerToAdd);
+            }
+            Corner cornerToAdd2 = points.get(Arrays.asList(c.getXCoordinate()-1, c.getYCoordinate()-1));
+            if(cornerToAdd2 != null){
+                adjacentCorners.add(cornerToAdd2);
+            }
+            Corner cornerToAdd3 = points.get(Arrays.asList(c.getXCoordinate()+1, c.getYCoordinate()-1));
+            if(cornerToAdd3 != null){
+                adjacentCorners.add(cornerToAdd3);
+            }
+            adjacentCorners.forEach(corner -> System.out.println(corner.getXCoordinate() + " " + corner.getYCoordinate()));
+            return adjacentCorners;
         }
         return adjacentCorners;
     }

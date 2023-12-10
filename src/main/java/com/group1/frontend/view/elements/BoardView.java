@@ -48,6 +48,9 @@ public class BoardView extends AnchorPane {
         for (Tile tile : tiles) {
             TileView tileView = new TileView(tile);
             getChildren().add(tileView);
+            if(tile.getDiceNumber() == 7){
+                continue;
+            }
             Image image = new Image(new FileInputStream(mapIntToNumberAsset(tile.getDiceNumber())));
             Circle c = new Circle(tileView.getBoardXCoordinate(), tileView.getBoardYCoordinate(), TILE_HEIGHT/6);
             c.setFill(new ImagePattern(image));
