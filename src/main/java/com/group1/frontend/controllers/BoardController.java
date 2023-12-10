@@ -117,11 +117,6 @@ public class BoardController extends Controller{
             game.addPlayer(p4);
             game.setCurrentPlayer(p4);
 
-            game.getCurrentPlayer().addResource(ResourceType.GRAIN, 10);
-            game.getCurrentPlayer().addResource(ResourceType.LUMBER, 10);
-            game.getCurrentPlayer().addResource(ResourceType.WOOL, 10);
-            game.getCurrentPlayer().addResource(ResourceType.BRICK, 10);
-            game.getCurrentPlayer().addResource(ResourceType.ORE, 10);
 
             setResourceLabels(game.getCurrentPlayer());
 
@@ -137,7 +132,7 @@ public class BoardController extends Controller{
                 player.addResource(ResourceType.LUMBER, 10);
                 player.addResource(ResourceType.WOOL, 10);
                 player.addResource(ResourceType.BRICK, 10);
-                player.addResource(ResourceType.ORE, 20);
+                player.addResource(ResourceType.ORE, 10);
             });
             setResourceLabels(game.getCurrentPlayer());
 
@@ -274,6 +269,7 @@ public class BoardController extends Controller{
     }
     public void onEndTourButtonClick(ActionEvent event) throws DiceAlreadyRolledException {
         game.endTurn();
+        setResourceLabels(game.getCurrentPlayer());
         statusLabel.setText("Turn ended");
         writeToGameUpdates("Turn ended");
     }

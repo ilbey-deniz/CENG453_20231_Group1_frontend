@@ -237,6 +237,9 @@ public class Game extends AnchorPane {
     }
 
     public void distributeResources(int diceRoll) {
+        if (diceRoll == 7) {
+            return;
+        }
         for(Building building : occupiedBuildings) {
             if (building.getCorner().getIsOccupied()) {
                 for(Tile tile : board.getAdjacentTilesOfCorner(building.getCorner())) {
