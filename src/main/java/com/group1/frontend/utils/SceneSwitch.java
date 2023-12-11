@@ -13,8 +13,7 @@ public class SceneSwitch {
 
     public void switchToScene(Stage stage, Service service, String sceneName) {
         try {
-            Class<?> c = Class.forName(ApplicationConstants.MAIN_CLASS);
-            FXMLLoader loader = new FXMLLoader(c.getResource(sceneName));
+            FXMLLoader loader = getSceneLoader(sceneName);
             Scene scene;
             if(sceneName.equals("board-view.fxml")) {
                 scene = new Scene(loader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -35,5 +34,15 @@ public class SceneSwitch {
         catch(Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+    public static FXMLLoader getSceneLoader(String sceneName) {
+        try {
+            Class<?> c = Class.forName(ApplicationConstants.MAIN_CLASS);
+            return new FXMLLoader(c.getResource(sceneName));
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 }

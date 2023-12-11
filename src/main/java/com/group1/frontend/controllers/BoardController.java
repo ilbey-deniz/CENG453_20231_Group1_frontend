@@ -4,17 +4,19 @@ import com.group1.frontend.components.*;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.events.TimeEvent;
-import com.group1.frontend.exceptions.DiceAlreadyRolledException;
 import com.group1.frontend.utils.BoardUtilityFunctions;
 import com.group1.frontend.view.elements.BoardView;
 import com.group1.frontend.events.CornerClickedEvent;
 import com.group1.frontend.events.EdgeClickedEvent;
 import com.group1.frontend.utils.Timer;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.input.KeyCode;
@@ -22,12 +24,15 @@ import javafx.scene.input.KeyEvent;
 import javafx.util.Pair;
 
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 import static com.group1.frontend.constants.BoardConstants.PLAYER_COLORS;
 import static com.group1.frontend.constants.BoardConstants.TURN_TIME;
 import static com.group1.frontend.utils.BoardUtilityFunctions.secondsToTime;
+import static com.group1.frontend.utils.SceneSwitch.getSceneLoader;
 
 
 public class BoardController extends Controller{
@@ -45,21 +50,6 @@ public class BoardController extends Controller{
 
     @FXML
     private ImageView secondDiceImage;
-
-    @FXML
-    private Label grainLabel;
-
-    @FXML
-    private Label lumberLabel;
-
-    @FXML
-    private Label woolLabel;
-
-    @FXML
-    private Label brickLabel;
-
-    @FXML
-    private Label oreLabel;
 
     @FXML
     private Label statusLabel;
@@ -85,22 +75,26 @@ public class BoardController extends Controller{
     @FXML
     private ToggleButton roadToggleButton;
 
+    @FXML
+    private VBox playerInfoVBox;
 
-    private HashSet<Edge> highlightedEdges;
-    private HashSet<Corner> highlightedCorners;
+    private final HashSet<Edge> highlightedEdges;
+    private final HashSet<Corner> highlightedCorners;
 
     private final HashSet<Corner> highlightedBuildings;
 
-
     private Game game;
     private Timer timer;
-
     BoardView boardView;
+
+    //stores player and its index in playerInfoVBox
+    HashMap<Player, Integer> playerInfoMap;
 
     public BoardController(){
         this.highlightedBuildings = new HashSet<>();
         highlightedEdges = new HashSet<>();
         highlightedCorners = new HashSet<>();
+        playerInfoMap = new HashMap<>();
     }
 
     public void init() {
@@ -110,19 +104,16 @@ public class BoardController extends Controller{
             game.setBoard(board);
             boardView = new BoardView(board);
             //populate with mock players
-            Player p1 = new Player("red", "iplikçi nedim", true);
+            Player p1 = new Player("red", "iplikçi nedim", false);
             Player p2 = new Player("yellow", "laz ziya", true);
             Player p3 = new Player("green", "tombalacı mehmet", true);
-            Player p4 = new Player("blue", "karahanlı", false);
+            Player p4 = new Player("blue", "karahanlı", true);
 
             game.addPlayer(p1);
             game.addPlayer(p2);
             game.addPlayer(p3);
             game.addPlayer(p4);
-            game.setCurrentPlayer(p4);
-
-
-            setResourceLabels(game.getCurrentPlayer());
+            game.setCurrentPlayer(game.getPlayers().get(0));
 
             game.createInitialBuildings();
 
@@ -138,7 +129,9 @@ public class BoardController extends Controller{
                 player.addResource(ResourceType.BRICK, 10);
                 player.addResource(ResourceType.ORE, 10);
             });
-            setResourceLabels(game.getCurrentPlayer());
+
+            loadPlayerInfos();
+            highlightPlayerInfo(game.getCurrentPlayer());
 
             timer = new Timer(TURN_TIME);
 
@@ -179,18 +172,6 @@ public class BoardController extends Controller{
     }
 
     public void handleCornerClickEvent(CornerClickedEvent event) {
-        //TODO: highlight adjacent tiles, inefficient
-
-//        List<Tile> adjacentTiles = game.getBoard().getAdjacentTilesOfCorner(event.getCorner());
-//        boardView.getChildren().forEach(child -> {
-//            if(child instanceof TileView){
-//                TileView tileView = (TileView) child;
-//                if(adjacentTiles.contains(tileView.getTile())){
-//                    tileView.highlight();
-//                }
-//            }
-//        });
-
         //check settlementToggleButton is selected
         if(settlementToggleButton.isSelected()){
             //check if the corner is available to build a settlement
@@ -210,7 +191,7 @@ public class BoardController extends Controller{
             //unselect the settlementToggleButton
             settlementToggleButton.setSelected(false);
             //update resource labels
-            setResourceLabels(game.getCurrentPlayer());
+            updatePlayerInfo(game.getCurrentPlayer());
         }
 
         if(cityToggleButton.isSelected()){
@@ -231,7 +212,7 @@ public class BoardController extends Controller{
             //unselect the cityToggleButton
             cityToggleButton.setSelected(false);
             //update resource labels
-            setResourceLabels(game.getCurrentPlayer());
+            updatePlayerInfo(game.getCurrentPlayer());
         }
 
     }
@@ -255,7 +236,7 @@ public class BoardController extends Controller{
             //unselect the roadToggleButton
             roadToggleButton.setSelected(false);
             //update resource labels
-            setResourceLabels(game.getCurrentPlayer());
+            updatePlayerInfo(game.getCurrentPlayer());
         }
     }
 
@@ -283,20 +264,29 @@ public class BoardController extends Controller{
             Pair<Integer, Integer> dicePair = game.rollDice();
             firstDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getKey()));
             secondDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getValue()));
-            statusLabel.setText("Dice rolled: " + (dicePair.getKey() + dicePair.getValue()));
-            writeToGameUpdates("Dice rolled: " + (dicePair.getKey() + dicePair.getValue()));
+            //statusLabel.setText("Dice rolled: " + (dicePair.getKey() + dicePair.getValue()));
+            statusLabel.setText(game.getCurrentPlayer().getName() + " rolled: " + (dicePair.getKey() + dicePair.getValue()));
+            writeToGameUpdates(game.getCurrentPlayer().getName() + " rolled: " + (dicePair.getKey() + dicePair.getValue()));
+
             game.distributeResources(dicePair.getKey() + dicePair.getValue());
-            setResourceLabels(game.getCurrentPlayer());
+            updateAllPlayerInfos();
+
         } catch (Exception e) {
-            statusLabel.setText(e.getMessage());
+            e.printStackTrace();
         }
 
     }
-    public void onEndTourButtonClick(ActionEvent event) throws DiceAlreadyRolledException {
+    public void onEndTourButtonClick(ActionEvent event){
+        removeHighlight(); //unhighlight all highlighted edges, corners
+        unhighlightPlayerInfo(game.getCurrentPlayer()); //unhighlight current player info
+
         game.endTurn();
-        setResourceLabels(game.getCurrentPlayer());
-        statusLabel.setText("Turn ended");
-        writeToGameUpdates("Turn ended");
+
+        highlightPlayerInfo(game.getCurrentPlayer());
+
+        statusLabel.setText(game.getCurrentPlayer().getName() + "'s turn");
+        writeToGameUpdates(game.getCurrentPlayer().getName() + "'s turn");
+
     }
 
     private void writeToGameUpdates(String message) {
@@ -408,26 +398,42 @@ public class BoardController extends Controller{
         highlightedBuildings.clear();
     }
 
-    public void setResourceLabels(Player player){
-        player.getResources().forEach((resourceType, integer) -> {
-            switch (resourceType){
-                case GRAIN:
-                    grainLabel.setText(integer.toString());
-                    break;
-                case LUMBER:
-                    lumberLabel.setText(integer.toString());
-                    break;
-                case WOOL:
-                    woolLabel.setText(integer.toString());
-                    break;
-                case BRICK:
-                    brickLabel.setText(integer.toString());
-                    break;
-                case ORE:
-                    oreLabel.setText(integer.toString());
-                    break;
-            }
-        });
-    }
+    //TODO: move these to another class
 
+    public void loadPlayerInfos() {
+        for (Player player : game.getPlayers()) {
+            FXMLLoader loader = getSceneLoader("player-info-view.fxml");
+            AnchorPane playerInfoAnchorPane = null;
+            try {
+                playerInfoAnchorPane = loader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            PlayerInfoController playerInfoController = loader.getController();
+            playerInfoController.initPlayerInfo(player);
+
+            playerInfoAnchorPane.getProperties().put("controller", playerInfoController);
+            playerInfoMap.put(player, playerInfoVBox.getChildren().size());
+            playerInfoVBox.getChildren().add(playerInfoAnchorPane);
+
+        }
+    }
+    public void updateAllPlayerInfos() {
+        for (Player player : game.getPlayers()) {
+            getPlayerInfoController(player).setPlayerInfo(player);
+        }
+    }
+    public void updatePlayerInfo(Player player) {
+        getPlayerInfoController(player).setPlayerInfo(player);
+    }
+    public void highlightPlayerInfo(Player player) {
+        getPlayerInfoController(player).highlight();
+    }
+    public void unhighlightPlayerInfo(Player player) {
+        getPlayerInfoController(player).unhighlight();
+    }
+    public PlayerInfoController getPlayerInfoController(Player player){
+        String color = player.getColor();
+        return (PlayerInfoController) playerInfoVBox.getChildren().get(playerInfoMap.get(player)).getProperties().get("controller");
+    }
 }

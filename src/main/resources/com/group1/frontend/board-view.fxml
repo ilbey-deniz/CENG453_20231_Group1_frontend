@@ -10,7 +10,6 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Ellipse?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
@@ -31,65 +30,6 @@
       <AnchorPane layoutX="11.0" layoutY="14.0" onDragDetected="#onLeaveButtonClick" prefHeight="27.0" prefWidth="55.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
          <children>
             <Button fx:id="leaveButton" layoutX="5.0" layoutY="2.0" mnemonicParsing="false" onAction="#onLeaveButtonClick" text="Leave" />
-         </children>
-      </AnchorPane>
-      <AnchorPane layoutX="382.0" layoutY="566.0" prefHeight="138.0" prefWidth="362.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="382.0">
-         <children>
-            <ImageView fitHeight="115.0" fitWidth="88.0" layoutX="5.0" layoutY="21.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@assets/grain.png" />
-               </image>
-            </ImageView>
-            <ImageView fitHeight="115.0" fitWidth="88.0" layoutX="79.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@assets/wool.png" />
-               </image>
-            </ImageView>
-            <ImageView fitHeight="115.0" fitWidth="88.0" layoutX="153.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@assets/lumber.png" />
-               </image>
-            </ImageView>
-            <ImageView fitHeight="115.0" fitWidth="88.0" layoutX="227.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@assets/ore.png" />
-               </image>
-            </ImageView>
-            <ImageView fitHeight="115.0" fitWidth="88.0" layoutX="302.0" layoutY="22.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@assets/brick.png" />
-               </image>
-            </ImageView>
-            <Ellipse fill="#ffffffb2" layoutX="42.0" layoutY="118.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="grainLabel" alignment="CENTER" layoutX="19.0" layoutY="102.0" prefHeight="35.0" prefWidth="47.0" text="4" textAlignment="CENTER">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
-            <Ellipse fill="#ffffffb2" layoutX="112.0" layoutY="118.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="woolLabel" alignment="CENTER" layoutX="89.0" layoutY="101.0" prefHeight="35.0" prefWidth="47.0" text="3-2" textAlignment="CENTER">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
-            <Ellipse fill="#ffffffb2" layoutX="184.0" layoutY="118.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="lumberLabel" alignment="CENTER" layoutX="160.0" layoutY="100.0" prefHeight="35.0" prefWidth="47.0" text="1-1" textAlignment="CENTER">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
-            <Ellipse fill="#ffffffb2" layoutX="260.0" layoutY="118.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="oreLabel" alignment="CENTER" layoutX="237.0" layoutY="101.0" prefHeight="35.0" prefWidth="47.0" text="0" textAlignment="CENTER">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
-            <Ellipse fill="#ffffffb2" layoutX="335.0" layoutY="118.0" radiusX="28.0" radiusY="18.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-            <Label fx:id="brickLabel" alignment="CENTER" layoutX="312.0" layoutY="101.0" prefHeight="35.0" prefWidth="47.0" text="2" textAlignment="CENTER">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
          </children>
       </AnchorPane>
       <AnchorPane layoutX="1109.0" layoutY="552.0" prefHeight="68.0" prefWidth="147.0" AnchorPane.bottomAnchor="92.0" AnchorPane.rightAnchor="14.0">
@@ -175,13 +115,7 @@
       </AnchorPane>
       <AnchorPane layoutX="14.0" layoutY="65.0" prefHeight="507.0" prefWidth="300.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="65.0">
          <children>
-            <VBox prefHeight="507.0" prefWidth="300.0">
-               <children>
-                  <fx:include source="player-info-view.fxml" />
-                  <fx:include source="player-info-view.fxml" />
-                  <fx:include source="player-info-view.fxml" />
-               </children>
-            </VBox>
+            <VBox fx:id="playerInfoVBox" prefHeight="507.0" prefWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </children>
       </AnchorPane>
    </children>
