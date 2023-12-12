@@ -181,6 +181,7 @@ public class BoardController extends Controller{
             writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a road");
             boardView.getEdgeView((Edge) buildingPlacedEvent.getPlacement()).occupyEdge(PLAYER_COLORS.get(buildingPlacedEvent.getPlayer().getColor()));
         }
+        updatePlayerInfo(buildingPlacedEvent.getPlayer());
     }
 
 

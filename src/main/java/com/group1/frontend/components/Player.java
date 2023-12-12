@@ -108,6 +108,12 @@ public class Player {
         return true;
     }
 
+    public void addVictoryPoints(int i) {
+        victoryPoints += i;
+    }
+
+
+
     //checks before buying a building:
     // 1. if player has enough resources
     // 2. if player has road connected to the corner
