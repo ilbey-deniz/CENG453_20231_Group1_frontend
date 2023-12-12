@@ -1,8 +1,7 @@
 package com.group1.frontend.components;
 
 import com.group1.frontend.enums.BuildingType;
-import com.group1.frontend.events.DiceRolledEvent;
-import com.group1.frontend.events.TurnEndedEvent;
+import com.group1.frontend.events.*;
 import com.group1.frontend.exceptions.DiceAlreadyRolledException;
 import com.group1.frontend.utils.BoardUtilityFunctions;
 import javafx.scene.layout.AnchorPane;
@@ -270,11 +269,9 @@ public class Game extends AnchorPane {
 
     public void autoPlayCpuPlayer(){
         if(currentPlayer.isCpu()){
-            //Pair<Integer, Integer> dice = rollDice();
             DiceRolledEvent diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED);
             getParent().fireEvent(diceRolledEvent);
 
-            //TODO: give resource to player according to dice roll result.
             if(currentPlayer.hasEnoughResources(BuildingType.CITY)){
 //               currentPlayer.getBuildings()
 //                TODO: placeCity onto one of the random existing settlement
@@ -283,7 +280,7 @@ public class Game extends AnchorPane {
                 List<Corner> availableCorners = getAvailableCorners();
                 if(!availableCorners.isEmpty()){
                     Corner randomCorner = availableCorners.get((int) (Math.random() * availableCorners.size()));
-                    placeSettlement(randomCorner);
+                    getParent().fireEvent(new BuildingPlacedEvent(randomCorner, BuildingType.SETTLEMENT, currentPlayer));
                 }
             }
             Random random = new Random();
@@ -292,7 +289,7 @@ public class Game extends AnchorPane {
                     List<Edge> availableEdges = getAvailableEdges();
                     if(!availableEdges.isEmpty()){
                         Edge randomEdge = availableEdges.get((int) (Math.random() * availableEdges.size()));
-                        placeRoad(randomEdge);
+                        getParent().fireEvent(new BuildingPlacedEvent(randomEdge, BuildingType.ROAD, currentPlayer));
                     }
                 }
             }

@@ -1,7 +1,5 @@
 package com.group1.frontend.components;
 
-
-
 public class Edge {
     private double firstXCoordinate;
     private double firstYCoordinate;

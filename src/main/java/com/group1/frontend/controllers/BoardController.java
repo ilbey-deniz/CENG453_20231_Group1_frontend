@@ -146,6 +146,9 @@ public class BoardController extends Controller{
             hexagonPane.addEventHandler(DiceRolledEvent.DICE_ROLLED, this::handleDiceRolledEvent);
             hexagonPane.addEventHandler(DiceRolledEvent.DICE_ROLLED_ALREADY, this::handleDiceRolledEvent);
             hexagonPane.addEventHandler(TurnEndedEvent.TURN_ENDED, this::handleTurnEndedEvent);
+            hexagonPane.addEventHandler(BuildingPlacedEvent.ROAD_PLACED, this::handleBuildingPlacedEvent);
+            hexagonPane.addEventHandler(BuildingPlacedEvent.SETTLEMENT_PLACED, this::handleBuildingPlacedEvent);
+            hexagonPane.addEventHandler(BuildingPlacedEvent.CITY_PLACED, this::handleBuildingPlacedEvent);
 
 
             for(int i = 0; i < 19; i++){
@@ -158,6 +161,28 @@ public class BoardController extends Controller{
             e.printStackTrace();
         }
     }
+
+    private void handleBuildingPlacedEvent(BuildingPlacedEvent buildingPlacedEvent) {
+        if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.SETTLEMENT_PLACED){
+            game.placeSettlement((Corner) buildingPlacedEvent.getPlacement());
+            statusLabel.setText("Settlement built");
+            writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a settlement");
+            boardView.getCornerView((Corner) buildingPlacedEvent.getPlacement()).occupyCorner(buildingPlacedEvent.getPlayer().getColor(), BuildingType.SETTLEMENT);
+        }
+        else if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CITY_PLACED){
+            game.placeCity((Corner) buildingPlacedEvent.getPlacement());
+            statusLabel.setText("City built");
+            writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a city");
+            boardView.getCornerView((Corner) buildingPlacedEvent.getPlacement()).occupyCorner(buildingPlacedEvent.getPlayer().getColor(), BuildingType.CITY);
+        }
+        else{
+            game.placeRoad((Edge) buildingPlacedEvent.getPlacement());
+            statusLabel.setText("Road built");
+            writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a road");
+            boardView.getEdgeView((Edge) buildingPlacedEvent.getPlacement()).occupyEdge(PLAYER_COLORS.get(buildingPlacedEvent.getPlayer().getColor()));
+        }
+    }
+
 
     public void onSendButtonClick() {
         String message = chatTextField.getText();
@@ -187,10 +212,8 @@ public class BoardController extends Controller{
             //unhighlight all corners
             removeHighlight();
 
-            //build the settlement
-            game.placeSettlement(event.getCorner());
-            statusLabel.setText("Settlement built");
-            boardView.getCornerView(event.getCorner()).occupyCorner(game.getCurrentPlayer().getColor(), BuildingType.SETTLEMENT);
+            //place the settlement
+            hexagonPane.fireEvent(new BuildingPlacedEvent(event.getCorner(), BuildingType.SETTLEMENT, game.getCurrentPlayer()));
 
             //unselect the settlementToggleButton
             settlementToggleButton.setSelected(false);
@@ -208,11 +231,8 @@ public class BoardController extends Controller{
             //unhighlight all corners
             removeHighlight();
 
-            //build the city
-            game.placeCity(event.getCorner());
-            statusLabel.setText("City built");
-            boardView.getCornerView(event.getCorner()).occupyCorner(game.getCurrentPlayer().getColor(), BuildingType.CITY);
-
+            //place the city
+            hexagonPane.fireEvent(new BuildingPlacedEvent(event.getCorner(), BuildingType.CITY, game.getCurrentPlayer()));
             //unselect the cityToggleButton
             cityToggleButton.setSelected(false);
             //update resource labels
@@ -232,10 +252,8 @@ public class BoardController extends Controller{
             //unhighlight all edges
             removeHighlight();
 
-            //build the road
-            game.placeRoad(event.getEdge());
-            statusLabel.setText("Road built");
-            boardView.getEdgeView(event.getEdge()).occupyEdge(PLAYER_COLORS.get(game.getCurrentPlayer().getColor()));
+            //place the road
+            hexagonPane.fireEvent(new BuildingPlacedEvent(event.getEdge(), BuildingType.ROAD, game.getCurrentPlayer()));
 
             //unselect the roadToggleButton
             roadToggleButton.setSelected(false);
