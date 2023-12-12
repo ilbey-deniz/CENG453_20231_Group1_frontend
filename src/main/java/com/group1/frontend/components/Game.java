@@ -272,8 +272,17 @@ public class Game extends AnchorPane {
             getParent().fireEvent(diceRolledEvent);
 
             if(currentPlayer.hasEnoughResources(BuildingType.CITY)){
-//               currentPlayer.getBuildings()
-//                TODO: placeCity onto one of the random existing settlement
+                List <Building> availableBuildings = new ArrayList<>();
+                for(Building building : currentPlayer.buildings){
+                    if(building.getBuildingType() == BuildingType.SETTLEMENT){
+                        availableBuildings.add(building);
+                    }
+                }
+                if(!availableBuildings.isEmpty()){
+                    Building randomBuilding = availableBuildings.get((int) (Math.random() * availableBuildings.size()));
+                    getParent().fireEvent(new BuildingPlacedEvent(randomBuilding.getCorner(), BuildingType.CITY, currentPlayer));
+                }
+
             }
             if(currentPlayer.hasEnoughResources(BuildingType.SETTLEMENT)){
                 List<Corner> availableCorners = getAvailableCorners();
