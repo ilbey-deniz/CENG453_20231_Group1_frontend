@@ -198,6 +198,7 @@ public class Game extends AnchorPane {
         Building building = new Building(BuildingType.SETTLEMENT, currentPlayer, board.getAdjacentTilesOfCorner(corner), corner);
         currentPlayer.buildings.add(building);
         occupiedBuildings.add(building);
+        currentPlayer.addVictoryPoints(1);
     }
 
     public void placeSettlementForFree(Corner corner, Player player) {
@@ -218,6 +219,7 @@ public class Game extends AnchorPane {
 
         getBuildingFromCorner(corner).setBuildingType(BuildingType.CITY);
         REQUIRED_RESOURCES.get(BuildingType.CITY).forEach(currentPlayer::removeResource);
+        currentPlayer.addVictoryPoints(2);
     }
 
     public Building getBuildingFromCorner(Corner corner) {
