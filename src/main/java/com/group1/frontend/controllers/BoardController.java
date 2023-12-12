@@ -320,6 +320,8 @@ public class BoardController extends Controller{
 
         statusLabel.setText(game.getCurrentPlayer().getName() + "'s turn");
         writeToGameUpdates(game.getCurrentPlayer().getName() + "'s turn");
+
+        game.autoPlayCpuPlayer();
     }
 
     public void onDiceImageClick(){

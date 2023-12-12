@@ -152,7 +152,6 @@ public class Game extends AnchorPane {
 
     public void createInitialBuildings() {
         for(Player player : players) {
-            player.setCpu(true);
             Corner randomCorner = board.getCorners().get((int) (Math.random() * board.getCorners().size()));
             while(!isCornerAvailableToInitialize(randomCorner)) {
                 randomCorner = board.getCorners().get((int) (Math.random() * board.getCorners().size()));
