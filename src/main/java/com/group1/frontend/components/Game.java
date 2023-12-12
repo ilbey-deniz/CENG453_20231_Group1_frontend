@@ -7,10 +7,7 @@ import com.group1.frontend.utils.BoardUtilityFunctions;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.group1.frontend.constants.BoardConstants.REQUIRED_RESOURCES;
@@ -237,12 +234,14 @@ public class Game extends AnchorPane {
         edge.setOwner(currentPlayer);
         REQUIRED_RESOURCES.get(BuildingType.ROAD).forEach(currentPlayer::removeResource);
         currentPlayer.roads.add(new Road(currentPlayer, edge));
+        System.out.println("longest road is: " + calculateLongestRoad(currentPlayer));
     }
 
     public void placeRoadForFree(Edge randomEdge, Player player) {
         randomEdge.setOccupied(true);
         randomEdge.setOwner(player);
         player.roads.add(new Road(player, randomEdge));
+        System.out.println("longest road is: " + calculateLongestRoad(player));
     }
 
     public void distributeResources(int diceRoll) {
@@ -266,7 +265,82 @@ public class Game extends AnchorPane {
         }
     }
 
-    public void autoPlayCpuPlayer(){
+    public int calculateLongestRoad(Player player) {
+        int maxRoadLength = 1;
+        for(Road road : getEndRoads(player)){
+            HashMap<Road, Boolean> visited = new HashMap<>();
+            for(Road r : player.roads) {
+                visited.put(r, false);
+            }
+            maxRoadLength = Math.max(maxRoadLength, calculateTotalRoadLength(player, road, visited));
+
+        }
+        return maxRoadLength;
+    }
+
+    // take the starting point as parameter
+    public int calculateTotalRoadLength(Player player, Road road, HashMap<Road, Boolean> visited) {
+//         TODO: calculate total road length for player
+//         perform dfs on player's roads
+//         loop over player's roads that is next to the starting road
+//         if the road is not visited, perform dfs on it
+//         if the road is visited, skip it
+        visited.put(road, true);
+        int maxRoadLength = 1;
+        for(Road r: player.roads) {
+            if (!visited.get(r)){
+                // if the road is next to the starting road
+                if((r.edge.getFirstXCoordinate() == road.edge.getSecondXCoordinate()
+                        && r.edge.getFirstYCoordinate() == road.edge.getSecondYCoordinate())
+                        || (road.edge.getSecondYCoordinate() == road.edge.getFirstYCoordinate()
+                        && road.edge.getSecondXCoordinate() == road.edge.getFirstXCoordinate())
+                        || (road.edge.getFirstXCoordinate() == r.edge.getFirstXCoordinate()
+                        && road.edge.getFirstYCoordinate() == r.edge.getFirstYCoordinate())
+                        || (road.edge.getSecondXCoordinate() == r.edge.getSecondXCoordinate()
+                        && road.edge.getSecondYCoordinate() == r.edge.getSecondYCoordinate())) {
+//                    visited.put(r, true);
+                    maxRoadLength = Math.max(maxRoadLength, 1 + calculateTotalRoadLength(player, r, visited));
+                }
+            }
+        }
+        return maxRoadLength;
+    }
+
+    public List<Road> getEndRoads(Player player) {
+        List<Road> endRoads = new ArrayList<>();
+        for (Road road : player.roads) {
+            int counter = 0;
+            for (Road otherRoad : player.roads) {
+                if (road.edge.getFirstXCoordinate() == otherRoad.edge.getSecondXCoordinate()
+                        && road.edge.getFirstYCoordinate() == otherRoad.edge.getSecondYCoordinate()) {
+                    counter++;
+                }
+                if (road.edge.getFirstXCoordinate() == otherRoad.edge.getFirstXCoordinate()
+                        && road.edge.getFirstYCoordinate() == otherRoad.edge.getFirstYCoordinate()) {
+                    counter++;
+                }
+                if (road.edge.getSecondXCoordinate() == otherRoad.edge.getSecondXCoordinate()
+                        && road.edge.getSecondYCoordinate() == otherRoad.edge.getSecondYCoordinate()) {
+                    counter++;
+                }
+                if (road.edge.getSecondYCoordinate() == otherRoad.edge.getFirstYCoordinate()
+                        && road.edge.getSecondXCoordinate() == otherRoad.edge.getFirstXCoordinate()) {
+                    counter++;
+                }
+            }
+            if (counter == 3) {
+                endRoads.add(road);
+            }
+        }
+        for (Road e : endRoads) {
+            board.getAdjacentTilesOfCorner(new Corner(e.edge.getFirstXCoordinate(), e.edge.getFirstYCoordinate())).
+                    forEach(tile -> System.out.print(tile.getTileType() + " "));
+            System.out.println();
+        }
+        return endRoads;
+    }
+
+    public void autoPlayCpuPlayer() {
         if(currentPlayer.isCpu()){
             DiceRolledEvent diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED);
             getParent().fireEvent(diceRolledEvent);

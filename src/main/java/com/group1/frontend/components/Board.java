@@ -148,7 +148,6 @@ public class Board {
             if(cornerToAdd3 != null){
                 adjacentCorners.add(cornerToAdd3);
             }
-            adjacentCorners.forEach(corner -> System.out.println(corner.getXCoordinate() + " " + corner.getYCoordinate()));
             return adjacentCorners;
         }
 
@@ -165,7 +164,6 @@ public class Board {
             if(cornerToAdd3 != null){
                 adjacentCorners.add(cornerToAdd3);
             }
-            adjacentCorners.forEach(corner -> System.out.println(corner.getXCoordinate() + " " + corner.getYCoordinate()));
             return adjacentCorners;
         }
         return adjacentCorners;
