@@ -6,8 +6,7 @@ import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.events.TimeEvent;
 import com.group1.frontend.utils.BoardUtilityFunctions;
 import com.group1.frontend.view.elements.BoardView;
-import com.group1.frontend.events.CornerClickedEvent;
-import com.group1.frontend.events.EdgeClickedEvent;
+import com.group1.frontend.events.*;
 import com.group1.frontend.utils.Timer;
 
 import javafx.event.ActionEvent;
@@ -24,6 +23,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.util.Pair;
 
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -143,6 +143,10 @@ public class BoardController extends Controller{
             hexagonPane.addEventHandler(EdgeClickedEvent.EDGE_CLICKED, this::handleEdgeClickEvent);
             hexagonPane.addEventHandler(TimeEvent.TIMES_UP, this::handleTimesUpEvent);
             hexagonPane.addEventHandler(TimeEvent.ONE_TICK, this::handleOneTickEvent);
+            hexagonPane.addEventHandler(DiceRolledEvent.DICE_ROLLED, this::handleDiceRolledEvent);
+            hexagonPane.addEventHandler(DiceRolledEvent.DICE_ROLLED_ALREADY, this::handleDiceRolledEvent);
+            hexagonPane.addEventHandler(TurnEndedEvent.TURN_ENDED, this::handleTurnEndedEvent);
+
 
             for(int i = 0; i < 19; i++){
                 writeToGameUpdates("");
@@ -255,28 +259,40 @@ public class BoardController extends Controller{
         hexagonPane.getChildren().add(timer);
         leftTimeLabel.setStyle("-fx-text-fill: black");
         timer.start();
-
+        hexagonPane.fireEvent(new TurnEndedEvent(TurnEndedEvent.TURN_ENDED));
     }
 
-
-    public void onDiceImageClick(){
-        try {
+    public void handleDiceRolledEvent(DiceRolledEvent event) {
+        if(event.getEventType() == DiceRolledEvent.DICE_ROLLED_ALREADY){
+            statusLabel.setText("The dice is already rolled");
+            return;
+        }
+        else if (event.getEventType() == DiceRolledEvent.DICE_ROLLED){
             Pair<Integer, Integer> dicePair = game.rollDice();
-            firstDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getKey()));
-            secondDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getValue()));
+            game.distributeResources(dicePair.getKey() + dicePair.getValue());
+
+            try {
+                firstDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getKey()));
+                secondDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getValue()));
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             //statusLabel.setText("Dice rolled: " + (dicePair.getKey() + dicePair.getValue()));
             statusLabel.setText(game.getCurrentPlayer().getName() + " rolled: " + (dicePair.getKey() + dicePair.getValue()));
             writeToGameUpdates(game.getCurrentPlayer().getName() + " rolled: " + (dicePair.getKey() + dicePair.getValue()));
 
-            game.distributeResources(dicePair.getKey() + dicePair.getValue());
             updateAllPlayerInfos();
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+        else{
+            throw new RuntimeException("Invalid event type");
         }
 
+
+
+
     }
-    public void onEndTourButtonClick(ActionEvent event){
+
+    public void handleTurnEndedEvent(TurnEndedEvent event) {
         removeHighlight(); //unhighlight all highlighted edges, corners
         unhighlightPlayerInfo(game.getCurrentPlayer()); //unhighlight current player info
 
@@ -286,11 +302,25 @@ public class BoardController extends Controller{
 
         statusLabel.setText(game.getCurrentPlayer().getName() + "'s turn");
         writeToGameUpdates(game.getCurrentPlayer().getName() + "'s turn");
-
     }
 
+    public void onDiceImageClick(){
+        DiceRolledEvent diceRolledEvent;
+        if(game.getCurrentDiceRoll()!=null){
+            diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED_ALREADY);
+        }
+        else{
+            diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED);
+        }
+        hexagonPane.fireEvent(diceRolledEvent);
+    }
+    public void onEndTourButtonClick(ActionEvent event){
+        hexagonPane.fireEvent(new TurnEndedEvent(TurnEndedEvent.TURN_ENDED));
+    }
     private void writeToGameUpdates(String message) {
         gameUpdatesTextFlow.getChildren().add(new Text(message + "\n"));
+        gameUpdatesScrollPane.applyCss();
+        gameUpdatesScrollPane.layout();
         gameUpdatesScrollPane.setVvalue(1.0);
     }
 

@@ -4,6 +4,7 @@ import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.events.DiceRolledEvent;
 import com.group1.frontend.events.TurnEndedEvent;
 import com.group1.frontend.exceptions.DiceAlreadyRolledException;
+import com.group1.frontend.utils.BoardUtilityFunctions;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Pair;
 
@@ -181,10 +182,7 @@ public class Game extends AnchorPane {
         return isAvailable.get();
     }
 
-    public Pair<Integer, Integer> rollDice() throws DiceAlreadyRolledException {
-        if (currentDiceRoll != null) {
-            throw new DiceAlreadyRolledException("Dice already rolled this turn.");
-        }
+    public Pair<Integer, Integer> rollDice(){
         int dice1 = (int) (Math.random() * 6) + 1;
         int dice2 = (int) (Math.random() * 6) + 1;
         currentDiceRoll = new Pair<>(dice1, dice2);
@@ -196,8 +194,6 @@ public class Game extends AnchorPane {
         //currentPlayer = players.get((players.indexOf(currentPlayer) + 1) % players.size());
         turnNumber++;
         currentPlayer = players.get(turnNumber % players.size());
-        TurnEndedEvent turnEndedEvent = new TurnEndedEvent();
-        getParent().fireEvent(turnEndedEvent);
     }
 
     public void placeSettlement(Corner corner) {
@@ -272,11 +268,10 @@ public class Game extends AnchorPane {
         }
     }
 
-    public void autoPlayCpuPlayer() throws DiceAlreadyRolledException {
+    public void autoPlayCpuPlayer(){
         if(currentPlayer.isCpu()){
-            Pair<Integer, Integer> dice = rollDice();
-            DiceRolledEvent diceRolledEvent = new DiceRolledEvent(dice.getKey() + dice.getValue());
-            distributeResources(dice.getKey() + dice.getValue());
+            //Pair<Integer, Integer> dice = rollDice();
+            DiceRolledEvent diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED);
             getParent().fireEvent(diceRolledEvent);
 
             //TODO: give resource to player according to dice roll result.
@@ -286,7 +281,7 @@ public class Game extends AnchorPane {
             }
             if(currentPlayer.hasEnoughResources(BuildingType.SETTLEMENT)){
                 List<Corner> availableCorners = getAvailableCorners();
-                if(availableCorners.size() > 0){
+                if(!availableCorners.isEmpty()){
                     Corner randomCorner = availableCorners.get((int) (Math.random() * availableCorners.size()));
                     placeSettlement(randomCorner);
                 }
@@ -295,13 +290,17 @@ public class Game extends AnchorPane {
             if(random.nextGaussian() > 0.5){
                 if(currentPlayer.hasEnoughResources(BuildingType.ROAD)){
                     List<Edge> availableEdges = getAvailableEdges();
-                    if(availableEdges.size() > 0){
+                    if(!availableEdges.isEmpty()){
                         Edge randomEdge = availableEdges.get((int) (Math.random() * availableEdges.size()));
                         placeRoad(randomEdge);
                     }
                 }
             }
-            endTurn();
+            getParent().fireEvent(new TurnEndedEvent(TurnEndedEvent.TURN_ENDED));
         }
+    }
+
+    public Pair<Integer, Integer> getCurrentDiceRoll() {
+        return currentDiceRoll;
     }
 }
