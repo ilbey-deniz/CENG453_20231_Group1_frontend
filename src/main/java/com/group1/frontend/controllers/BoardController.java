@@ -52,6 +52,12 @@ public class BoardController extends Controller{
     private ImageView secondDiceImage;
 
     @FXML
+    private Button firstDiceButton;
+
+    @FXML
+    private Button secondDiceButton;
+
+    @FXML
     private Label statusLabel;
 
     @FXML
@@ -161,7 +167,6 @@ public class BoardController extends Controller{
             e.printStackTrace();
         }
     }
-
 
     public void onSendButtonClick() {
         String message = chatTextField.getText();
@@ -282,10 +287,6 @@ public class BoardController extends Controller{
         else{
             throw new RuntimeException("Invalid event type");
         }
-
-
-
-
     }
 
     public void handleTurnEndedEvent(TurnEndedEvent event) {
@@ -352,9 +353,13 @@ public class BoardController extends Controller{
         settlementToggleButton.setDisable(true);
         cityToggleButton.setDisable(true);
         roadToggleButton.setDisable(true);
+        firstDiceButton.setDisable(true);
+        secondDiceButton.setDisable(true);
+        //save score
+        //service.makeRequest("/game/" + game.getId() + "/end", "POST", "");
     }
 
-    public void onDiceImageClick(){
+    public void onDiceButtonClick(){
         DiceRolledEvent diceRolledEvent;
         if(game.getCurrentDiceRoll()!=null){
             diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED_ALREADY);
