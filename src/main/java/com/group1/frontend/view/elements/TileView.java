@@ -43,7 +43,6 @@ public class TileView extends Polygon {
         }
         setStrokeWidth(2);
         setStroke(Color.BLACK);
-        setOnMouseClicked(e -> System.out.println("Clicked: " + this));
         setEventHandler(javafx.scene.input.MouseEvent.MOUSE_ENTERED, e -> setStroke(Color.RED));
         setEventHandler(javafx.scene.input.MouseEvent.MOUSE_EXITED, e -> setStroke(Color.BLACK));
     }

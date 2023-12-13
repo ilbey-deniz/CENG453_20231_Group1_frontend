@@ -80,15 +80,14 @@ public class BoardController extends Controller{
 
     private final HashSet<Edge> highlightedEdges;
     private final HashSet<Corner> highlightedCorners;
-
     private final HashSet<Corner> highlightedBuildings;
 
     private Game game;
     private Timer timer;
-    BoardView boardView;
+    private BoardView boardView;
 
     //stores player and its index in playerInfoVBox
-    HashMap<Player, Integer> playerInfoMap;
+    private final HashMap<Player, Integer> playerInfoMap;
 
     public BoardController(){
         this.highlightedBuildings = new HashSet<>();
@@ -149,7 +148,7 @@ public class BoardController extends Controller{
             hexagonPane.addEventHandler(BuildingPlacedEvent.ROAD_PLACED, this::handleBuildingPlacedEvent);
             hexagonPane.addEventHandler(BuildingPlacedEvent.SETTLEMENT_PLACED, this::handleBuildingPlacedEvent);
             hexagonPane.addEventHandler(BuildingPlacedEvent.CITY_PLACED, this::handleBuildingPlacedEvent);
-
+            hexagonPane.addEventHandler(LongestRoadEvent.LONGEST_ROAD, this::handleLongestRoadEvent);
 
             for(int i = 0; i < 19; i++){
                 writeToGameUpdates("");
@@ -160,28 +159,6 @@ public class BoardController extends Controller{
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void handleBuildingPlacedEvent(BuildingPlacedEvent buildingPlacedEvent) {
-        if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.SETTLEMENT_PLACED){
-            game.placeSettlement((Corner) buildingPlacedEvent.getPlacement());
-            statusLabel.setText("Settlement built");
-            writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a settlement");
-            boardView.getCornerView((Corner) buildingPlacedEvent.getPlacement()).occupyCorner(buildingPlacedEvent.getPlayer().getColor(), BuildingType.SETTLEMENT);
-        }
-        else if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CITY_PLACED){
-            game.placeCity((Corner) buildingPlacedEvent.getPlacement());
-            statusLabel.setText("City built");
-            writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a city");
-            boardView.getCornerView((Corner) buildingPlacedEvent.getPlacement()).occupyCorner(buildingPlacedEvent.getPlayer().getColor(), BuildingType.CITY);
-        }
-        else{
-            game.placeRoad((Edge) buildingPlacedEvent.getPlacement());
-            statusLabel.setText("Road built");
-            writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a road");
-            boardView.getEdgeView((Edge) buildingPlacedEvent.getPlacement()).occupyEdge(PLAYER_COLORS.get(buildingPlacedEvent.getPlayer().getColor()));
-        }
-        updatePlayerInfo(buildingPlacedEvent.getPlayer());
     }
 
 
@@ -252,7 +229,6 @@ public class BoardController extends Controller{
 
             //unhighlight all edges
             removeHighlight();
-
             //place the road
             hexagonPane.fireEvent(new BuildingPlacedEvent(event.getEdge(), BuildingType.ROAD, game.getCurrentPlayer()));
 
@@ -325,6 +301,41 @@ public class BoardController extends Controller{
         game.autoPlayCpuPlayer();
     }
 
+    private void handleBuildingPlacedEvent(BuildingPlacedEvent buildingPlacedEvent) {
+        if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.SETTLEMENT_PLACED){
+            game.placeSettlement((Corner) buildingPlacedEvent.getPlacement());
+            statusLabel.setText("Settlement built");
+            writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a settlement");
+            boardView.getCornerView((Corner) buildingPlacedEvent.getPlacement()).occupyCorner(buildingPlacedEvent.getPlayer().getColor(), BuildingType.SETTLEMENT);
+        }
+        else if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CITY_PLACED){
+            game.placeCity((Corner) buildingPlacedEvent.getPlacement());
+            statusLabel.setText("City built");
+            writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a city");
+            boardView.getCornerView((Corner) buildingPlacedEvent.getPlacement()).occupyCorner(buildingPlacedEvent.getPlayer().getColor(), BuildingType.CITY);
+        }
+        else{
+            game.placeRoad((Edge) buildingPlacedEvent.getPlacement());
+            statusLabel.setText("Road built");
+            writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a road");
+            boardView.getEdgeView((Edge) buildingPlacedEvent.getPlacement()).occupyEdge(PLAYER_COLORS.get(buildingPlacedEvent.getPlayer().getColor()));
+            game.fireLongestRoadEventInNeed(game.getCurrentPlayer().getLongestRoad());
+            game.updateAllVictoryPoints();
+        }
+        updatePlayerInfo(buildingPlacedEvent.getPlayer());
+    }
+
+    private void handleLongestRoadEvent(LongestRoadEvent event) {
+        for (Player player : game.getPlayers()) {
+            getPlayerInfoController(player).unhighlightLongestRoadLabel();
+        }
+        //for each player, highlight the longestRoadImage if it is in the playersWithLongestRoad list
+        event.getPlayersWithLongestRoad().forEach(player -> {
+            getPlayerInfoController(player).highlightLongestRoadLabel();
+            writeToGameUpdates(player.getName() + " has the longest road");
+        });
+    }
+
     public void onDiceImageClick(){
         DiceRolledEvent diceRolledEvent;
         if(game.getCurrentDiceRoll()!=null){
@@ -338,13 +349,6 @@ public class BoardController extends Controller{
     public void onEndTourButtonClick(ActionEvent event){
         hexagonPane.fireEvent(new TurnEndedEvent(TurnEndedEvent.TURN_ENDED));
     }
-    private void writeToGameUpdates(String message) {
-        gameUpdatesTextFlow.getChildren().add(new Text(message + "\n"));
-        gameUpdatesScrollPane.applyCss();
-        gameUpdatesScrollPane.layout();
-        gameUpdatesScrollPane.setVvalue(1.0);
-    }
-
     public void onTradeButtonClick(){
 
     }
@@ -422,6 +426,12 @@ public class BoardController extends Controller{
         });
 
     }
+    private void writeToGameUpdates(String message) {
+        gameUpdatesTextFlow.getChildren().add(new Text(message + "\n"));
+        gameUpdatesScrollPane.applyCss();
+        gameUpdatesScrollPane.layout();
+        gameUpdatesScrollPane.setVvalue(1.0);
+    }
     public void removeHighlight(){
         highlightedEdges.forEach(edge -> {
             try {
@@ -450,7 +460,6 @@ public class BoardController extends Controller{
     }
 
     //TODO: move these to another class
-
     public void loadPlayerInfos() {
         for (Player player : game.getPlayers()) {
             FXMLLoader loader = getSceneLoader("player-info-view.fxml");
@@ -484,7 +493,6 @@ public class BoardController extends Controller{
         getPlayerInfoController(player).unhighlight();
     }
     public PlayerInfoController getPlayerInfoController(Player player){
-        String color = player.getColor();
         return (PlayerInfoController) playerInfoVBox.getChildren().get(playerInfoMap.get(player)).getProperties().get("controller");
     }
 }

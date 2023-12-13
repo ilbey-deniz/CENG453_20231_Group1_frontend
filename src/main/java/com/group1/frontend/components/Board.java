@@ -210,17 +210,14 @@ public class Board {
             Tile tileToAdd = tiles.get(Arrays.asList(topXCoordinate, topYCoordinate));
             if(tileToAdd != null){
                 adjacentTiles.add(tileToAdd);
-//                System.out.println(tileToAdd.getResourceType());
             }
             Tile tileToAdd2 = tiles.get(Arrays.asList(topXCoordinate-0.5, topYCoordinate-1));
             if (tileToAdd2 != null) {
                 adjacentTiles.add(tileToAdd2);
-//                System.out.println(tileToAdd2.getResourceType());
             }
             Tile tileToAdd3 = tiles.get(Arrays.asList(topXCoordinate+0.5, topYCoordinate-1));
             if (tileToAdd3 != null) {
                 adjacentTiles.add(tileToAdd3);
-//                System.out.println(tileToAdd3.getResourceType());
             }
             return adjacentTiles;
         } else if (mod == 2) {

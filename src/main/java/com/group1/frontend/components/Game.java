@@ -2,8 +2,6 @@ package com.group1.frontend.components;
 
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.events.*;
-import com.group1.frontend.exceptions.DiceAlreadyRolledException;
-import com.group1.frontend.utils.BoardUtilityFunctions;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Pair;
 
@@ -22,12 +20,18 @@ public class Game extends AnchorPane {
 
     private Pair<Integer, Integer> currentDiceRoll;
 
+    private final HashMap<Player, Integer> playersWithLongestRoad;
+
+    private Player winningPlayer;
+
+
     public Game(List<Player> players, Board board) {
         this.players = players;
         this.board = board;
         this.currentPlayer = players.get(0);
         this.turnNumber = 0;
         this.occupiedBuildings = new HashSet<>();
+        this.playersWithLongestRoad = new HashMap<>();
     }
     public Game() {
         this.players = new ArrayList<>();
@@ -35,6 +39,7 @@ public class Game extends AnchorPane {
         this.currentPlayer = null;
         this.turnNumber = 0;
         this.occupiedBuildings = new HashSet<>();
+        this.playersWithLongestRoad = new HashMap<>();
     }
 
     public void setPlayers(List<Player> players) {
@@ -71,37 +76,6 @@ public class Game extends AnchorPane {
 
     public Player getCurrentPlayer() {
         return currentPlayer;
-    }
-
-    public void incrementTurnNumber() {
-        turnNumber++;
-    }
-
-    public int getTurnNumber() {
-        return turnNumber;
-    }
-
-
-    public boolean isEdgeAvailableToBuild(Edge e){
-        // check whether edge is adjacent to another edge or corner building owned by player
-        // first look at adjacent corners. whether they are occupied by opponent player we can not build.
-        // if not occupied by opponent player then we can build road
-        // second look at edges adjacent to the corners. If they are occupied by our player then we can build road
-        return false;
-    }
-
-
-
-    // Wrong function. It does not check if the corner is adjacent to any of the player's buildings.
-    private boolean isCornerAvailableToBuild(Corner c) {
-        // check 3 of adjacent edge is occupied by player. If yes, return true.
-        List<Edge> adjacentEdges = board.getAdjacentEdgesOfCorner(c);
-        for(Edge edge : adjacentEdges) {
-            if (edge.getOwner() == currentPlayer) {
-                return true;
-            }
-        }
-        return false;
     }
 
     //1. get player's road list
@@ -145,6 +119,15 @@ public class Game extends AnchorPane {
             }
         }
         return new ArrayList<>(availableCorners);
+    }
+
+    public Building getBuildingFromCorner(Corner corner) {
+        for(Building building : occupiedBuildings) {
+            if (building.getCorner().equals(corner)) {
+                return building;
+            }
+        }
+        return null;
     }
 
     public void createInitialBuildings() {
@@ -198,7 +181,7 @@ public class Game extends AnchorPane {
         Building building = new Building(BuildingType.SETTLEMENT, currentPlayer, board.getAdjacentTilesOfCorner(corner), corner);
         currentPlayer.buildings.add(building);
         occupiedBuildings.add(building);
-        currentPlayer.addVictoryPoints(1);
+        currentPlayer.addVictoryPoint(1);
     }
 
     public void placeSettlementForFree(Corner corner, Player player) {
@@ -206,7 +189,7 @@ public class Game extends AnchorPane {
         corner.setOwner(player);
         List<Tile> adjacentTiles = board.getAdjacentTilesOfCorner(corner);
         Building building = new Building(BuildingType.SETTLEMENT, player, adjacentTiles, corner);
-        player.buildings.add(building);
+        player.getBuildings().add(building);
         occupiedBuildings.add(building);
         for(Tile tile : adjacentTiles) {
             if (tile.getDiceNumber() != 7){
@@ -216,19 +199,9 @@ public class Game extends AnchorPane {
     }
 
     public void placeCity(Corner corner) {
-
         getBuildingFromCorner(corner).setBuildingType(BuildingType.CITY);
         REQUIRED_RESOURCES.get(BuildingType.CITY).forEach(currentPlayer::removeResource);
-        currentPlayer.addVictoryPoints(2);
-    }
-
-    public Building getBuildingFromCorner(Corner corner) {
-        for(Building building : occupiedBuildings) {
-            if (building.getCorner().equals(corner)) {
-                return building;
-            }
-        }
-        return null;
+        currentPlayer.addVictoryPoint(1);
     }
 
     public void placeRoad(Edge edge) {
@@ -236,14 +209,13 @@ public class Game extends AnchorPane {
         edge.setOwner(currentPlayer);
         REQUIRED_RESOURCES.get(BuildingType.ROAD).forEach(currentPlayer::removeResource);
         currentPlayer.roads.add(new Road(currentPlayer, edge));
-        System.out.println("longest road is: " + calculateLongestRoad(currentPlayer));
+        currentPlayer.setLongestRoad(calculateLongestRoad(currentPlayer));
     }
 
     public void placeRoadForFree(Edge randomEdge, Player player) {
         randomEdge.setOccupied(true);
         randomEdge.setOwner(player);
         player.roads.add(new Road(player, randomEdge));
-        System.out.println("longest road is: " + calculateLongestRoad(player));
     }
 
     public void distributeResources(int diceRoll) {
@@ -334,14 +306,31 @@ public class Game extends AnchorPane {
                 endRoads.add(road);
             }
         }
-        for (Road e : endRoads) {
-            board.getAdjacentTilesOfCorner(new Corner(e.edge.getFirstXCoordinate(), e.edge.getFirstYCoordinate())).
-                    forEach(tile -> System.out.print(tile.getTileType() + " "));
-            System.out.println();
-        }
+//        for (Road e : endRoads) {
+//            board.getAdjacentTilesOfCorner(new Corner(e.edge.getFirstXCoordinate(), e.edge.getFirstYCoordinate())).
+//                    forEach(tile -> System.out.print(tile.getTileType() + " "));
+//            System.out.println();
+//        }
         return endRoads;
     }
 
+    public void updateAllVictoryPoints() {
+        for(Player player : players) {
+            int victoryPoint = 0;
+            for(Building building : player.buildings) {
+                if (building.getBuildingType() == BuildingType.SETTLEMENT) {
+                    victoryPoint++;
+                }
+                else if (building.getBuildingType() == BuildingType.CITY) {
+                    victoryPoint += 2;
+                }
+            }
+            if(playersWithLongestRoad.containsKey(player)){
+                victoryPoint += 2;
+            }
+            player.setVictoryPoint(victoryPoint);
+        }
+    }
     public void autoPlayCpuPlayer() {
         if(currentPlayer.isCpu()){
             DiceRolledEvent diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED);
@@ -374,6 +363,7 @@ public class Game extends AnchorPane {
                     if(!availableEdges.isEmpty()){
                         Edge randomEdge = availableEdges.get((int) (Math.random() * availableEdges.size()));
                         getParent().fireEvent(new BuildingPlacedEvent(randomEdge, BuildingType.ROAD, currentPlayer));
+                        fireLongestRoadEventInNeed(currentPlayer.getLongestRoad());
                     }
                 }
             }
@@ -381,6 +371,28 @@ public class Game extends AnchorPane {
         }
     }
 
+    public void fireLongestRoadEventInNeed(Integer longestRoad){
+        //fires LongestRoadEvent if the longest road is changed
+        if(longestRoad>=5){
+            if (playersWithLongestRoad.containsKey(currentPlayer) &&
+                    playersWithLongestRoad.get(currentPlayer) < longestRoad ||
+                    !playersWithLongestRoad.containsKey(currentPlayer) &&
+                            !playersWithLongestRoad.isEmpty() && playersWithLongestRoad.values().stream().findFirst().get() < longestRoad){
+
+                playersWithLongestRoad.clear();
+                playersWithLongestRoad.put(currentPlayer, longestRoad);
+                getParent().fireEvent(new LongestRoadEvent(new ArrayList<>(playersWithLongestRoad.keySet())));
+            } else if (!playersWithLongestRoad.containsKey(currentPlayer) &&
+                    playersWithLongestRoad.isEmpty() ||
+                    !playersWithLongestRoad.containsKey(currentPlayer) &&
+                            playersWithLongestRoad.values().stream().findFirst().get().equals(longestRoad)) {
+
+                playersWithLongestRoad.put(currentPlayer, longestRoad);
+                getParent().fireEvent(new LongestRoadEvent(new ArrayList<>(playersWithLongestRoad.keySet())));
+            }
+
+        }
+    }
     public Pair<Integer, Integer> getCurrentDiceRoll() {
         return currentDiceRoll;
     }
