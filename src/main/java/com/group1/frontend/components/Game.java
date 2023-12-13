@@ -22,8 +22,6 @@ public class Game extends AnchorPane {
 
     private final HashMap<Player, Integer> playersWithLongestRoad;
 
-    private Player winningPlayer;
-
 
     public Game(List<Player> players, Board board) {
         this.players = players;
