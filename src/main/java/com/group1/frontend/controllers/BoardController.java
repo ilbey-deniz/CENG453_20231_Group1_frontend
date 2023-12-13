@@ -149,6 +149,7 @@ public class BoardController extends Controller{
             hexagonPane.addEventHandler(BuildingPlacedEvent.SETTLEMENT_PLACED, this::handleBuildingPlacedEvent);
             hexagonPane.addEventHandler(BuildingPlacedEvent.CITY_PLACED, this::handleBuildingPlacedEvent);
             hexagonPane.addEventHandler(LongestRoadEvent.LONGEST_ROAD, this::handleLongestRoadEvent);
+            hexagonPane.addEventHandler(GameWonEvent.GAME_WON, this::handleGameWonEvent);
 
             for(int i = 0; i < 19; i++){
                 writeToGameUpdates("");
@@ -288,10 +289,16 @@ public class BoardController extends Controller{
     }
 
     public void handleTurnEndedEvent(TurnEndedEvent event) {
+
         removeHighlight(); //unhighlight all highlighted edges, corners
         unhighlightPlayerInfo(game.getCurrentPlayer()); //unhighlight current player info
 
         game.endTurn();
+
+        if(game.checkWinner()!=null){
+            hexagonPane.fireEvent(new GameWonEvent(game.checkWinner()));
+            return;
+        }
 
         highlightPlayerInfo(game.getCurrentPlayer());
 
@@ -334,6 +341,17 @@ public class BoardController extends Controller{
             getPlayerInfoController(player).highlightLongestRoadLabel();
             writeToGameUpdates(player.getName() + " has the longest road");
         });
+    }
+
+    private void handleGameWonEvent(GameWonEvent event) {
+        writeToGameUpdates(event.getWinner().getName() + " won the game!");
+        statusLabel.setText(event.getWinner().getName() + " won the game!");
+        timer.stop();
+        endTourButton.setDisable(true);
+        tradeToggleButton.setDisable(true);
+        settlementToggleButton.setDisable(true);
+        cityToggleButton.setDisable(true);
+        roadToggleButton.setDisable(true);
     }
 
     public void onDiceImageClick(){

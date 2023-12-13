@@ -394,4 +394,12 @@ public class Game extends AnchorPane {
     public Pair<Integer, Integer> getCurrentDiceRoll() {
         return currentDiceRoll;
     }
+    public Player checkWinner() {
+        for(Player player : players) {
+            if (player.getVictoryPoint() >= 8) {
+                return player;
+            }
+        }
+        return null;
+    }
 }
