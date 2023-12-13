@@ -32,10 +32,10 @@
                   <Label layoutX="33.0" layoutY="85.0" text="Email:" />
                   <Label layoutX="33.0" layoutY="118.0" text="Password: " />
                   <Label layoutX="33.0" layoutY="152.0" text="Confirm Password:" />
-                  <TextField fx:id="usernameField" layoutX="136.0" layoutY="46.0" />
-                  <TextField fx:id="emailField" layoutX="136.0" layoutY="81.0" />
-                  <PasswordField fx:id="passwordField" layoutX="136.0" layoutY="113.0" />
-                  <PasswordField fx:id="confirmPasswordField" layoutX="136.0" layoutY="147.0" />
+                  <TextField fx:id="usernameField" layoutX="136.0" layoutY="46.0" onKeyPressed="#onEnter" />
+                  <TextField fx:id="emailField" layoutX="136.0" layoutY="81.0" onKeyPressed="#onEnter" />
+                  <PasswordField fx:id="passwordField" layoutX="136.0" layoutY="113.0" onKeyPressed="#onEnter" />
+                  <PasswordField fx:id="confirmPasswordField" layoutX="136.0" layoutY="147.0" onKeyPressed="#onEnter" />
                   <Button fx:id="registerButton" layoutX="253.0" layoutY="214.0" mnemonicParsing="false" onAction="#onRegisterButtonClick" style="-fx-background-color: #4fa6eb;" text="Register" />
                   <Button fx:id="loginButton" layoutX="33.0" layoutY="214.0" mnemonicParsing="false" onAction="#onLoginButtonClick" text="Login" />
                   <Label layoutX="32.0" text="Register">
