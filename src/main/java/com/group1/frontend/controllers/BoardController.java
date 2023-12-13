@@ -25,6 +25,7 @@ import javafx.util.Pair;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -109,7 +110,7 @@ public class BoardController extends Controller{
             game.setBoard(board);
             boardView = new BoardView(board);
             //populate with mock players
-            Player p1 = new Player("red", "iplikçi nedim", false);
+            Player p1 = new Player("red", service.getUsername(), false);
             Player p2 = new Player("yellow", "laz ziya", true);
             Player p3 = new Player("green", "tombalacı mehmet", true);
             Player p4 = new Player("blue", "karahanlı", true);
@@ -355,8 +356,7 @@ public class BoardController extends Controller{
         roadToggleButton.setDisable(true);
         firstDiceButton.setDisable(true);
         secondDiceButton.setDisable(true);
-        //save score
-        //service.makeRequest("/game/" + game.getId() + "/end", "POST", "");
+        savePlayerScores();
     }
 
     public void onDiceButtonClick(){
@@ -517,5 +517,17 @@ public class BoardController extends Controller{
     }
     public PlayerInfoController getPlayerInfoController(Player player){
         return (PlayerInfoController) playerInfoVBox.getChildren().get(playerInfoMap.get(player)).getProperties().get("controller");
+    }
+
+    public void savePlayerScores() {
+        for (Player player : game.getPlayers()) {
+            if (player.isCpu()) {
+                continue;
+            }
+            service.makeRequestWithToken("/saveScore",
+                    "POST",
+                    "{\"name\":\"" + player.getName() + "\",\"score\":" + player.getVictoryPoint() + "}");
+
+        }
     }
 }
