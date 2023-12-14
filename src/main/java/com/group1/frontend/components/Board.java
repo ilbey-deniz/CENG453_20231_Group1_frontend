@@ -114,6 +114,10 @@ public class Board {
         return new ArrayList<>(corners.values());
     }
 
+    public HashMap<List<Double> ,Corner> getCornersAsMap() {
+        return corners;
+    }
+
     public List<Edge> getEdges() {
         return this.edges;
     }
