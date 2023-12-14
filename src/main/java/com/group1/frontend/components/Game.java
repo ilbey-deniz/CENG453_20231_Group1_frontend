@@ -2,8 +2,6 @@ package com.group1.frontend.components;
 
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.events.*;
-import com.group1.frontend.exceptions.DiceAlreadyRolledException;
-import com.group1.frontend.utils.BoardUtilityFunctions;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Pair;
 
@@ -253,7 +251,7 @@ public class Game extends AnchorPane {
                 visited.put(r, false);
             }
             System.out.println("Calculate based on endEdge -> " + corner.getXCoordinate() + " " + corner.getYCoordinate());
-            int length = calculateTotalRoadLength(corner, visited, allRoadCorners);
+            int length = calculateTotalRoadLength(player, corner, visited, allRoadCorners);
             System.out.println("length: " + length);
             maxRoadLength = Math.max(maxRoadLength, length);
 
@@ -262,12 +260,12 @@ public class Game extends AnchorPane {
     }
 
     // take the starting point as parameter
-    public int calculateTotalRoadLength(Corner corner, HashMap<Corner, Boolean> visited, HashSet<Corner> allRoadCorners) {
+    public int calculateTotalRoadLength(Player player, Corner corner, HashMap<Corner, Boolean> visited, HashSet<Corner> allRoadCorners) {
         visited.put(corner, true);
         System.out.println("corner: " + corner.getXCoordinate() + " " + corner.getYCoordinate() + " visited");
         List<Corner> adjacentCorners = board.getAdjacentCornersOfCorner(corner);
         int maxRoadLength = 0;
-        for(Corner c : allRoadCorners) {
+            for(Corner c : allRoadCorners) {
             if (!visited.get(c)){
                 // if the road is next to the starting road
 //                if(((road.edge.getFirstXCoordinate() == r.edge.getFirstXCoordinate()) && (road.edge.getFirstYCoordinate() == r.edge.getFirstYCoordinate()))
@@ -276,7 +274,10 @@ public class Game extends AnchorPane {
 //                        || (road.edge.getSecondXCoordinate() == r.edge.getFirstXCoordinate() && road.edge.getSecondYCoordinate() == r.edge.getFirstYCoordinate()))
                 for(Corner adjCorner : adjacentCorners){
                     if(((c.getXCoordinate() == adjCorner.getXCoordinate()) && (c.getYCoordinate() == adjCorner.getYCoordinate()))){
-                        maxRoadLength = Math.max(maxRoadLength, 1 + calculateTotalRoadLength(adjCorner, visited, allRoadCorners));
+                        Edge e = board.getEdgeBetweenCorners(corner, adjCorner);
+                        if(e.isOccupied() && e.getOwner() == player) {
+                            maxRoadLength = Math.max(maxRoadLength, 1 + calculateTotalRoadLength(player, adjCorner, visited, allRoadCorners));
+                        }
                     }
                 }
             }

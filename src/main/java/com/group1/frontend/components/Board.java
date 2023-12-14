@@ -2,6 +2,7 @@ package com.group1.frontend.components;
 
 import com.group1.frontend.enums.TileType;
 
+import java.security.PublicKey;
 import java.util.*;
 
 import static com.group1.frontend.constants.BoardConstants.*;
@@ -10,7 +11,7 @@ import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomKey;
 public class Board {
     private final HashMap<List<Double> ,Tile> tiles;
     private final HashMap<List<Double> ,Corner> corners;
-    private final List<Edge> edges;
+    private final HashMap<List<Double>, Edge> edges;
 
     private final Set<List<Double>> points;
     private final List<List<List<Double>>> groupedCorners;
@@ -19,7 +20,7 @@ public class Board {
     public Board() {
         tiles = new HashMap<>();
         corners = new HashMap<>();
-        edges = new ArrayList<>();
+        edges = new HashMap<>();
         points = new HashSet<>();
         groupedCorners = new ArrayList<>();
     }
@@ -79,7 +80,7 @@ public class Board {
         }
         for (List<Double> edgesCoordinates : nonDuplicateEdges){
             Edge edge = new Edge(edgesCoordinates.get(0), edgesCoordinates.get(1), edgesCoordinates.get(2), edgesCoordinates.get(3));
-            edges.add(edge);
+            edges.put(Arrays.asList(edgesCoordinates.get(0), edgesCoordinates.get(1), edgesCoordinates.get(2), edgesCoordinates.get(3)), edge);
         }
     }
 
@@ -119,7 +120,11 @@ public class Board {
     }
 
     public List<Edge> getEdges() {
-        return this.edges;
+        return new ArrayList<>(edges.values());
+    }
+
+    public HashMap<List<Double>, Edge> getEdgesAsMap() {
+            return edges;
     }
 
     public List<Corner> getAdjacentCornersOfEdge(Edge e) {
@@ -185,6 +190,16 @@ public class Board {
             return adjacentEdges;
     }
 
+    // the first y coordinate is smaller than second for all corners of edge
+    // TODO: by using this convert the edges to hashmap create a getter for hashmap that run in o(1)
+    public Edge getEdgeBetweenCorners(Corner c1, Corner c2){
+        if(c1.getYCoordinate() > c2.getYCoordinate()){
+            return getEdgesAsMap().get(Arrays.asList(c2.getXCoordinate(), c2.getYCoordinate(), c1.getXCoordinate(), c1.getYCoordinate()));
+        }
+        else{
+            return getEdgesAsMap().get(Arrays.asList(c1.getXCoordinate(), c1.getYCoordinate(), c2.getXCoordinate(), c2.getYCoordinate()));
+        }
+    }
 
     public List<Edge> getAdjacentEdgesOfEdge(Edge e){
         List<Edge> adjacentEdges = new ArrayList<>();
