@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import java.net.http.HttpResponse;
 
@@ -50,6 +52,12 @@ public class RegisterController extends Controller{
             }
         }
 
+    }
+    @FXML
+    protected void onEnter(KeyEvent event) {
+        if(event.getCode() == KeyCode.ENTER) {
+            onRegisterButtonClick();
+        }
     }
 
     @FXML

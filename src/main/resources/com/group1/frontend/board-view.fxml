@@ -32,18 +32,26 @@
             <Button fx:id="leaveButton" layoutX="5.0" layoutY="2.0" mnemonicParsing="false" onAction="#onLeaveButtonClick" text="Leave" />
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="1109.0" layoutY="552.0" prefHeight="68.0" prefWidth="147.0" AnchorPane.bottomAnchor="92.0" AnchorPane.rightAnchor="14.0">
+      <AnchorPane layoutX="1103.0" layoutY="546.0" prefHeight="84.0" prefWidth="169.0" AnchorPane.bottomAnchor="90.0" AnchorPane.rightAnchor="8.0">
          <children>
-            <ImageView fx:id="firstDiceImage" fitHeight="86.0" fitWidth="76.0" onMouseClicked="#onDiceImageClick" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../assets/dice_3.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="secondDiceImage" fitHeight="76.0" fitWidth="76.0" layoutX="81.0" onMouseClicked="#onDiceImageClick" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0">
-               <image>
-                  <Image url="@../../../assets/dice_5.png" />
-               </image>
-            </ImageView>
+            <Button fx:id="firstDiceButton" mnemonicParsing="false" onAction="#onDiceButtonClick" style="-fx-background-color: transparent;">
+               <graphic>
+                  <ImageView fx:id="firstDiceImage" fitHeight="86.0" fitWidth="76.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../assets/dice_3.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="secondDiceButton" layoutX="77.0" mnemonicParsing="false" onAction="#onDiceButtonClick" prefHeight="84.0" prefWidth="92.0" style="-fx-background-color: transparent;">
+               <graphic>
+                  <ImageView fx:id="secondDiceImage" fitHeight="76.0" fitWidth="76.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../assets/dice_5.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
          </children>
       </AnchorPane>
       <Label fx:id="statusLabel" alignment="CENTER" layoutX="240.0" layoutY="24.0" textAlignment="CENTER" textFill="#b50000" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="240.0" AnchorPane.topAnchor="24.0">

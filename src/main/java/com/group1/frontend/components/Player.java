@@ -13,7 +13,7 @@ public class Player {
     String color;
     String name;
     Boolean cpu;
-    Integer victoryPoints;
+    Integer victoryPoint;
     Integer longestRoad;
 
     public Player(String color, String name, Boolean cpu) {
@@ -23,8 +23,8 @@ public class Player {
         this.buildings = new ArrayList<>();
         this.roads = new HashSet<>();
         this.resources = new HashMap<>();
-        this.victoryPoints = 1;
-        this.longestRoad = 0;
+        this.victoryPoint = 1;
+        this.longestRoad = 1;
         for (ResourceType resourceType : ResourceType.values()) {
             resources.put(resourceType, 0);
         }
@@ -77,11 +77,11 @@ public class Player {
         return cpu;
     }
 
-    public void setVictoryPoints(Integer victoryPoints) {
-        this.victoryPoints = victoryPoints;
+    public void setVictoryPoint(Integer victoryPoint) {
+        this.victoryPoint = victoryPoint;
     }
-    public Integer getVictoryPoints() {
-        return victoryPoints;
+    public Integer getVictoryPoint() {
+        return victoryPoint;
     }
     public void setLongestRoad(Integer longestRoad) {
         this.longestRoad = longestRoad;
@@ -108,9 +108,10 @@ public class Player {
         return true;
     }
 
-    public void addVictoryPoints(int i) {
-        victoryPoints += i;
+    public void addVictoryPoint(int i) {
+        victoryPoint += i;
     }
+
 
 
 
