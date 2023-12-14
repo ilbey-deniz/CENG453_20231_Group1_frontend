@@ -208,6 +208,7 @@ public class Game extends AnchorPane {
         edge.setOwner(currentPlayer);
         REQUIRED_RESOURCES.get(BuildingType.ROAD).forEach(currentPlayer::removeResource);
         currentPlayer.roads.add(new Road(currentPlayer, edge));
+        currentPlayer.setLongestRoad(calculateLongestRoad(currentPlayer));
         System.out.println("------------------");
         System.out.println("player road count is " + currentPlayer.roads.size());
         System.out.println("longest road is: " + calculateLongestRoad(currentPlayer));
