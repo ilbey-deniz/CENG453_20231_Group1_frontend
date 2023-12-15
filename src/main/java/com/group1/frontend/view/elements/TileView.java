@@ -4,12 +4,12 @@ import com.group1.frontend.components.Tile;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 
 
-import java.io.FileInputStream;
+
 import java.io.FileNotFoundException;
+import java.net.URL;
 
 import static com.group1.frontend.constants.BoardConstants.*;
 import static com.group1.frontend.constants.BoardConstants.xStartOffset;
@@ -38,8 +38,8 @@ public class TileView extends Polygon {
         // set up the visuals and a click listener for the tile
 
         if(tile.getTileType() != null){
-            Image image = new Image(new FileInputStream(tile.getTileType().getImagePath()));
-            setFill(new ImagePattern(image));
+            URL url = tile.getTileType().getImagePath();
+            setFill(new ImagePattern(new Image(url.toString())));
         }
         setStrokeWidth(2);
         setStroke(Color.BLACK);

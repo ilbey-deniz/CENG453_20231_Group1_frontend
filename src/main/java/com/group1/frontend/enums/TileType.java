@@ -1,5 +1,9 @@
 package com.group1.frontend.enums;
 
+import com.group1.frontend.MainApplication;
+
+import java.net.URL;
+
 public enum TileType {
     FOREST,
     HILLS,
@@ -8,14 +12,14 @@ public enum TileType {
     DESERT,
     MOUNTAIN;
 
-    public String getImagePath() {
+    public URL getImagePath() {
         return switch (this) {
-            case FOREST -> "src/main/resources/assets/forest.png";
-            case HILLS -> "src/main/resources/assets/hill.png";
-            case PASTURE -> "src/main/resources/assets/pasteur.png";
-            case FIELDS -> "src/main/resources/assets/field.png";
-            case DESERT -> "src/main/resources/assets/desert.png";
-            case MOUNTAIN -> "src/main/resources/assets/mountain.png";
+            case FOREST -> MainApplication.class.getResource("/assets/forest.png");
+            case HILLS -> MainApplication.class.getResource("/assets/hills.png");
+            case PASTURE -> MainApplication.class.getResource("/assets/pasture.png");
+            case FIELDS -> MainApplication.class.getResource("/assets/fields.png");
+            case DESERT -> MainApplication.class.getResource("/assets/desert.png");
+            case MOUNTAIN -> MainApplication.class.getResource("/assets/mountain.png");
         };
     }
 
