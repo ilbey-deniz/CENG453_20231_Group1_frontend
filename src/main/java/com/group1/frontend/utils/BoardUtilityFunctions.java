@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Random;
 import java.io.FileInputStream;
+import java.util.Set;
 
 import static com.group1.frontend.constants.BoardConstants.PLAYER_COLORS;
 
@@ -54,6 +55,12 @@ public class BoardUtilityFunctions {
         return MainApplication.class.getResource("/assets/city_" + color + ".png").toString();
     }
 
+    public static String getRandomDiceAsset(){
+        int diceRoll = (int) (Math.random() * 6) + 1;
+        String diceType = "dice_" + diceRoll;
+        diceType = "src/main/resources/assets/" + diceType + ".png";
+        return diceType;
+    }
     public static Image getDiceImage(int diceRoll) throws FileNotFoundException {
         String diceType = "dice_" + diceRoll;
         diceType = MainApplication.class.getResource("/assets/" + diceType + ".png").toString();
@@ -64,5 +71,20 @@ public class BoardUtilityFunctions {
         int minutes = seconds / 60;
         seconds = seconds % 60;
         return String.format("%d:%02d", minutes, seconds);
+    }
+
+    // get random value from hashset
+    // https://stackoverflow.com/questions/124671/picking-a-random-element-from-a-set
+    public static <E> E getRandomElementFromSet(Set<E> set) {
+        int size = set.size();
+        int item = new Random().nextInt(size);
+        int i = 0;
+        for(E obj : set)
+        {
+            if (i == item)
+                return obj;
+            i++;
+        }
+        return null;
     }
 }
