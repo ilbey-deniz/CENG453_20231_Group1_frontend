@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.group1.frontend.constants.BoardConstants.REQUIRED_RESOURCES;
+import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomElementFromSet;
 
 public class Game extends AnchorPane {
     private List<Player> players;
@@ -243,6 +244,10 @@ public class Game extends AnchorPane {
     }
 
     public int calculateLongestRoad(Player player) {
+//
+//        if(player.roads.size() < 5) {
+//            return 0;
+//        }
         int maxRoadLength = 0;
         List<Corner> getEndCorners = getEndCorners(player);
         HashSet<Corner> allRoadCorners = getAllCornerOfRoads(player);
@@ -268,11 +273,6 @@ public class Game extends AnchorPane {
         int maxRoadLength = 0;
             for(Corner c : allRoadCorners) {
             if (!visited.get(c)){
-                // if the road is next to the starting road
-//                if(((road.edge.getFirstXCoordinate() == r.edge.getFirstXCoordinate()) && (road.edge.getFirstYCoordinate() == r.edge.getFirstYCoordinate()))
-//                        || (road.edge.getSecondXCoordinate() == r.edge.getSecondXCoordinate() && road.edge.getSecondYCoordinate() == r.edge.getSecondYCoordinate())
-//                        || (road.edge.getFirstXCoordinate() == r.edge.getSecondXCoordinate() && road.edge.getFirstYCoordinate() == r.edge.getSecondYCoordinate())
-//                        || (road.edge.getSecondXCoordinate() == r.edge.getFirstXCoordinate() && road.edge.getSecondYCoordinate() == r.edge.getFirstYCoordinate()))
                 for(Corner adjCorner : adjacentCorners){
                     if(((c.getXCoordinate() == adjCorner.getXCoordinate()) && (c.getYCoordinate() == adjCorner.getYCoordinate()))){
                         Edge e = board.getEdgeBetweenCorners(corner, adjCorner);
@@ -321,11 +321,13 @@ public class Game extends AnchorPane {
                 endCorners.add(corner);
             }
         }
-//        for (Road e : endRoads) {
-//            board.getAdjacentTilesOfCorner(new Corner(e.edge.getFirstXCoordinate(), e.edge.getFirstYCoordinate())).
-//                    forEach(tile -> System.out.print(tile.getTileType() + " "));
-//            System.out.println();
-//        }
+        if (endCorners.isEmpty()) {
+            // add random corner from the users road list
+            Road road = getRandomElementFromSet(player.roads);
+            assert road != null;
+            endCorners.add(board.getCornersAsMap().get(
+                    Arrays.asList(road.edge.getFirstXCoordinate(), road.edge.getFirstYCoordinate())));
+        }
         System.out.println("end corner size: " + endCorners.size());
         return endCorners;
     }

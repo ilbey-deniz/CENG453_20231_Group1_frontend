@@ -112,27 +112,4 @@ public class Player {
         victoryPoint += i;
     }
 
-
-
-
-    //checks before buying a building:
-    // 1. if player has enough resources
-    // 2. if player has road connected to the corner
-    // 3. if corner is not occupied
-    // 4. if the turn is valid
-    // TODO: move this to game class
-//    public boolean buySettlement(Building building, BuildingType buildingType) {
-//
-////        TODO: add logic to check if player has enough resources to buy settlement. if not, return false.
-//        this.buildings.add(building);
-//
-//        return false;
-//    }
-//
-//    public boolean buyCity(Building building, BuildingType buildingType) {
-////        TODO: add logic to check if player has enough resources to buy settlement.
-////        make city from settlement
-//        return false;
-//    }
-
 }
