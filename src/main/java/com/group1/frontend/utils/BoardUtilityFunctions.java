@@ -57,7 +57,7 @@ public class BoardUtilityFunctions {
     public static Image getDiceImage(int diceRoll) throws FileNotFoundException {
         String diceType = "dice_" + diceRoll;
         diceType = MainApplication.class.getResource("/assets/" + diceType + ".png").toString();
-        return new Image(new FileInputStream(diceType));
+        return new Image(diceType);
     }
 
     public static String secondsToTime(int seconds){
