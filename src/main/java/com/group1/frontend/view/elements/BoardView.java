@@ -50,7 +50,7 @@ public class BoardView extends AnchorPane {
             if(tile.getDiceNumber() == 7){
                 continue;
             }
-            Image image = new Image(new FileInputStream(mapIntToNumberAsset(tile.getDiceNumber())));
+            Image image = new Image(mapIntToNumberAsset(tile.getDiceNumber()).toString());
             Circle c = new Circle(tileView.getBoardXCoordinate(), tileView.getBoardYCoordinate(), TILE_HEIGHT/6);
             c.setFill(new ImagePattern(image));
             getChildren().add(c);

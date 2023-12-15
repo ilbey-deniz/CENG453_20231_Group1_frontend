@@ -1,4 +1,5 @@
 package com.group1.frontend.controllers;
+import com.group1.frontend.MainApplication;
 import com.group1.frontend.components.Player;
 import com.group1.frontend.enums.ResourceType;
 import javafx.fxml.FXML;
@@ -48,8 +49,8 @@ public class PlayerInfoController extends Controller{
 
     public void initPlayerInfo(Player player) {
         try {
-            this.playerImageView.setImage(new Image(new FileInputStream("src/main/resources/assets/" + player.getColor() + ".png")));
-        } catch (FileNotFoundException e) {
+            this.playerImageView.setImage(new Image(MainApplication.class.getResource("/assets/" + player.getColor() + ".png").toString()));
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         this.setPlayerInfo(player);

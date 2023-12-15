@@ -49,7 +49,7 @@ public CornerView(Corner corner) {
         try{
             Image image = null;
             if(buildingType == BuildingType.SETTLEMENT){
-                image = new Image(new FileInputStream(getSettlementAsset(color)));
+                image = new Image(getSettlementAsset(color).toString());
             }
             else if(buildingType == BuildingType.CITY){
                 image = new Image(new FileInputStream(getCityAsset(color)));

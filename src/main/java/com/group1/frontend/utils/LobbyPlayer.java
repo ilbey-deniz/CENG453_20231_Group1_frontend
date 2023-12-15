@@ -1,5 +1,6 @@
 package com.group1.frontend.utils;
 
+import com.group1.frontend.MainApplication;
 import com.group1.frontend.constants.ApplicationConstants;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -30,7 +31,7 @@ public class LobbyPlayer {
     public void setColor(String color){
         color = color.toLowerCase();
         try {
-            this.color = new ImageView(new Image(new FileInputStream("src/main/resources/assets/" + color + ".png")));
+            this.color = new ImageView(new Image(MainApplication.class.getResource("/assets/" + color + ".png").toString()));
         }
         catch(Exception e) {
             System.out.println(e);

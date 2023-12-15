@@ -1,8 +1,10 @@
 package com.group1.frontend.utils;
 
+import com.group1.frontend.MainApplication;
 import javafx.scene.image.Image;
 
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.util.Map;
 import java.util.Random;
 import java.io.FileInputStream;
@@ -26,8 +28,8 @@ public class BoardUtilityFunctions {
         return (K) keysArray[randomIndex];
     }
 
-    public static String mapIntToNumberAsset(Integer number){
-        return "src/main/resources/assets/" + number.toString() + ".png";
+    public static URL mapIntToNumberAsset(Integer number){
+        return MainApplication.class.getResource("/assets/"+ number +".png");
     }
 
     public static String getRandomColor(){
@@ -43,25 +45,18 @@ public class BoardUtilityFunctions {
         else{
             buildingType = "city_";
         }
-
-        return "src/main/resources/assets/" + buildingType + getRandomKey(PLAYER_COLORS) + ".png";
+        return MainApplication.class.getResource("/assets/" + buildingType + getRandomKey(PLAYER_COLORS) + ".png").toString();
     }
-    public static String getSettlementAsset(String color){
-        return "src/main/resources/assets/house_" + color + ".png";
+    public static URL getSettlementAsset(String color){
+        return MainApplication.class.getResource("/assets/house_" + color + ".png");
     }
     public static String getCityAsset(String color){
-        return "src/main/resources/assets/city_" + color + ".png";
+        return MainApplication.class.getResource("/assets/city_" + color + ".png").toString();
     }
 
-    public static String getRandomDiceAsset(){
-        int diceRoll = (int) (Math.random() * 6) + 1;
-        String diceType = "dice_" + diceRoll;
-        diceType = "src/main/resources/assets/" + diceType + ".png";
-        return diceType;
-    }
     public static Image getDiceImage(int diceRoll) throws FileNotFoundException {
         String diceType = "dice_" + diceRoll;
-        diceType = "src/main/resources/assets/" + diceType + ".png";
+        diceType = MainApplication.class.getResource("/assets/" + diceType + ".png").toString();
         return new Image(new FileInputStream(diceType));
     }
 
