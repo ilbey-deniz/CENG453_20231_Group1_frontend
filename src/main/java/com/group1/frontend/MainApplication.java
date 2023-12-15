@@ -26,25 +26,6 @@ public class MainApplication extends Application {
     }
 
     public void start(Stage primaryStage) throws IOException {
-        //justGame(primaryStage);
-        wholeThing(primaryStage);
-
-//        primaryStage.widthProperty().addListener((obs, oldVal, newVal) -> {
-//            TILE_HEIGHT = TILE_HEIGHT * (double) newVal / (double) oldVal;
-//            System.out.println(TILE_HEIGHT);
-//
-//        });
-//        primaryStage.heightProperty().addListener((obs, oldVal, newVal) -> {
-//            tileMap.setPrefHeight((double) newVal);
-//        });
-    }
-    public void justGame(Stage primaryStage) throws FileNotFoundException {
-        AnchorPane tileMap = new BoardView(new Board());
-        Scene content = new Scene(tileMap, WINDOW_WIDTH, WINDOW_HEIGHT);
-        primaryStage.setScene(content);
-        primaryStage.show();
-    }
-    public void wholeThing(Stage primaryStage) throws IOException {
         Service service = new Service();
         //service.setBackendURL("https://backend-qdu1.onrender.com/api");
         service.setBackendURL("http://localhost:8080/api");
@@ -64,5 +45,4 @@ public class MainApplication extends Application {
         primaryStage.setScene(content);
         primaryStage.show();
     }
-
 }
