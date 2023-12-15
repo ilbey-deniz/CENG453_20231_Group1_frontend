@@ -52,13 +52,13 @@ public CornerView(Corner corner) {
                 image = new Image(getSettlementAsset(color).toString());
             }
             else if(buildingType == BuildingType.CITY){
-                image = new Image(new FileInputStream(getCityAsset(color)));
+                image = new Image(getCityAsset(color).toString());
             }
             assert image != null;
             setFill(new ImagePattern(image));
             corner.setIsOccupied(true);
         }
-        catch (FileNotFoundException e){
+        catch (Exception e){
             e.printStackTrace();
         }
     }
