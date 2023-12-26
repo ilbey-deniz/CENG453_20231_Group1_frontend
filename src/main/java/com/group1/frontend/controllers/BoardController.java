@@ -176,23 +176,6 @@ public class BoardController extends Controller{
             e.printStackTrace();
         }
     }
-
-    public void onSendButtonClick() {
-        String message = chatTextField.getText();
-        writeToGameUpdates(message);
-        chatTextField.clear();
-    }
-
-    public void onEnter(KeyEvent event) {
-        if(event.getCode() == KeyCode.ENTER){
-            onSendButtonClick();
-        }
-    }
-
-    public void onLeaveButtonClick() {
-        sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
-    }
-
     public void handleCornerClickEvent(CornerClickedEvent event) {
         //check settlementToggleButton is selected
         if(settlementToggleButton.isSelected()){
@@ -263,12 +246,6 @@ public class BoardController extends Controller{
     public void handleTimesUpEvent(TimeEvent event) {
         statusLabel.setText("Time's up!");
         writeToGameUpdates("Time's up!");
-
-        hexagonPane.getChildren().remove(timer);
-        timer = new Timer(TURN_TIME);
-        hexagonPane.getChildren().add(timer);
-        leftTimeLabel.setStyle("-fx-text-fill: black");
-        timer.start();
         hexagonPane.fireEvent(new TurnEndedEvent(TurnEndedEvent.TURN_ENDED));
     }
 
@@ -299,6 +276,13 @@ public class BoardController extends Controller{
     }
 
     public void handleTurnEndedEvent(TurnEndedEvent event) {
+
+        timer.stop();
+        hexagonPane.getChildren().remove(timer);
+        timer = new Timer(TURN_TIME);
+        hexagonPane.getChildren().add(timer);
+        leftTimeLabel.setStyle("-fx-text-fill: black");
+        timer.start();
 
         removeHighlight(); //unhighlight all highlighted edges, corners
         unhighlightPlayerInfo(game.getCurrentPlayer()); //unhighlight current player info
@@ -365,6 +349,22 @@ public class BoardController extends Controller{
         firstDiceButton.setDisable(true);
         secondDiceButton.setDisable(true);
         savePlayerScores();
+    }
+
+    public void onSendButtonClick() {
+        String message = chatTextField.getText();
+        writeToGameUpdates(message);
+        chatTextField.clear();
+    }
+
+    public void onEnter(KeyEvent event) {
+        if(event.getCode() == KeyCode.ENTER){
+            onSendButtonClick();
+        }
+    }
+
+    public void onLeaveButtonClick() {
+        sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
     }
 
     public void onDiceButtonClick(){
@@ -526,7 +526,6 @@ public class BoardController extends Controller{
     public PlayerInfoController getPlayerInfoController(Player player){
         return (PlayerInfoController) playerInfoVBox.getChildren().get(playerInfoMap.get(player)).getProperties().get("controller");
     }
-
     public void savePlayerScores() {
         for (Player player : game.getPlayers()) {
             if (player.isCpu()) {
@@ -537,5 +536,13 @@ public class BoardController extends Controller{
                     "{\"name\":\"" + player.getName() + "\",\"score\":" + player.getVictoryPoint() + "}");
 
         }
+    }
+
+    private void restartTimer() {
+        hexagonPane.getChildren().remove(timer);
+        timer = new Timer(TURN_TIME);
+        hexagonPane.getChildren().add(timer);
+        leftTimeLabel.setStyle("-fx-text-fill: black");
+        timer.start();
     }
 }
