@@ -7,7 +7,7 @@ public class Edge {
     private double secondXCoordinate;
     private double secondYCoordinate;
 
-    private boolean isOccupied;
+    private boolean occupied;
     private Player owner;
 
     public Edge(double firstXCoordinate, double firstYCoordinate, double secondXCoordinate, double secondYCoordinate) {
@@ -15,7 +15,7 @@ public class Edge {
         this.firstYCoordinate = firstYCoordinate;
         this.secondXCoordinate = secondXCoordinate;
         this.secondYCoordinate = secondYCoordinate;
-        this.isOccupied = false;
+        this.occupied = false;
         this.owner = null;
     }
 
@@ -25,7 +25,7 @@ public class Edge {
         this.firstYCoordinate = firstYCoordinate;
         this.secondXCoordinate = secondXCoordinate;
         this.secondYCoordinate = secondYCoordinate;
-        this.isOccupied = isOccupied;
+        this.occupied = isOccupied;
         this.owner = owner;
     }
 
@@ -61,14 +61,6 @@ public class Edge {
         return secondYCoordinate;
     }
 
-    public void setIsOccupied(boolean isOccupied) {
-        this.isOccupied = isOccupied;
-    }
-
-    public boolean getIsOccupied() {
-        return isOccupied;
-    }
-
     public void setOwner(Player owner) {
         this.owner = owner;
     }
@@ -78,11 +70,11 @@ public class Edge {
     }
 
     public void setOccupied(boolean occupied) {
-        isOccupied = occupied;
+        this.occupied = occupied;
     }
 
     public boolean isOccupied() {
-        return isOccupied;
+        return occupied;
     }
 
 

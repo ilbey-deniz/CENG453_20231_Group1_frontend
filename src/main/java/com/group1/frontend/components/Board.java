@@ -1,5 +1,7 @@
 package com.group1.frontend.components;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.group1.frontend.enums.TileType;
 
 import java.security.PublicKey;
@@ -115,6 +117,7 @@ public class Board {
         return new ArrayList<>(corners.values());
     }
 
+    @JsonBackReference
     public HashMap<List<Double> ,Corner> getCornersAsMap() {
         return corners;
     }
@@ -123,8 +126,17 @@ public class Board {
         return new ArrayList<>(edges.values());
     }
 
+    @JsonBackReference
     public HashMap<List<Double>, Edge> getEdgesAsMap() {
             return edges;
+    }
+
+    public Set<List<Double>> getPoints() {
+        return points;
+    }
+
+    public List<List<List<Double>>> getGroupedCorners() {
+        return groupedCorners;
     }
 
     public List<Corner> getAdjacentCornersOfEdge(Edge e) {

@@ -3,6 +3,7 @@ module com.group1.frontend {
     requires javafx.fxml;
     requires java.net.http;
     requires org.json;
+    requires com.fasterxml.jackson.databind;
 
 
     opens com.group1.frontend to javafx.fxml;

@@ -9,6 +9,9 @@ import com.group1.frontend.view.elements.BoardView;
 import com.group1.frontend.events.*;
 import com.group1.frontend.utils.Timer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -162,6 +165,11 @@ public class BoardController extends Controller{
                 writeToGameUpdates("");
             }
             writeToGameUpdates("Welcome to Catan!");
+
+            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+            String json = ow.writeValueAsString(game.getBoard());
+            System.out.println(json);
+
             timer.start();
 
         } catch (Exception e) {

@@ -210,16 +210,12 @@ public class Game extends AnchorPane {
         REQUIRED_RESOURCES.get(BuildingType.ROAD).forEach(currentPlayer::removeResource);
         currentPlayer.roads.add(new Road(currentPlayer, edge));
         currentPlayer.setLongestRoad(calculateLongestRoad(currentPlayer));
-        System.out.println("------------------");
-        System.out.println("player road count is " + currentPlayer.roads.size());
-        System.out.println("longest road is: " + calculateLongestRoad(currentPlayer));
     }
 
     public void placeRoadForFree(Edge randomEdge, Player player) {
         randomEdge.setOccupied(true);
         randomEdge.setOwner(player);
         player.roads.add(new Road(player, randomEdge));
-        System.out.println("longest road is: " + calculateLongestRoad(player));
     }
 
     public void distributeResources(int diceRoll) {
@@ -256,9 +252,7 @@ public class Game extends AnchorPane {
             for(Corner r : allRoadCorners) {
                 visited.put(r, false);
             }
-            System.out.println("Calculate based on endEdge -> " + corner.getXCoordinate() + " " + corner.getYCoordinate());
             int length = calculateTotalRoadLength(player, corner, visited, allRoadCorners);
-            System.out.println("length: " + length);
             maxRoadLength = Math.max(maxRoadLength, length);
 
         }
@@ -268,7 +262,6 @@ public class Game extends AnchorPane {
     // take the starting point as parameter
     public int calculateTotalRoadLength(Player player, Corner corner, HashMap<Corner, Boolean> visited, HashSet<Corner> allRoadCorners) {
         visited.put(corner, true);
-        System.out.println("corner: " + corner.getXCoordinate() + " " + corner.getYCoordinate() + " visited");
         List<Corner> adjacentCorners = board.getAdjacentCornersOfCorner(corner);
         int maxRoadLength = 0;
             for(Corner c : allRoadCorners) {
@@ -328,7 +321,6 @@ public class Game extends AnchorPane {
             endCorners.add(board.getCornersAsMap().get(
                     Arrays.asList(road.edge.getFirstXCoordinate(), road.edge.getFirstYCoordinate())));
         }
-        System.out.println("end corner size: " + endCorners.size());
         return endCorners;
     }
 

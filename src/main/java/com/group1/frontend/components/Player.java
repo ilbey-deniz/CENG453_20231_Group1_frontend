@@ -1,5 +1,6 @@
 package com.group1.frontend.components;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.group1.frontend.constants.BoardConstants;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.ResourceType;
@@ -7,8 +8,12 @@ import com.group1.frontend.enums.ResourceType;
 import java.util.*;
 
 public class Player {
+
+    @JsonBackReference
     HashMap<ResourceType, Integer> resources;
+    @JsonBackReference
     List<Building> buildings;
+    @JsonBackReference
     HashSet<Road> roads;
     String color;
     String name;
