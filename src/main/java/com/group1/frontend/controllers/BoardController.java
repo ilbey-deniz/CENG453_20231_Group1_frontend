@@ -167,7 +167,7 @@ public class BoardController extends Controller{
             writeToGameUpdates("Welcome to Catan!");
 
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-            String json = ow.writeValueAsString(game.getBoard());
+            String json = ow.writeValueAsString(game.getPlayers());
             System.out.println(json);
 
             timer.start();

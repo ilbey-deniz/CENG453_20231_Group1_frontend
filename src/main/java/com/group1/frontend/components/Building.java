@@ -1,10 +1,12 @@
 package com.group1.frontend.components;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.group1.frontend.enums.BuildingType;
 import java.util.List;
 
 public class Building {
     BuildingType buildingType;
+    @JsonBackReference
     Player owner;
     List<Tile> tiles;
     Corner corner;

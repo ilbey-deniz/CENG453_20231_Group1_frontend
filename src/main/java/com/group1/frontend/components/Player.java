@@ -9,11 +9,9 @@ import java.util.*;
 
 public class Player {
 
-    @JsonBackReference
     HashMap<ResourceType, Integer> resources;
-    @JsonBackReference
     List<Building> buildings;
-    @JsonBackReference
+
     HashSet<Road> roads;
     String color;
     String name;

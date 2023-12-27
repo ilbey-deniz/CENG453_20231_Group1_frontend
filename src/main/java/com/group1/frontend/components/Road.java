@@ -1,7 +1,11 @@
 package com.group1.frontend.components;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 public class Road {
+
+    @JsonBackReference
     Player owner;
 //    List<Corner> corners;
     Edge edge;
