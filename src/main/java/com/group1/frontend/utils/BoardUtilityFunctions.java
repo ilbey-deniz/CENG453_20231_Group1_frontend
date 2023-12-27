@@ -48,8 +48,8 @@ public class BoardUtilityFunctions {
         }
         return MainApplication.class.getResource("/assets/" + buildingType + getRandomKey(PLAYER_COLORS) + ".png").toString();
     }
-    public static URL getSettlementAsset(String color){
-        return MainApplication.class.getResource("/assets/house_" + color + ".png");
+    public static String  getSettlementAsset(String color){
+        return MainApplication.class.getResource("/assets/house_" + color + ".png").toString();
     }
     public static String getCityAsset(String color){
         return MainApplication.class.getResource("/assets/city_" + color + ".png").toString();

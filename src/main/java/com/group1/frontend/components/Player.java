@@ -3,6 +3,7 @@ package com.group1.frontend.components;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.group1.frontend.constants.BoardConstants;
 import com.group1.frontend.enums.BuildingType;
+import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.enums.ResourceType;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,13 +18,13 @@ public class Player {
     List<Building> buildings;
 
     HashSet<Road> roads;
-    String color;
+    PlayerColor color;
     String name;
     Boolean cpu;
     Integer victoryPoint;
     Integer longestRoad;
 
-    public Player(String color, String name, Boolean cpu) {
+    public Player(PlayerColor color, String name, Boolean cpu) {
         this.name = name;
         this.color = color;
         this.cpu = cpu;

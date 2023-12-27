@@ -52,9 +52,6 @@ public class Game extends AnchorPane {
     public void addPlayer(Player player) {
         players.add(player);
     }
-    public void addPlayer(String color, String name, Boolean cpu) {
-        players.add(new Player(name, color, cpu));
-    }
 
     public void removePlayer(Player player) {
         //TODO: if that is a real player, replace it with a CPU player

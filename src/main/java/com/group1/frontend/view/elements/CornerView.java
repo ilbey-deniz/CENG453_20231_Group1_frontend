@@ -2,6 +2,7 @@ package com.group1.frontend.view.elements;
 
 import com.group1.frontend.components.Corner;
 import com.group1.frontend.enums.BuildingType;
+import com.group1.frontend.enums.PlayerColor;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -35,14 +36,14 @@ public CornerView(Corner corner) {
         getParent().fireEvent(new CornerClickedEvent(this.corner));
     });
 }
-    public void occupyCorner(String color, BuildingType buildingType){
+    public void occupyCorner(PlayerColor color, BuildingType buildingType){
         try{
             Image image = null;
             if(buildingType == BuildingType.SETTLEMENT){
-                image = new Image(getSettlementAsset(color).toString());
+                image = new Image(getSettlementAsset(color.toString().toLowerCase()));
             }
             else if(buildingType == BuildingType.CITY){
-                image = new Image(getCityAsset(color).toString());
+                image = new Image(getCityAsset(color.toString().toLowerCase()));
             }
             assert image != null;
             setFill(new ImagePattern(image));

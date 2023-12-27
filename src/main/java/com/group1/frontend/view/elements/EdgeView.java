@@ -1,6 +1,7 @@
 package com.group1.frontend.view.elements;
 
 import com.group1.frontend.components.Edge;
+import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.events.EdgeClickedEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -57,8 +58,8 @@ public class EdgeView extends Polygon {
         setStrokeWidth(1);
         edge.setOccupied(true);
     }
-    public void occupyEdge(String color) {
-        setFill(Color.valueOf(color));
+    public void occupyEdge(PlayerColor color) {
+        setFill(Color.valueOf(PLAYER_COLORS.get(color)));
         setStroke(Color.BLACK);
         setStrokeWidth(1);
         edge.setOccupied(true);

@@ -1,4 +1,8 @@
 package com.group1.frontend.utils;
+import com.group1.frontend.enums.PlayerColor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -6,26 +10,19 @@ import java.net.http.HttpResponse;
 
 
 //service class for making backend requests, storing tokens, etc.
+@Getter
+@Setter
 public class Service {
+    //getters and setters
+
     private String token;
     private String backendURL;
-    private String username;
 
-    //getters and setters
-    public String getToken() {
-        return token;
-    }
-    public void setToken(String token) {
-        this.token = token;
-    }
-    public void setUsername(String username) {this.username = username;}
-    public void setBackendURL(String backendURL) {
-        this.backendURL = backendURL;
-    }
-    public String getBackendURL() {
-        return backendURL;
-    }
-    public String getUsername() {return username;}
+    //TODO: remove this
+    private String username = "polat";
+    private PlayerColor playerColor = PlayerColor.RED;
+    private GameRoom gameRoom = null;
+
 
     //make a request to the backend
     public HttpResponse<String> makeRequest(String endpoint, String method, String body) {

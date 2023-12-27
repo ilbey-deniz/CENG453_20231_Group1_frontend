@@ -29,7 +29,7 @@ public class MainApplication extends Application {
         Service service = new Service();
         //service.setBackendURL("https://backend-qdu1.onrender.com/api");
         service.setBackendURL("http://localhost:8080/api");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("board-view.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("host-lobby-view.fxml"));
 //      Scene content = new Scene(loader.load(), WINDOW_WIDTH, WINDOW_HEIGHT);
 //        FXMLLoader loader = new FXMLLoader(getClass().getResource("login-view.fxml"));
         Scene content = new Scene(loader.load(), DEFAULT_WIDTH, DEFAULT_HEIGHT);

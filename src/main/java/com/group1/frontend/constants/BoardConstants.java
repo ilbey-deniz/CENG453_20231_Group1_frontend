@@ -1,6 +1,7 @@
 package com.group1.frontend.constants;
 
 import com.group1.frontend.enums.BuildingType;
+import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.enums.TileType;
 import javafx.scene.paint.Color;
@@ -24,11 +25,11 @@ public final class BoardConstants {
     public static final double V = Math.sqrt(3) / 2.0;
     public static final double V2 = Math.sqrt(3);
 
-    public static final Map<String , String > PLAYER_COLORS = new HashMap<>(Map.of(
-        "red", "#ff4f4f",
-        "blue", "#4fa6eb",
-        "green", "#00ff00",
-        "yellow", "#ffff00"
+    public static final Map<PlayerColor, String > PLAYER_COLORS = new HashMap<>(Map.of(
+        PlayerColor.RED, "#ff4f4f",
+        PlayerColor.BLUE, "#4fa6eb",
+        PlayerColor.GREEN, "#00ff00",
+        PlayerColor.YELLOW, "#ffff00"
     ));
 
     public static final String BACKGROUND_ISLAND_COLOR = "#fff7d0";

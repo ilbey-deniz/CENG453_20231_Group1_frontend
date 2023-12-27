@@ -2,6 +2,7 @@ package com.group1.frontend.controllers;
 
 import com.group1.frontend.components.*;
 import com.group1.frontend.enums.BuildingType;
+import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.events.TimeEvent;
 import com.group1.frontend.utils.BoardUtilityFunctions;
@@ -113,10 +114,10 @@ public class BoardController extends Controller{
             game.setBoard(board);
             boardView = new BoardView(board);
             //populate with mock players
-            Player p1 = new Player("red", service.getUsername(), false);
-            Player p2 = new Player("yellow", "laz ziya", true);
-            Player p3 = new Player("green", "tombalacı mehmet", true);
-            Player p4 = new Player("blue", "karahanlı", true);
+            Player p1 = new Player(PlayerColor.RED, service.getUsername(), false);
+            Player p2 = new Player(PlayerColor.YELLOW, "laz ziya", true);
+            Player p3 = new Player(PlayerColor.GREEN, "tombalacı mehmet", true);
+            Player p4 = new Player(PlayerColor.BLUE, "karahanlı", true);
 
             game.addPlayer(p1);
             game.addPlayer(p2);
@@ -129,7 +130,7 @@ public class BoardController extends Controller{
             game.getPlayers().forEach(player -> {
                 //place random settlements and one road for each player
                 player.getRoads().forEach(road -> boardView.getEdgeView(
-                        road.getEdge()).occupyEdge(PLAYER_COLORS.get(player.getColor())));
+                        road.getEdge()).occupyEdge(player.getColor()));
                 player.getBuildings().forEach(building -> boardView.getCornerView(
                         building.getCorner()).occupyCorner(player.getColor(), building.getBuildingType()));
                 player.addResource(ResourceType.GRAIN, 10);
@@ -319,7 +320,7 @@ public class BoardController extends Controller{
             game.placeRoad((Edge) buildingPlacedEvent.getPlacement());
             statusLabel.setText("Road built");
             writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a road");
-            boardView.getEdgeView((Edge) buildingPlacedEvent.getPlacement()).occupyEdge(PLAYER_COLORS.get(buildingPlacedEvent.getPlayer().getColor()));
+            boardView.getEdgeView((Edge) buildingPlacedEvent.getPlacement()).occupyEdge(buildingPlacedEvent.getPlayer().getColor());
             game.fireLongestRoadEventInNeed(game.getCurrentPlayer().getLongestRoad());
             game.updateAllVictoryPoints();
         }
