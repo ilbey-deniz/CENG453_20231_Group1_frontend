@@ -4,6 +4,8 @@ import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.events.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Pair;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -12,13 +14,19 @@ import static com.group1.frontend.constants.BoardConstants.REQUIRED_RESOURCES;
 import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomElementFromSet;
 
 public class Game extends AnchorPane {
+    @Getter
+    @Setter
     private List<Player> players;
+    @Setter
     private Board board;
 
     private final HashSet<Building> occupiedBuildings;
+    @Getter
+    @Setter
     private Player currentPlayer;
     private int turnNumber;
 
+    @Getter
     private Pair<Integer, Integer> currentDiceRoll;
 
     private final HashMap<Player, Integer> playersWithLongestRoad;
@@ -27,7 +35,7 @@ public class Game extends AnchorPane {
     public Game(List<Player> players, Board board) {
         this.players = players;
         this.board = board;
-        this.currentPlayer = players.get(0);
+        this.currentPlayer = players.getFirst();
         this.turnNumber = 0;
         this.occupiedBuildings = new HashSet<>();
         this.playersWithLongestRoad = new HashMap<>();
@@ -41,14 +49,6 @@ public class Game extends AnchorPane {
         this.playersWithLongestRoad = new HashMap<>();
     }
 
-    public void setPlayers(List<Player> players) {
-        this.players = players;
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
     public void addPlayer(Player player) {
         players.add(player);
     }
@@ -59,22 +59,6 @@ public class Game extends AnchorPane {
     public void removePlayer(Player player) {
         //TODO: if that is a real player, replace it with a CPU player
         players.remove(player);
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
-    public void setCurrentPlayer(Player currentPlayer) {
-        this.currentPlayer = currentPlayer;
-    }
-
-    public Player getCurrentPlayer() {
-        return currentPlayer;
     }
 
     //1. get player's road list
@@ -104,7 +88,7 @@ public class Game extends AnchorPane {
         for(Road road : currentPlayer.roads) {
             List<Corner> adjacentCorners = board.getAdjacentCornersOfEdge(road.getEdge());
             for(Corner corner : adjacentCorners) {
-                if (!corner.getIsOccupied()) {
+                if (!corner.isOccupied()) {
                     availableCorners.add(corner);
                 }
             }
@@ -165,7 +149,7 @@ public class Game extends AnchorPane {
     }
 
     public void placeSettlement(Corner corner) {
-        corner.setIsOccupied(true);
+        corner.setOccupied(true);
         corner.setOwner(currentPlayer);
         REQUIRED_RESOURCES.get(BuildingType.SETTLEMENT).forEach(currentPlayer::removeResource);
         Building building = new Building(BuildingType.SETTLEMENT, currentPlayer, board.getAdjacentTilesOfCorner(corner), corner);
@@ -175,7 +159,7 @@ public class Game extends AnchorPane {
     }
 
     public void placeSettlementForFree(Corner corner, Player player) {
-        corner.setIsOccupied(true);
+        corner.setOccupied(true);
         corner.setOwner(player);
         List<Tile> adjacentTiles = board.getAdjacentTilesOfCorner(corner);
         Building building = new Building(BuildingType.SETTLEMENT, player, adjacentTiles, corner);
@@ -223,7 +207,7 @@ public class Game extends AnchorPane {
             return;
         }
         for(Building building : occupiedBuildings) {
-            if (building.getCorner().getIsOccupied()) {
+            if (building.getCorner().isOccupied()) {
                 for(Tile tile : board.getAdjacentTilesOfCorner(building.getCorner())) {
                     if (tile.getDiceNumber() == diceRoll) {
                         if (building.getBuildingType() == BuildingType.CITY) {
@@ -414,9 +398,7 @@ public class Game extends AnchorPane {
 
         }
     }
-    public Pair<Integer, Integer> getCurrentDiceRoll() {
-        return currentDiceRoll;
-    }
+
     public Player checkWinner() {
         for(Player player : players) {
             if (player.getVictoryPoint() >= 8) {
