@@ -9,11 +9,7 @@ import javafx.scene.shape.Circle;
 import com.group1.frontend.events.CornerClickedEvent;
 
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
 import static com.group1.frontend.constants.BoardConstants.*;
-import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomBuildingAsset;
 import static com.group1.frontend.utils.BoardUtilityFunctions.getSettlementAsset;
 import static com.group1.frontend.utils.BoardUtilityFunctions.getCityAsset;
 
@@ -50,7 +46,7 @@ public CornerView(Corner corner) {
             }
             assert image != null;
             setFill(new ImagePattern(image));
-            corner.setIsOccupied(true);
+            corner.setOccupied(true);
         }
         catch (Exception e){
             e.printStackTrace();

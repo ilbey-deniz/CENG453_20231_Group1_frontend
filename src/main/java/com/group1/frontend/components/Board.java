@@ -1,10 +1,9 @@
 package com.group1.frontend.components;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.group1.frontend.enums.TileType;
+import lombok.Getter;
 
-import java.security.PublicKey;
 import java.util.*;
 
 import static com.group1.frontend.constants.BoardConstants.*;
@@ -15,7 +14,9 @@ public class Board {
     private final HashMap<List<Double> ,Corner> corners;
     private final HashMap<List<Double>, Edge> edges;
 
+    @Getter
     private final Set<List<Double>> points;
+    @Getter
     private final List<List<List<Double>>> groupedCorners;
 
 
@@ -60,6 +61,14 @@ public class Board {
             corners.put(cornerCoordinates, corner);
         }
         // create a sorted set to remove duplicate edges from the list
+        Set<List<Double>> nonDuplicateEdges = getNonDuplicateEdges();
+        for (List<Double> edgesCoordinates : nonDuplicateEdges){
+            Edge edge = new Edge(edgesCoordinates.get(0), edgesCoordinates.get(1), edgesCoordinates.get(2), edgesCoordinates.get(3));
+            edges.put(Arrays.asList(edgesCoordinates.get(0), edgesCoordinates.get(1), edgesCoordinates.get(2), edgesCoordinates.get(3)), edge);
+        }
+    }
+
+    private Set<List<Double>> getNonDuplicateEdges() {
         Set<List<Double>> nonDuplicateEdges = new HashSet<>();
         for(List<List<Double>> groupedCorner : groupedCorners){
             for(int i = 0; i < groupedCorner.size(); i++){
@@ -80,10 +89,7 @@ public class Board {
                 nonDuplicateEdges.add(edgeCoordinates);
             }
         }
-        for (List<Double> edgesCoordinates : nonDuplicateEdges){
-            Edge edge = new Edge(edgesCoordinates.get(0), edgesCoordinates.get(1), edgesCoordinates.get(2), edgesCoordinates.get(3));
-            edges.put(Arrays.asList(edgesCoordinates.get(0), edgesCoordinates.get(1), edgesCoordinates.get(2), edgesCoordinates.get(3)), edge);
-        }
+        return nonDuplicateEdges;
     }
 
     public void getCornersFromTileCoordinates(){
@@ -117,7 +123,7 @@ public class Board {
         return new ArrayList<>(corners.values());
     }
 
-    @JsonBackReference
+    @JsonIgnore
     public HashMap<List<Double> ,Corner> getCornersAsMap() {
         return corners;
     }
@@ -126,17 +132,9 @@ public class Board {
         return new ArrayList<>(edges.values());
     }
 
-    @JsonBackReference
+    @JsonIgnore
     public HashMap<List<Double>, Edge> getEdgesAsMap() {
             return edges;
-    }
-
-    public Set<List<Double>> getPoints() {
-        return points;
-    }
-
-    public List<List<List<Double>>> getGroupedCorners() {
-        return groupedCorners;
     }
 
     public List<Corner> getAdjacentCornersOfEdge(Edge e) {

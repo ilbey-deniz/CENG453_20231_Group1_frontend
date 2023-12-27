@@ -2,46 +2,37 @@ package com.group1.frontend.utils;
 
 import com.group1.frontend.MainApplication;
 import com.group1.frontend.constants.ApplicationConstants;
+import com.group1.frontend.enums.PlayerColor;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+@Getter
+@Setter
 public class LobbyPlayer {
     private String username;
     private ImageView color;
+    private Boolean cpu;
     private String ready;
 
-    public LobbyPlayer(String color, String username,  String ready) {
+    public LobbyPlayer(PlayerColor color, String username, Boolean cpu, String ready) {
         this.username = username;
+        this.cpu = cpu;
         setColor(color);
         this.ready = ready;
     }
-    //getters and setters
-    public String getUsername() {
-        return username;
-    }
-    public ImageView getColor() {
-        return color;
-    }
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    public void setColor(String color){
-        color = color.toLowerCase();
+    public void setColor(PlayerColor color) {
+        String colorStr = color.toString().toLowerCase();
         try {
-            this.color = new ImageView(new Image(MainApplication.class.getResource("/assets/" + color + ".png").toString()));
+            this.color = new ImageView(new Image(MainApplication.class.getResource("/assets/" + colorStr + ".png").toString()));
         }
         catch(Exception e) {
             System.out.println(e);
         }
 
-    }
-    public String getReady() {
-        return ready;
-    }
-    public void setReady(String ready) {
-        this.ready = ready;
     }
 }

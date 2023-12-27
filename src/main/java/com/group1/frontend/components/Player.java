@@ -4,9 +4,13 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.group1.frontend.constants.BoardConstants;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.ResourceType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
+@Getter
+@Setter
 public class Player {
 
     HashMap<ResourceType, Integer> resources;
@@ -33,66 +37,6 @@ public class Player {
         }
     }
 
-    public Map<ResourceType, Integer> getResources() {
-        return resources;
-    }
-
-    public void setResources(HashMap<ResourceType, Integer> resources) {
-        this.resources = resources;
-    }
-
-    public void setBuildings(List<Building> buildings) {
-        this.buildings = buildings;
-    }
-
-    public List<Building> getBuildings() {
-        return buildings;
-    }
-
-    public void setRoads(HashSet<Road> roads) {
-        this.roads = roads;
-    }
-
-    public HashSet<Road> getRoads() {
-        return roads;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setCpu(Boolean cpu) {
-        this.cpu = cpu;
-    }
-    public Boolean isCpu() {
-        return cpu;
-    }
-
-    public void setVictoryPoint(Integer victoryPoint) {
-        this.victoryPoint = victoryPoint;
-    }
-    public Integer getVictoryPoint() {
-        return victoryPoint;
-    }
-    public void setLongestRoad(Integer longestRoad) {
-        this.longestRoad = longestRoad;
-    }
-    public Integer getLongestRoad() {
-        return longestRoad;
-    }
-
     public void addResource(ResourceType resourceType, int i) {
         resources.put(resourceType, resources.get(resourceType) + i);
     }
@@ -113,6 +57,10 @@ public class Player {
 
     public void addVictoryPoint(int i) {
         victoryPoint += i;
+    }
+
+    public Boolean isCpu() {
+          return cpu;
     }
 
 }

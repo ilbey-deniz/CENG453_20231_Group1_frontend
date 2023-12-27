@@ -1,7 +1,9 @@
 package com.group1.frontend.events;
 import com.group1.frontend.components.Corner;
 import javafx.event.*;
+import lombok.Getter;
 
+@Getter
 public class CornerClickedEvent extends Event{
     public static final EventType<CornerClickedEvent> CORNER_CLICKED = new EventType<>(Event.ANY, "CORNER_CLICKED");
     private Corner corner;
@@ -15,7 +17,4 @@ public class CornerClickedEvent extends Event{
         super(CORNER_CLICKED);
     }
 
-    public Corner getCorner() {
-        return corner;
-    }
 }

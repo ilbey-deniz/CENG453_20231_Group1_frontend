@@ -15,8 +15,8 @@ import static java.time.Duration.ofSeconds;
 import javafx.scene.layout.AnchorPane;
 
 public class Timer extends AnchorPane{
-    ObjectProperty<Duration> remainingSeconds;
-    Timeline leftTime;
+    private final ObjectProperty<Duration> remainingSeconds;
+    private final Timeline leftTime;
 
     public Timer(int seconds) {
         remainingSeconds = new SimpleObjectProperty<>(ofSeconds(seconds));
@@ -40,15 +40,4 @@ public class Timer extends AnchorPane{
     public void stop() {
         leftTime.stop();
     }
-    public void pause() {
-        leftTime.pause();
-    }
-    public void resume() {
-        leftTime.play();
-    }
-    public void restart() {
-        leftTime.stop();
-        leftTime.play();
-    }
-
 }
