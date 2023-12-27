@@ -1,15 +1,16 @@
 package com.group1.frontend.controllers;
+
 import com.group1.frontend.utils.LobbyPlayer;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.Button;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 
 
-public class LobbyController extends Controller{
+public class GuestLobbyController extends Controller{
     @FXML
     private TableView<LobbyPlayer> lobbyTable;
     @FXML
@@ -44,11 +45,6 @@ public class LobbyController extends Controller{
         //roomCodeLabel.setText(service.getRoomCode());
         statusLabel.setText("Waiting for players...");
 
-        //populate table with players
-        lobbyTable.getItems().add(new LobbyPlayer("red", "iplikçi nedim", "Not Ready"));
-        lobbyTable.getItems().add(new LobbyPlayer("yellow", "laz ziya", "Not Ready"));
-        lobbyTable.getItems().add(new LobbyPlayer("green", "tombalacı mehmet", "Ready"));
-        lobbyTable.getItems().add(new LobbyPlayer("blue", "karahanlı", "Not Ready"));
     }
 
 

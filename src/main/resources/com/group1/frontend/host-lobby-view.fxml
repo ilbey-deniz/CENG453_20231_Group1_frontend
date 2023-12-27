@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.group1.frontend.controllers.LobbyController">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.group1.frontend.controllers.HostLobbyController">
    <children>
       <AnchorPane prefHeight="400.0" prefWidth="276.0" style="-fx-background-color: #4fa6eb;">
          <children>
@@ -36,6 +36,7 @@
                 <TableColumn fx:id="colorColumn" editable="false" minWidth="0.0" prefWidth="54.0" resizable="false" sortable="false" text="Color" />
                 <TableColumn fx:id="usernameColumn" editable="false" prefWidth="289.95758056640625" sortable="false" text="Username" />
                   <TableColumn fx:id="readyColumn" editable="false" prefWidth="105.04241943359375" sortable="false" text="Ready?" />
+                  <TableColumn fx:id="kickColumn" prefWidth="75.0" text="Kick" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -43,10 +44,11 @@
             </TableView>
             <Label layoutX="33.0" layoutY="291.0" text="Room Code:" />
             <Label fx:id="roomCodeLabel" layoutX="110.0" layoutY="291.0" text="#1234" />
-            <Button fx:id="readyButton" alignment="CENTER_RIGHT" layoutX="430.0" layoutY="288.0" mnemonicParsing="false" text="Ready!" textAlignment="CENTER" />
+            <Button fx:id="readyButton" alignment="CENTER" contentDisplay="CENTER" layoutX="405.0" layoutY="288.0" mnemonicParsing="false" onAction="#onReadyButtonClick" prefHeight="24.0" prefWidth="78.0" text="Ready!" />
             <Label fx:id="statusLabel" layoutX="33.0" layoutY="311.0" text="STATUS_LABEL" textFill="RED" />
-            <Button fx:id="addCpuPlayerButton" layoutX="300.0" layoutY="289.0" mnemonicParsing="false" text="Add CPU Player" />
-            <Button fx:id="backButton" layoutX="29.0" layoutY="384.0" mnemonicParsing="false" text="Back" />
+            <Button fx:id="addCpuPlayerButton" layoutX="258.0" layoutY="288.0" mnemonicParsing="false" onAction="#onAddCpuPlayerButtonClick" text="Add CPU Player" />
+            <Button fx:id="backButton" layoutX="29.0" layoutY="384.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="Back" />
+            <Button fx:id="startGameButton" layoutX="404.0" layoutY="326.0" mnemonicParsing="false" onAction="#onStartGameButtonClick" text="Start Game" />
          </children>
       </AnchorPane>
    </children>
