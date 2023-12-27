@@ -1,6 +1,7 @@
 package com.group1.frontend.controllers;
 
 import com.group1.frontend.components.*;
+import com.group1.frontend.dto.ScoreDto;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.enums.ResourceType;
@@ -534,7 +535,8 @@ public class BoardController extends Controller{
             }
             service.makeRequestWithToken("/saveScore",
                     "POST",
-                    "{\"name\":\"" + player.getName() + "\",\"score\":" + player.getVictoryPoint() + "}");
+                    new ScoreDto(player.getName(), player.getVictoryPoint())
+            );
 
         }
     }

@@ -1,4 +1,5 @@
 package com.group1.frontend.controllers;
+import com.group1.frontend.dto.ChangePasswordDto;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -31,10 +32,12 @@ public class ChangePasswordController extends Controller{
             HttpResponse<String> response = service.makeRequestWithToken(
                     "/changePassword",
                     "POST",
-                    "{\"name\":\"" + service.getUsername() +
-                            "\",\"oldPassword\":\"" + oldPasswordField.getText() +
-                            "\",\"newPassword\":\"" + newPasswordField.getText() +
-                            "\"}");
+                    new ChangePasswordDto(
+                            service.getUsername(),
+                            oldPasswordField.getText(),
+                            newPasswordField.getText()
+                    ));
+
 
             if(response.statusCode() == 200) {
                 statusLabel.setText("Password changed successfully!");

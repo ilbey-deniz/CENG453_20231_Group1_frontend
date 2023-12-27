@@ -1,4 +1,5 @@
 package com.group1.frontend.controllers;
+import com.group1.frontend.dto.EmptyDto;
 import com.group1.frontend.utils.Score;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
@@ -37,7 +38,7 @@ public class LeaderboardController extends Controller{
         HttpResponse<String> response = service.makeRequestWithToken(
                 "/get/topScorers/all",
                 "GET",
-                "");
+                new EmptyDto());
 
             if(response.statusCode() == 200) {
                 JSONArray scores = new JSONArray(response.body());
@@ -61,7 +62,7 @@ public class LeaderboardController extends Controller{
         HttpResponse<String> response = service.makeRequestWithToken(
                 "/get/topScorers/all",
                 "GET",
-                "");
+                new EmptyDto());
 
         if(response.statusCode() == 200) {
             JSONArray scores = new JSONArray(response.body());
@@ -80,7 +81,7 @@ public class LeaderboardController extends Controller{
         HttpResponse<String> response = service.makeRequestWithToken(
                 "/get/topScorers/weekly",
                 "GET",
-                "");
+                new EmptyDto());
         if(response.statusCode() == 200) {
             JSONArray scores = new JSONArray(response.body());
             addJsonToTable(scores);
@@ -98,7 +99,7 @@ public class LeaderboardController extends Controller{
         HttpResponse<String> response = service.makeRequestWithToken(
                 "/get/topScorers/monthly",
                 "GET",
-                "");
+                new EmptyDto());
         if(response.statusCode() == 200) {
             JSONArray scores = new JSONArray(response.body());
             addJsonToTable(scores);
