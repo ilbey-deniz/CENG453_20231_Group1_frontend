@@ -1,5 +1,6 @@
 package com.group1.frontend.controllers;
 
+import com.group1.frontend.dto.RegisterCredentialDto;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -36,10 +37,10 @@ public class RegisterController extends Controller{
             HttpResponse<String> response = service.makeRequest(
                     "/register",
                     "POST",
-                    "{\"name\":\"" + usernameField.getText() +
-                            "\",\"email\":\"" + emailField.getText() +
-                            "\",\"password\":\"" + passwordField.getText() +
-                            "\"}");
+                    new RegisterCredentialDto(
+                            usernameField.getText(),
+                            emailField.getText(),
+                            passwordField.getText()));
 
             if(response.statusCode() == 200) {
                 statusLabel.setText("Registration successful!");

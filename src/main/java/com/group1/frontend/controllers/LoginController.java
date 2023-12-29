@@ -1,5 +1,6 @@
 package com.group1.frontend.controllers;
 
+import com.group1.frontend.dto.LoginDto;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -29,9 +30,7 @@ public class LoginController extends Controller {
             HttpResponse<String> response = service.makeRequest(
                     "/login",
                     "POST",
-                    "{\"name\":\"" + usernameField.getText() +
-                            "\",\"password\":\"" + passwordField.getText() +
-                            "\"}");
+                    new LoginDto(usernameField.getText(), passwordField.getText()));
 
             if(response.statusCode() == 200) {
                 service.setToken(response.body());

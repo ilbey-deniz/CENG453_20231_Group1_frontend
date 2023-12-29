@@ -7,6 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class ForgotPasswordDto implements HttpRequestDto{
-    private String name;
     private String email;
 }

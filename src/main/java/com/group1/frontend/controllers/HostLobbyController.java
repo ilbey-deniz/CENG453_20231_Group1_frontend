@@ -61,7 +61,6 @@ public class HostLobbyController extends Controller{
                 );
 
 
-
                 if (lobbyPlayer.getUsername().equals(service.getUsername())) {
                     kickButton.setDisable(true);
                 }
@@ -72,12 +71,6 @@ public class HostLobbyController extends Controller{
         //roomCodeLabel.setText(service.getRoomCode());
         statusLabel.setText("Waiting for players...");
         lobbyTable.addEventHandler(PlayerKickedEvent.PLAYER_KICKED, this::handlePlayerKickedEvent);
-
-        addPlayerToTable(PlayerColor.BLUE, "test", false, "Not Ready");
-        addPlayerToTable(PlayerColor.GREEN, "test2", false, "Not Ready");
-        addPlayerToTable(PlayerColor.RED, "test3", true, "Not Ready");
-        addPlayerToTable(PlayerColor.YELLOW, "test4", false, "Not Ready");
-
     }
 
     protected void handlePlayerKickedEvent(PlayerKickedEvent event) {

@@ -1,6 +1,7 @@
 package com.group1.frontend.controllers;
 
 
+import com.group1.frontend.dto.ForgotPasswordDto;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -25,8 +26,7 @@ public class ForgotController extends Controller {
             HttpResponse<String> response = service.makeRequest(
                     "/forgotPassword",
                     "POST",
-                    "{\"email\":\"" + emailField.getText() +
-                            "\"}");
+                    new ForgotPasswordDto(emailField.getText()));
 
             if(response.statusCode() == 200) {
                 statusLabel.setText("Email sent!");
