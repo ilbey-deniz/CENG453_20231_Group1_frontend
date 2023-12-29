@@ -26,10 +26,10 @@ public final class BoardConstants {
     public static final double V2 = Math.sqrt(3);
 
     public static final Map<PlayerColor, String > PLAYER_COLORS = new HashMap<>(Map.of(
-        PlayerColor.RED, "#ff4f4f",
-        PlayerColor.BLUE, "#4fa6eb",
-        PlayerColor.GREEN, "#00ff00",
-        PlayerColor.YELLOW, "#ffff00"
+        PlayerColor.red, "#ff4f4f",
+        PlayerColor.blue, "#4fa6eb",
+        PlayerColor.green, "#00ff00",
+        PlayerColor.yellow, "#ffff00"
     ));
 
     public static final String BACKGROUND_ISLAND_COLOR = "#fff7d0";

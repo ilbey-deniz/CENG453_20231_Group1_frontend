@@ -40,10 +40,10 @@ public CornerView(Corner corner) {
         try{
             Image image = null;
             if(buildingType == BuildingType.SETTLEMENT){
-                image = new Image(getSettlementAsset(color.toString().toLowerCase()));
+                image = new Image(getSettlementAsset(color.toString()));
             }
             else if(buildingType == BuildingType.CITY){
-                image = new Image(getCityAsset(color.toString().toLowerCase()));
+                image = new Image(getCityAsset(color.toString()));
             }
             assert image != null;
             setFill(new ImagePattern(image));

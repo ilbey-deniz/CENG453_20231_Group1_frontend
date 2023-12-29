@@ -1,8 +1,12 @@
 package com.group1.frontend.enums;
 
 public enum PlayerColor {
-    RED,
-    BLUE,
-    YELLOW,
-    GREEN
+    red,
+    blue,
+    yellow,
+    green;
+
+    public static PlayerColor getRandomColor() {
+        return values()[(int) (Math.random() * values().length)];
+    }
 }

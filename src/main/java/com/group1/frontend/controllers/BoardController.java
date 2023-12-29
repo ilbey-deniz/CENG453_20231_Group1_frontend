@@ -115,10 +115,10 @@ public class BoardController extends Controller{
             game.setBoard(board);
             boardView = new BoardView(board);
             //populate with mock players
-            Player p1 = new Player(PlayerColor.RED, service.getUsername(), false);
-            Player p2 = new Player(PlayerColor.YELLOW, "laz ziya", true);
-            Player p3 = new Player(PlayerColor.GREEN, "tombalacı mehmet", true);
-            Player p4 = new Player(PlayerColor.BLUE, "karahanlı", true);
+            Player p1 = new Player(PlayerColor.red, service.getUsername(), false);
+            Player p2 = new Player(PlayerColor.yellow, "laz ziya", true);
+            Player p3 = new Player(PlayerColor.green, "tombalacı mehmet", true);
+            Player p4 = new Player(PlayerColor.blue, "karahanlı", true);
 
             game.addPlayer(p1);
             game.addPlayer(p2);

@@ -32,7 +32,7 @@ public class SceneSwitch {
             stage.show();
         }
         catch(Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
     public static FXMLLoader getSceneLoader(String sceneName) {

@@ -25,18 +25,18 @@
       </AnchorPane>
       <AnchorPane prefHeight="400.0" prefWidth="408.0">
          <children>
-            <AnchorPane fx:id="statusLabel" layoutX="20.0" layoutY="102.0" prefHeight="246.0" prefWidth="329.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+            <AnchorPane layoutX="20.0" layoutY="102.0" prefHeight="246.0" prefWidth="329.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
                <children>
                   <Label layoutX="35.0" layoutY="30.0" text="Welcome, " AnchorPane.leftAnchor="35.0" />
                   <Label fx:id="usernameLabel" layoutX="96.0" layoutY="30.0" />
-                  <Button fx:id="createGameButton" layoutX="35.0" layoutY="67.0" mnemonicParsing="false" onAction="#onCreateGameButtonClick" text="CREATE GAME" AnchorPane.leftAnchor="35.0" />
+                  <Button fx:id="createGameButton" layoutX="35.0" layoutY="67.0" mnemonicParsing="false" onAction="#onCreateGameButtonClick" prefHeight="24.0" prefWidth="103.0" text="CREATE GAME" AnchorPane.leftAnchor="35.0" />
                   <Button fx:id="leaderboardButton" layoutX="35.0" layoutY="159.0" mnemonicParsing="false" onAction="#onLeaderboardButtonClick" text="Leaderboard" AnchorPane.leftAnchor="35.0" />
                   <Button fx:id="logoutButton" layoutX="35.0" layoutY="191.0" mnemonicParsing="false" onAction="#onLogoutButtonClick" prefHeight="24.0" prefWidth="85.0" text="Log Out" AnchorPane.leftAnchor="35.0" />
                   <Button fx:id="quitButton" layoutX="35.0" layoutY="222.0" mnemonicParsing="false" onAction="#onQuitButtonClick" prefHeight="24.0" prefWidth="85.0" text="Quit Game" AnchorPane.leftAnchor="35.0" />
                   <Hyperlink fx:id="changePasswordLink" layoutX="203.0" layoutY="224.0" onAction="#onChangePasswordLinkClick" text="Change Password" AnchorPane.rightAnchor="14.0" />
                   <Button fx:id="joinGameButton" layoutX="35.0" layoutY="99.0" mnemonicParsing="false" onAction="#onJoinGameButtonClick" prefHeight="24.0" prefWidth="103.0" text="JOIN GAME" AnchorPane.leftAnchor="35.0" />
                   <TextField fx:id="roomCodeTextField" layoutX="151.0" layoutY="99.0" prefHeight="24.0" prefWidth="91.0" promptText="#Room Code" />
-                  <Label layoutX="154.0" layoutY="131.0" text="STATUS LABEL" textFill="RED" />
+                  <Label fx:id="statusLabel" layoutX="154.0" layoutY="131.0" text="STATUS LABEL" textFill="RED" />
                </children>
             </AnchorPane>
          </children>

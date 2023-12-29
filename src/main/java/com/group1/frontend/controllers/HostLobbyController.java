@@ -1,27 +1,29 @@
 package com.group1.frontend.controllers;
 
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.group1.frontend.enums.PlayerColor;
+import com.group1.frontend.dto.DestroyGameDto;
 import com.group1.frontend.events.PlayerKickedEvent;
 import com.group1.frontend.utils.LobbyPlayer;
-import com.group1.frontend.utils.SceneSwitch;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import lombok.Getter;
 
-import java.util.List;
+import java.net.http.HttpResponse;
 
 public class HostLobbyController extends Controller{
+    @Getter
     @FXML
     private TableView<LobbyPlayer> lobbyTable;
     @FXML
     private TableColumn<LobbyPlayer, String> usernameColumn;
     @FXML
+    private TableColumn<LobbyPlayer, Boolean> hostColumn;
+    @FXML
     private TableColumn<LobbyPlayer, ImageView> colorColumn;
     @FXML
-    private TableColumn<LobbyPlayer, String> readyColumn;
+    private TableColumn<LobbyPlayer, Boolean> readyColumn;
     @FXML
     private TableColumn<LobbyPlayer, LobbyPlayer> kickColumn;
 
@@ -32,14 +34,16 @@ public class HostLobbyController extends Controller{
 
     public void init() {
         colorColumn.setCellValueFactory(
-                new PropertyValueFactory<LobbyPlayer, ImageView>("color")
+                new PropertyValueFactory<LobbyPlayer, ImageView>("colorImage")
         );
         usernameColumn.setCellValueFactory(
                 new PropertyValueFactory<LobbyPlayer, String>("username")
         );
-
+        hostColumn.setCellValueFactory(
+                new PropertyValueFactory<LobbyPlayer, Boolean>("host")
+        );
         readyColumn.setCellValueFactory(
-                new PropertyValueFactory<LobbyPlayer, String>("ready")
+                new PropertyValueFactory<LobbyPlayer, Boolean>("ready")
         );
         kickColumn.setCellValueFactory(
                 param -> new ReadOnlyObjectWrapper<>(param.getValue())
@@ -68,8 +72,13 @@ public class HostLobbyController extends Controller{
 
         });
 
+        service.getGameRoom().getPlayers().forEach((username, lobbyPlayer) -> {
+            addPlayerToTable(lobbyPlayer);
+        });
+
         //roomCodeLabel.setText(service.getRoomCode());
         statusLabel.setText("Waiting for players...");
+        roomCodeLabel.setText(service.getGameRoom().getRoomCode());
         lobbyTable.addEventHandler(PlayerKickedEvent.PLAYER_KICKED, this::handlePlayerKickedEvent);
     }
 
@@ -87,7 +96,7 @@ public class HostLobbyController extends Controller{
     protected void onReadyButtonClick() {
         lobbyTable.getItems().forEach(lobbyPlayer -> {
             if (lobbyPlayer.getUsername().equals(service.getUsername())) {
-                lobbyPlayer.setReady("Ready");
+                lobbyPlayer.setReady(true);
             }
         });
 
@@ -104,6 +113,12 @@ public class HostLobbyController extends Controller{
         //alternatively, the host can be kicked and the host can be transferred to another non-CPU player
         //if there are no non-CPU players left, the room should be destroyed
         //In any case, some sort of HostLeftEvent should be fired
+        service.disconnectFromGameRoom();
+        HttpResponse<String> response = service.makeRequestWithToken(
+                "/game/destroy",
+                "POST",
+                new DestroyGameDto(service.getGameRoom().getRoomCode())
+        );
         sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
     }
     @FXML
@@ -111,11 +126,7 @@ public class HostLobbyController extends Controller{
 
     }
 
-    public void addPlayerToTable(PlayerColor color, String username, Boolean cpu, String ready) {
-        lobbyTable.getItems().add(new LobbyPlayer(color, username, cpu, ready));
-    }
-
-    public TableView<LobbyPlayer> getLobbyTable() {
-        return lobbyTable;
+    private void addPlayerToTable(LobbyPlayer lobbyPlayer) {
+        lobbyTable.getItems().add(lobbyPlayer);
     }
 }

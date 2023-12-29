@@ -12,6 +12,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import static com.group1.frontend.constants.ApplicationConstants.WEBSOCKET_GAME_URL;
+
 
 //service class for making backend requests, storing tokens, etc.
 @Getter
@@ -21,17 +23,14 @@ public class Service {
 
     private String token;
     private String backendURL;
+    private GenericWebsocketClient client;
 
-    //TODO: remove this
     private String username;
-    private PlayerColor playerColor;
-
     private GameRoom gameRoom = null;
     private ObjectWriter objectWriter = new ObjectMapper()
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
             .writer()
             .withDefaultPrettyPrinter();
-
 
 
     //make a request to the backend
@@ -63,7 +62,7 @@ public class Service {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         }
         catch(Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
         if (response == null) throw new AssertionError();
         return response;
@@ -75,10 +74,28 @@ public class Service {
             json = objectWriter.writeValueAsString(object);
         }
         catch(Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
         if (json == null) throw new AssertionError();
         return json;
     }
+    public void createGameRoom() {
+        gameRoom = new GameRoom();
+    }
+    public void connectToGameRoom() {
+        URI uri = null;
+        try {
+            uri = new URI(WEBSOCKET_GAME_URL + gameRoom.getRoomCode());
+            client = new GenericWebsocketClient(uri);
+            client.addHeader("Authorization", "Bearer " + token);
+            client.connect();
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    public void disconnectFromGameRoom() {
+        client.close();
+    }
 }

@@ -4,6 +4,7 @@ module com.group1.frontend {
     requires java.net.http;
     requires org.json;
     requires com.fasterxml.jackson.databind;
+    requires org.java_websocket;
     requires static lombok;
 
 
