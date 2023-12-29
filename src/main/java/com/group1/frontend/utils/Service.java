@@ -23,8 +23,9 @@ public class Service {
     private String backendURL;
 
     //TODO: remove this
-    private String username = "polat";
-    private PlayerColor playerColor = PlayerColor.RED;
+    private String username;
+    private PlayerColor playerColor;
+
     private GameRoom gameRoom = null;
     private ObjectWriter objectWriter = new ObjectMapper()
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
@@ -34,12 +35,12 @@ public class Service {
 
 
     //make a request to the backend
-    public HttpResponse<String> makeRequest(String endpoint, String method, String body) {
+    public HttpResponse<String> makeRequest(String endpoint, String method, HttpRequestDto body) {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(backendURL + endpoint))
             .header("Content-Type", "application/json")
-            .method(method, HttpRequest.BodyPublishers.ofString(body))
+            .method(method, HttpRequest.BodyPublishers.ofString(objectToJson(body)))
             .build();
         return getHttpResponse(client, request);
     }
