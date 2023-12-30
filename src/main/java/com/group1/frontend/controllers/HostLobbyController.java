@@ -80,7 +80,15 @@ public class HostLobbyController extends Controller{
         statusLabel.setText("Waiting for players...");
         roomCodeLabel.setText(service.getGameRoom().getRoomCode());
         lobbyTable.addEventHandler(PlayerKickedEvent.PLAYER_KICKED, this::handlePlayerKickedEvent);
+
+        service.connectToGameRoom(this::hostLobbyMessageHandler);
+
+
     }
+    public void hostLobbyMessageHandler(String message) {
+        statusLabel.setText(message);
+    }
+
 
     protected void handlePlayerKickedEvent(PlayerKickedEvent event) {
         LobbyPlayer lobbyPlayer = event.getTableCell().getTableRow().getItem();
@@ -123,7 +131,7 @@ public class HostLobbyController extends Controller{
     }
     @FXML
     protected void onStartGameButtonClick() {
-
+        sceneSwitch.switchToScene(stage, service, "board-view.fxml");
     }
 
     private void addPlayerToTable(LobbyPlayer lobbyPlayer) {

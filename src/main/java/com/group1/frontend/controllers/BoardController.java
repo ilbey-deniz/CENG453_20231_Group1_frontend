@@ -110,6 +110,7 @@ public class BoardController extends Controller{
 
     public void init() {
         try {
+            service.setWebsocketHandler(this::boardMessageHandler);
             game = new Game();
             Board board = new Board();
             game.setBoard(board);
@@ -177,6 +178,9 @@ public class BoardController extends Controller{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void boardMessageHandler(String message) {
+        writeToGameUpdates(message);
     }
     public void handleCornerClickEvent(CornerClickedEvent event) {
         //check settlementToggleButton is selected

@@ -40,7 +40,6 @@ public class MenuController extends Controller{
                     playerDto.isReady());
             service.getGameRoom().addPlayer(lobbyPlayer);
             service.getGameRoom().setHost(service.getUsername());
-            service.connectToGameRoom();
 
             sceneSwitch.switchToScene(stage, service, "host-lobby-view.fxml");
         }

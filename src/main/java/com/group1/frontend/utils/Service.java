@@ -82,19 +82,22 @@ public class Service {
     public void createGameRoom() {
         gameRoom = new GameRoom();
     }
-    public void connectToGameRoom() {
+    public void connectToGameRoom(GenericWebsocketClient.OnMessageHandler handler) {
         URI uri = null;
         try {
             uri = new URI(WEBSOCKET_GAME_URL + gameRoom.getRoomCode());
             client = new GenericWebsocketClient(uri);
             client.addHeader("Authorization", "Bearer " + token);
+            client.setMessageHandler(handler);
             client.connect();
         }
         catch(Exception e) {
             e.printStackTrace();
         }
     }
-
+    public void setWebsocketHandler(GenericWebsocketClient.OnMessageHandler handler) {
+        client.setMessageHandler(handler);
+    }
     public void disconnectFromGameRoom() {
         client.close();
     }
