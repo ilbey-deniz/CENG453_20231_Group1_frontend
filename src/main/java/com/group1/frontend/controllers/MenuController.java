@@ -1,15 +1,23 @@
 package com.group1.frontend.controllers;
+import com.group1.frontend.dto.httpDto.JoinGameDto;
 import com.group1.frontend.dto.httpDto.PlayerDto;
 import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.utils.LobbyPlayer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 
 import java.net.http.HttpResponse;
 
+import static com.group1.frontend.constants.LobbyPlayerConstants.LOBBY_PLAYER_COLORS;
+import static com.group1.frontend.constants.LobbyPlayerConstants.getRandomAvailableColor;
+
 
 public class MenuController extends Controller{
+
+    @FXML
+    private TextField roomCodeTextField;
     @FXML
     private Label usernameLabel;
     @FXML
@@ -17,9 +25,11 @@ public class MenuController extends Controller{
 
     @FXML
     protected void onCreateGameButtonClick() {
+        // it picks random unpicked color
+        PlayerColor color = getRandomAvailableColor();
         PlayerDto playerDto = new PlayerDto(
                 service.getUsername(),
-                PlayerColor.getRandomColor(),
+                color,
                 false,
                 true,
                 false);
@@ -52,7 +62,52 @@ public class MenuController extends Controller{
 
     @FXML
     protected void onJoinGameButtonClick() {
+//        PlayerColor color = getRandomAvailableColor();
+//        PlayerDto playerDto = new PlayerDto(
+//                service.getUsername(),
+//                color,
+//                false,
+//                true,
+//                false);
+        if(roomCodeTextField.getText().isEmpty()) {
+            statusLabel.setText("Please enter a room code");
+            return;
+        }
+        PlayerColor color = getRandomAvailableColor();
+        PlayerDto playerDto = new PlayerDto(
+                service.getUsername(),
+                color,
+                false,
+                true,
+                false);
+        JoinGameDto joinGameDto = new JoinGameDto(
+                roomCodeTextField.getText(),
+                playerDto
+        );
+        HttpResponse<String> response = service.makeRequestWithToken(
+                "/game/join",
+                "POST",
+                joinGameDto);
+        if(response.statusCode() == 200) {
+            service.connectToGameRoom(this::joinLobbyHandler);
+            System.out.println("Joined game");
 
+        }
+        else {
+            statusLabel.setText("Error joining game: " + response.body());
+        }
+
+//        HttpResponse<String> response = service.makeRequestWithToken(
+//                "/game/join",
+//                "POST",
+//                );
+
+//        sceneSwitch.switchToScene(stage, service, "guest-lobby-view.fxml");
+    }
+
+    private void joinLobbyHandler(String s) {
+        System.out.println("Joined lobby");
+        sceneSwitch.switchToScene(stage, service, "guest-lobby-view.fxml");
     }
 
     @FXML

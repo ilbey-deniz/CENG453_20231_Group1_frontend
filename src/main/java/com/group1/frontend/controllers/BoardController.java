@@ -7,6 +7,8 @@ import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.events.TimeEvent;
 import com.group1.frontend.utils.BoardUtilityFunctions;
+import com.group1.frontend.utils.GameRoom;
+import com.group1.frontend.utils.LobbyPlayer;
 import com.group1.frontend.view.elements.BoardView;
 import com.group1.frontend.events.*;
 import com.group1.frontend.utils.Timer;
@@ -113,16 +115,13 @@ public class BoardController extends Controller{
             Board board = new Board();
             game.setBoard(board);
             boardView = new BoardView(board);
-            //populate with mock players
-            Player p1 = new Player(PlayerColor.red, service.getUsername(), false);
-            Player p2 = new Player(PlayerColor.yellow, "laz ziya", true);
-            Player p3 = new Player(PlayerColor.green, "tombalacı mehmet", true);
-            Player p4 = new Player(PlayerColor.blue, "karahanlı", true);
+            //add player from lobby to game
+            List<LobbyPlayer> lobbyPlayers = service.getGameRoom().getPlayersAsList();
+            lobbyPlayers.forEach(lobbyPlayer -> {
+                Player player = new Player(lobbyPlayer.getColor(), lobbyPlayer.getUsername(), lobbyPlayer.getCpu());
+                game.addPlayer(player);
+            });
 
-            game.addPlayer(p1);
-            game.addPlayer(p2);
-            game.addPlayer(p3);
-            game.addPlayer(p4);
             game.setCurrentPlayer(game.getPlayers().get(0));
 
             game.createInitialBuildings();

@@ -12,6 +12,8 @@ import lombok.Getter;
 
 import java.net.http.HttpResponse;
 
+import static com.group1.frontend.constants.LobbyPlayerConstants.*;
+
 public class HostLobbyController extends Controller{
     @Getter
     @FXML
@@ -99,6 +101,11 @@ public class HostLobbyController extends Controller{
         if (lobbyPlayer == null) {
             return;
         }
+        if(lobbyPlayer.getCpu()){
+            CPU_NAMES.replace(lobbyPlayer.getUsername(), false);
+        }
+        service.getGameRoom().removePlayer(lobbyPlayer.getUsername());
+        LOBBY_PLAYER_COLORS.replace(lobbyPlayer.getColor(), false);
         lobbyTable.getItems().remove(lobbyPlayer);
         lobbyTable.refresh();
     }
@@ -119,7 +126,18 @@ public class HostLobbyController extends Controller{
 
     @FXML
     protected void onAddCpuPlayerButtonClick() {
-        //select a random color and nickname from non selected ones
+        if (service.getGameRoom().getPlayers().size() >= 4) {
+            //TODO: disable Add CPU button (UI disable)
+            return;
+        }
+        LobbyPlayer lobbyPlayer = new LobbyPlayer(
+                getRandomAvailableColor(),
+                getRandomAvailableCpuName(),
+                false,
+                true,
+                true);
+        service.getGameRoom().addPlayer(lobbyPlayer);
+        lobbyTable.getItems().add(lobbyPlayer);
     }
 
     @FXML

@@ -4,7 +4,9 @@ import com.group1.frontend.enums.PlayerColor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Getter
 @Setter
@@ -31,5 +33,13 @@ public class GameRoom {
             }
         }
         return null;
+    }
+
+    public void removePlayer(String username) {
+        players.remove(username);
+    }
+
+    public List<LobbyPlayer> getPlayersAsList() {
+        return new ArrayList<>(players.values());
     }
 }
