@@ -1,6 +1,6 @@
 package com.group1.frontend.controllers;
 
-import com.group1.frontend.dto.RegisterCredentialDto;
+import com.group1.frontend.dto.httpDto.RegisterCredentialDto;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;

@@ -1,4 +1,4 @@
-package com.group1.frontend.dto;
+package com.group1.frontend.dto.httpDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

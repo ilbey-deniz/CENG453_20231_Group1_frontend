@@ -1,5 +1,5 @@
 package com.group1.frontend.controllers;
-import com.group1.frontend.dto.EmptyDto;
+import com.group1.frontend.dto.httpDto.EmptyDto;
 import com.group1.frontend.utils.Score;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;

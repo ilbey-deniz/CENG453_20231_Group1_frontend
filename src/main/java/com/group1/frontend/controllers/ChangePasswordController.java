@@ -1,5 +1,5 @@
 package com.group1.frontend.controllers;
-import com.group1.frontend.dto.ChangePasswordDto;
+import com.group1.frontend.dto.httpDto.ChangePasswordDto;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;

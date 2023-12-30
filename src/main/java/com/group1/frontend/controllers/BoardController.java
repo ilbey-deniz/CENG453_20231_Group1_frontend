@@ -1,7 +1,7 @@
 package com.group1.frontend.controllers;
 
 import com.group1.frontend.components.*;
-import com.group1.frontend.dto.ScoreDto;
+import com.group1.frontend.dto.httpDto.ScoreDto;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.enums.ResourceType;
@@ -30,12 +30,10 @@ import javafx.util.Pair;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.group1.frontend.constants.BoardConstants.PLAYER_COLORS;
 import static com.group1.frontend.constants.BoardConstants.TURN_TIME;
 import static com.group1.frontend.utils.BoardUtilityFunctions.secondsToTime;
 import static com.group1.frontend.utils.SceneSwitch.getSceneLoader;

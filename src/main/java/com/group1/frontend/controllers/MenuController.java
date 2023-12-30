@@ -1,5 +1,5 @@
 package com.group1.frontend.controllers;
-import com.group1.frontend.dto.PlayerDto;
+import com.group1.frontend.dto.httpDto.PlayerDto;
 import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.utils.LobbyPlayer;
 import javafx.application.Platform;

@@ -7,14 +7,14 @@ import javafx.scene.control.TableCell;
 
 public class PlayerKickedEvent extends Event {
     public static final EventType<PlayerKickedEvent> PLAYER_KICKED = new EventType<>(Event.ANY, "PLAYER_KICKED");
-    private final TableCell<LobbyPlayer, LobbyPlayer> cell;
+    private final String name;
 
-    public PlayerKickedEvent(TableCell<LobbyPlayer, LobbyPlayer> cell) {
+    public PlayerKickedEvent(String name) {
         super(PLAYER_KICKED);
-        this.cell = cell;
+        this.name = name;
     }
 
-    public TableCell<LobbyPlayer, LobbyPlayer> getTableCell() {
-        return cell;
+    public String getName() {
+        return name;
     }
 }

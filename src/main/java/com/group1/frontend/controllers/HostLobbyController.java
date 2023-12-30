@@ -1,6 +1,6 @@
 package com.group1.frontend.controllers;
 
-import com.group1.frontend.dto.DestroyGameDto;
+import com.group1.frontend.dto.httpDto.DestroyGameDto;
 import com.group1.frontend.events.PlayerKickedEvent;
 import com.group1.frontend.utils.LobbyPlayer;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -61,7 +61,7 @@ public class HostLobbyController extends Controller{
 
                 setGraphic(kickButton);
                 kickButton.setOnAction(
-                        event -> onKickButtonClick(this)
+                        event -> onKickButtonClick(lobbyPlayer.getUsername())
                 );
 
 
@@ -87,17 +87,24 @@ public class HostLobbyController extends Controller{
     }
     public void hostLobbyMessageHandler(String message) {
         statusLabel.setText(message);
+        lobbyTable.fireEvent(new PlayerKickedEvent(message));
     }
 
 
     protected void handlePlayerKickedEvent(PlayerKickedEvent event) {
-        LobbyPlayer lobbyPlayer = event.getTableCell().getTableRow().getItem();
+        LobbyPlayer lobbyPlayer = event.getName() == null ? null : lobbyTable.getItems().stream()
+                .filter(player -> player.getUsername().equals(event.getName()))
+                .findFirst()
+                .orElse(null);
+        if (lobbyPlayer == null) {
+            return;
+        }
         lobbyTable.getItems().remove(lobbyPlayer);
         lobbyTable.refresh();
     }
 
-    protected void onKickButtonClick(TableCell<LobbyPlayer, LobbyPlayer> cell) {
-        lobbyTable.fireEvent(new PlayerKickedEvent(cell));
+    protected void onKickButtonClick(String name) {
+        lobbyTable.fireEvent(new PlayerKickedEvent(name));
     }
 
     @FXML

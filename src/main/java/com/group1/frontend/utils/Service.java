@@ -2,8 +2,7 @@ package com.group1.frontend.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.group1.frontend.dto.HttpRequestDto;
-import com.group1.frontend.enums.PlayerColor;
+import com.group1.frontend.dto.httpDto.HttpRequestDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -97,6 +96,10 @@ public class Service {
     }
     public void setWebsocketHandler(GenericWebsocketClient.OnMessageHandler handler) {
         client.setMessageHandler(handler);
+    }
+
+    public void sendWebsocketMessage(String message) {
+        client.send(message);
     }
     public void disconnectFromGameRoom() {
         client.close();
