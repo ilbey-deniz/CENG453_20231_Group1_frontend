@@ -21,8 +21,6 @@ public class HostLobbyController extends Controller{
     @FXML
     private TableColumn<LobbyPlayer, String> usernameColumn;
     @FXML
-    private TableColumn<LobbyPlayer, Boolean> hostColumn;
-    @FXML
     private TableColumn<LobbyPlayer, ImageView> colorColumn;
     @FXML
     private TableColumn<LobbyPlayer, Boolean> readyColumn;
@@ -30,19 +28,16 @@ public class HostLobbyController extends Controller{
     private TableColumn<LobbyPlayer, LobbyPlayer> kickColumn;
 
     @FXML
-    private Label statusLabel;
-    @FXML
     private Label roomCodeLabel;
+    @FXML
+    private Label hostNameLabel;
 
     public void init() {
         colorColumn.setCellValueFactory(
                 new PropertyValueFactory<LobbyPlayer, ImageView>("colorImage")
         );
         usernameColumn.setCellValueFactory(
-                new PropertyValueFactory<LobbyPlayer, String>("username")
-        );
-        hostColumn.setCellValueFactory(
-                new PropertyValueFactory<LobbyPlayer, Boolean>("host")
+                new PropertyValueFactory<LobbyPlayer, String>("name")
         );
         readyColumn.setCellValueFactory(
                 new PropertyValueFactory<LobbyPlayer, Boolean>("ready")
@@ -63,11 +58,11 @@ public class HostLobbyController extends Controller{
 
                 setGraphic(kickButton);
                 kickButton.setOnAction(
-                        event -> onKickButtonClick(lobbyPlayer.getUsername())
+                        event -> onKickButtonClick(lobbyPlayer.getName())
                 );
 
 
-                if (lobbyPlayer.getUsername().equals(service.getUsername())) {
+                if (lobbyPlayer.getName().equals(service.getUsername())) {
                     kickButton.setDisable(true);
                 }
             }
@@ -77,9 +72,9 @@ public class HostLobbyController extends Controller{
         service.getGameRoom().getPlayers().forEach((username, lobbyPlayer) -> {
             addPlayerToTable(lobbyPlayer);
         });
+        hostNameLabel.setText(service.getUsername());
 
         //roomCodeLabel.setText(service.getRoomCode());
-        statusLabel.setText("Waiting for players...");
         roomCodeLabel.setText(service.getGameRoom().getRoomCode());
         lobbyTable.addEventHandler(PlayerKickedEvent.PLAYER_KICKED, this::handlePlayerKickedEvent);
 
@@ -88,23 +83,22 @@ public class HostLobbyController extends Controller{
 
     }
     public void hostLobbyMessageHandler(String message) {
-        statusLabel.setText(message);
-        lobbyTable.fireEvent(new PlayerKickedEvent(message));
+
     }
 
 
     protected void handlePlayerKickedEvent(PlayerKickedEvent event) {
         LobbyPlayer lobbyPlayer = event.getName() == null ? null : lobbyTable.getItems().stream()
-                .filter(player -> player.getUsername().equals(event.getName()))
+                .filter(player -> player.getName().equals(event.getName()))
                 .findFirst()
                 .orElse(null);
         if (lobbyPlayer == null) {
             return;
         }
         if(lobbyPlayer.getCpu()){
-            CPU_NAMES.replace(lobbyPlayer.getUsername(), false);
+            CPU_NAMES.replace(lobbyPlayer.getName(), false);
         }
-        service.getGameRoom().removePlayer(lobbyPlayer.getUsername());
+        service.getGameRoom().removePlayer(lobbyPlayer.getName());
         LOBBY_PLAYER_COLORS.replace(lobbyPlayer.getColor(), false);
         lobbyTable.getItems().remove(lobbyPlayer);
         lobbyTable.refresh();
@@ -117,7 +111,7 @@ public class HostLobbyController extends Controller{
     @FXML
     protected void onReadyButtonClick() {
         lobbyTable.getItems().forEach(lobbyPlayer -> {
-            if (lobbyPlayer.getUsername().equals(service.getUsername())) {
+            if (lobbyPlayer.getName().equals(service.getUsername())) {
                 lobbyPlayer.setReady(true);
             }
         });
@@ -133,7 +127,6 @@ public class HostLobbyController extends Controller{
         LobbyPlayer lobbyPlayer = new LobbyPlayer(
                 getRandomAvailableColor(),
                 getRandomAvailableCpuName(),
-                false,
                 true,
                 true);
         service.getGameRoom().addPlayer(lobbyPlayer);

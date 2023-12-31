@@ -3,11 +3,9 @@ package com.group1.frontend.controllers;
 import com.group1.frontend.components.*;
 import com.group1.frontend.dto.httpDto.ScoreDto;
 import com.group1.frontend.enums.BuildingType;
-import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.events.TimeEvent;
 import com.group1.frontend.utils.BoardUtilityFunctions;
-import com.group1.frontend.utils.GameRoom;
 import com.group1.frontend.utils.LobbyPlayer;
 import com.group1.frontend.view.elements.BoardView;
 import com.group1.frontend.events.*;
@@ -118,7 +116,7 @@ public class BoardController extends Controller{
             //add player from lobby to game
             List<LobbyPlayer> lobbyPlayers = service.getGameRoom().getPlayersAsList();
             lobbyPlayers.forEach(lobbyPlayer -> {
-                Player player = new Player(lobbyPlayer.getColor(), lobbyPlayer.getUsername(), lobbyPlayer.getCpu());
+                Player player = new Player(lobbyPlayer.getColor(), lobbyPlayer.getName(), lobbyPlayer.getCpu());
                 game.addPlayer(player);
             });
 

@@ -44,8 +44,9 @@
             <Label layoutX="33.0" layoutY="291.0" text="Room Code:" />
             <Label fx:id="roomCodeLabel" layoutX="110.0" layoutY="291.0" text="#1234" />
             <Button fx:id="readyButton" alignment="CENTER_RIGHT" layoutX="430.0" layoutY="288.0" mnemonicParsing="false" onAction="#onReadyButtonClick" text="Ready!" textAlignment="CENTER" />
-            <Label fx:id="statusLabel" layoutX="33.0" layoutY="311.0" text="STATUS_LABEL" textFill="RED" />
             <Button fx:id="backButton" layoutX="29.0" layoutY="384.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="Back" />
+            <Label fx:id="hostNameLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="73.0" layoutY="313.0" text="hostname" />
+            <Label layoutX="33.0" layoutY="313.0" text="Host:" />
          </children>
       </AnchorPane>
    </children>

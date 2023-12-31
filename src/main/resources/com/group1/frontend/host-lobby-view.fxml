@@ -35,7 +35,6 @@
               <columns>
                 <TableColumn fx:id="colorColumn" editable="false" minWidth="0.0" prefWidth="54.0" resizable="false" sortable="false" text="Color" />
                 <TableColumn fx:id="usernameColumn" editable="false" prefWidth="289.95758056640625" sortable="false" text="Username" />
-                  <TableColumn fx:id="hostColumn" prefWidth="64.0" text="Host?" />
                   <TableColumn fx:id="readyColumn" editable="false" prefWidth="66.0" sortable="false" text="Ready?" />
                   <TableColumn fx:id="kickColumn" prefWidth="75.0" text="Kick" />
               </columns>
@@ -43,13 +42,14 @@
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
             </TableView>
-            <Label layoutX="33.0" layoutY="291.0" text="Room Code:" />
-            <Label fx:id="roomCodeLabel" layoutX="110.0" layoutY="291.0" text="#1234" />
+            <Label layoutX="33.0" layoutY="291.0" text="Room Code:" AnchorPane.leftAnchor="33.0" />
+            <Label fx:id="roomCodeLabel" layoutX="120.0" layoutY="292.0" text="12345" />
             <Button fx:id="readyButton" alignment="CENTER" contentDisplay="CENTER" layoutX="405.0" layoutY="288.0" mnemonicParsing="false" onAction="#onReadyButtonClick" prefHeight="24.0" prefWidth="78.0" text="Ready!" />
-            <Label fx:id="statusLabel" layoutX="33.0" layoutY="311.0" textFill="RED" />
             <Button fx:id="addCpuPlayerButton" layoutX="258.0" layoutY="288.0" mnemonicParsing="false" onAction="#onAddCpuPlayerButtonClick" text="Add CPU Player" />
             <Button fx:id="backButton" layoutX="29.0" layoutY="384.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="Back" />
-            <Button fx:id="startGameButton" layoutX="404.0" layoutY="326.0" mnemonicParsing="false" onAction="#onStartGameButtonClick" text="Start Game" />
+            <Button fx:id="startGameButton" layoutX="404.0" layoutY="326.0" mnemonicParsing="false" onAction="#onStartGameButtonClick" prefHeight="25.0" prefWidth="78.0" text="Start Game" />
+            <Label layoutX="29.0" layoutY="311.0" text="Host:" AnchorPane.leftAnchor="33.0" />
+            <Label fx:id="hostNameLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="79.0" layoutY="311.0" text="hostname" />
          </children>
       </AnchorPane>
    </children>

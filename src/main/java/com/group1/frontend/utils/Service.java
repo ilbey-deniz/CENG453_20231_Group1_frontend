@@ -30,6 +30,7 @@ public class Service {
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
             .writer()
             .withDefaultPrettyPrinter();
+    private ObjectMapper objectMapper = new ObjectMapper();
 
 
     //make a request to the backend
@@ -78,6 +79,18 @@ public class Service {
         if (json == null) throw new AssertionError();
         return json;
     }
+    public GameRoom jsonToObject(String json){
+        GameRoom object = null;
+        try {
+            object = objectMapper.readValue(json, GameRoom.class);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        if (object == null) throw new AssertionError();
+        return object;
+    }
+
     public void createGameRoom() {
         gameRoom = new GameRoom();
     }

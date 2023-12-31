@@ -2,6 +2,7 @@ package com.group1.frontend.controllers;
 import com.group1.frontend.dto.httpDto.JoinGameDto;
 import com.group1.frontend.dto.httpDto.PlayerDto;
 import com.group1.frontend.enums.PlayerColor;
+import com.group1.frontend.utils.GameRoom;
 import com.group1.frontend.utils.LobbyPlayer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -10,7 +11,6 @@ import javafx.scene.control.TextField;
 
 import java.net.http.HttpResponse;
 
-import static com.group1.frontend.constants.LobbyPlayerConstants.LOBBY_PLAYER_COLORS;
 import static com.group1.frontend.constants.LobbyPlayerConstants.getRandomAvailableColor;
 
 
@@ -42,14 +42,9 @@ public class MenuController extends Controller{
         if(response.statusCode() == 200) {
             service.createGameRoom();
             service.getGameRoom().setRoomCode(response.body());
-            LobbyPlayer lobbyPlayer = new LobbyPlayer(
-                    playerDto.getColor(),
-                    playerDto.getName(),
-                    playerDto.isHost(),
-                    playerDto.isCpu(),
-                    playerDto.isReady());
+            LobbyPlayer lobbyPlayer = new LobbyPlayer(playerDto);
             service.getGameRoom().addPlayer(lobbyPlayer);
-            service.getGameRoom().setHost(service.getUsername());
+            service.getGameRoom().setHostName(service.getUsername());
 
             sceneSwitch.switchToScene(stage, service, "host-lobby-view.fxml");
         }
@@ -62,23 +57,18 @@ public class MenuController extends Controller{
 
     @FXML
     protected void onJoinGameButtonClick() {
-//        PlayerColor color = getRandomAvailableColor();
-//        PlayerDto playerDto = new PlayerDto(
-//                service.getUsername(),
-//                color,
-//                false,
-//                true,
-//                false);
+
         if(roomCodeTextField.getText().isEmpty()) {
             statusLabel.setText("Please enter a room code");
             return;
         }
-        PlayerColor color = getRandomAvailableColor();
+
+        //this check needs to be done in backend, guest doesn't know about existing colors
         PlayerDto playerDto = new PlayerDto(
                 service.getUsername(),
-                color,
+                null,
                 false,
-                true,
+                false,
                 false);
         JoinGameDto joinGameDto = new JoinGameDto(
                 roomCodeTextField.getText(),
@@ -89,25 +79,13 @@ public class MenuController extends Controller{
                 "POST",
                 joinGameDto);
         if(response.statusCode() == 200) {
-            service.connectToGameRoom(this::joinLobbyHandler);
-            System.out.println("Joined game");
-
+            GameRoom gameRoom = service.jsonToObject(response.body());
+            service.setGameRoom(gameRoom);
+            sceneSwitch.switchToScene(stage, service, "guest-lobby-view.fxml");
         }
         else {
             statusLabel.setText("Error joining game: " + response.body());
         }
-
-//        HttpResponse<String> response = service.makeRequestWithToken(
-//                "/game/join",
-//                "POST",
-//                );
-
-//        sceneSwitch.switchToScene(stage, service, "guest-lobby-view.fxml");
-    }
-
-    private void joinLobbyHandler(String s) {
-        System.out.println("Joined lobby");
-        sceneSwitch.switchToScene(stage, service, "guest-lobby-view.fxml");
     }
 
     @FXML
