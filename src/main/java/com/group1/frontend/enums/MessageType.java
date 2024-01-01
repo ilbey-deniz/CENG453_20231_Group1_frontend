@@ -9,5 +9,7 @@ public enum MessageType {
     PLACE_ROAD,
     PLACE_SETTLEMENT,
     PLACE_CITY,
-    INIT_GAME
+    INIT_GAME,
+    JOIN_LOBBY,
+    KICK_PLAYER,
 }

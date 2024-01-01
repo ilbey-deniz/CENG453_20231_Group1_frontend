@@ -9,6 +9,7 @@ import com.group1.frontend.dto.httpDto.PlayerDto;
 import com.group1.frontend.enums.PlayerColor;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,7 @@ import java.util.HashMap;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class LobbyPlayer {
     private String name;
     private ImageView colorImage;
