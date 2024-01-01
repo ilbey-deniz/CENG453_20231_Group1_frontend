@@ -1,23 +1,17 @@
 package com.group1.frontend.utils;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.group1.frontend.MainApplication;
 import com.group1.frontend.dto.httpDto.PlayerDto;
 import com.group1.frontend.enums.PlayerColor;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashMap;
-
 @Getter
 @Setter
-@AllArgsConstructor
+@JsonDeserialize(using = JsonDeserializers.LobbyPlayerDeserializer.class)
 public class LobbyPlayer {
     private String name;
     private ImageView colorImage;
@@ -49,21 +43,5 @@ public class LobbyPlayer {
         }
     }
 
-    public static class LobbyPlayerDeserializer extends JsonDeserializer<HashMap<String, LobbyPlayer>> {
-        @Override
-        public HashMap<String, LobbyPlayer> deserialize(JsonParser jsonParser,
-                                                        DeserializationContext deserializationContext) throws java.io.IOException{
 
-            HashMap<String, LobbyPlayer> players = new HashMap<>();
-            JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-            for (JsonNode playerNode : node) {
-                String name = playerNode.get("name").asText();
-                PlayerColor color = PlayerColor.valueOf(playerNode.get("color").asText());
-                Boolean cpu = playerNode.get("cpu").asBoolean();
-                Boolean ready = playerNode.get("ready").asBoolean();
-                players.put(name, new LobbyPlayer(color, name, cpu, ready));
-            }
-            return players;
-        }
-    }
 }

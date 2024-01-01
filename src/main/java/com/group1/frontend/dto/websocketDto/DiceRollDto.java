@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Data;
 
 @Data
-@JsonTypeName("END_TURN")
-public class EndTurnDto implements WebSocketDto{
-//    private String playerName;
+@JsonTypeName("DICE_ROLL")
+public class DiceRollDto implements WebSocketDto{
+    private int dice1;
+    private int dice2;
 }

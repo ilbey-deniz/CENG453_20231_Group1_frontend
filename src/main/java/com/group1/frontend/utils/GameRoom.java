@@ -1,7 +1,6 @@
 package com.group1.frontend.utils;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.group1.frontend.enums.PlayerColor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +13,7 @@ import java.util.List;
 public class GameRoom {
     private String roomCode;
     private String hostName;
-    @JsonDeserialize(using = LobbyPlayer.LobbyPlayerDeserializer.class)
+    @JsonDeserialize(using = JsonDeserializers.PlayersHashMapDeserializer.class)
     private HashMap<String, LobbyPlayer> players;
 
     public GameRoom() {

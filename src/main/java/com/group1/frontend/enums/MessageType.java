@@ -5,7 +5,7 @@ public enum MessageType {
     END_TURN,
     TIMER_END,
     LEAVE_GAME,
-    MESSAGE_SEND,
+    TEXT_MESSAGE,
     PLACE_ROAD,
     PLACE_SETTLEMENT,
     PLACE_CITY,

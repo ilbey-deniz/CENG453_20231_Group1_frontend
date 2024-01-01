@@ -4,7 +4,6 @@ import com.group1.frontend.dto.httpDto.DestroyGameDto;
 import com.group1.frontend.dto.websocketDto.JoinLobbyDto;
 import com.group1.frontend.dto.websocketDto.KickPlayerDto;
 import com.group1.frontend.dto.websocketDto.WebSocketDto;
-import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.events.PlayerJoinedEvent;
 import com.group1.frontend.events.PlayerKickedEvent;
 import com.group1.frontend.utils.LobbyPlayer;
@@ -82,6 +81,7 @@ public class HostLobbyController extends Controller{
         //roomCodeLabel.setText(service.getRoomCode());
         roomCodeLabel.setText(service.getGameRoom().getRoomCode());
         lobbyTable.addEventHandler(PlayerKickedEvent.PLAYER_KICKED, this::handlePlayerKickedEvent);
+        lobbyTable.addEventHandler(PlayerJoinedEvent.PLAYER_JOINED, this::handlePlayerJoinedEvent);
 
         service.connectToGameRoom(this::hostLobbyMessageHandler);
 
@@ -89,21 +89,12 @@ public class HostLobbyController extends Controller{
 
 
     public void hostLobbyMessageHandler(String message) {
-        WebSocketDto webSocketDto = (WebSocketDto) service.jsonToObject(message, WebSocketDto.class);
-        System.out.println(webSocketDto.toString());
-        switch (webSocketDto.getType()) {
-            case JOIN_LOBBY:
-
-                JoinLobbyDto joinLobbyDto = (JoinLobbyDto) webSocketDto.getContent();
-                handlePlayerJoinedEvent(new PlayerJoinedEvent(joinLobbyDto.getPlayer()));
-
-                break;
-            case KICK_PLAYER:
-                KickPlayerDto kickPlayerDto = (KickPlayerDto) service.jsonToObject(message, KickPlayerDto.class);
-//                handlePlayerKickedEvent(new PlayerKickedEvent(kickPlayerDto.getName()));
-                break;
-            default:
-                break;
+        WebSocketDto dto = (WebSocketDto) service.jsonToObject(message, WebSocketDto.class);
+        //TODO: handle other types of messages, getting class type is too ugly
+        if (dto.getClass().equals(JoinLobbyDto.class)) {
+            JoinLobbyDto joinLobbyDto = (JoinLobbyDto) dto;
+            LobbyPlayer lobbyPlayer = joinLobbyDto.getPlayer();
+            lobbyTable.fireEvent(new PlayerJoinedEvent(lobbyPlayer));
         }
     }
 
