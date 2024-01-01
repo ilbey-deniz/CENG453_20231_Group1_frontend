@@ -1,4 +1,5 @@
 package com.group1.frontend.controllers;
+import com.group1.frontend.components.Game;
 import com.group1.frontend.dto.httpDto.JoinGameDto;
 import com.group1.frontend.dto.httpDto.PlayerDto;
 import com.group1.frontend.enums.PlayerColor;
@@ -79,7 +80,7 @@ public class MenuController extends Controller{
                 "POST",
                 joinGameDto);
         if(response.statusCode() == 200) {
-            GameRoom gameRoom = service.jsonToObject(response.body());
+            GameRoom gameRoom = (GameRoom) service.jsonToObject(response.body(), GameRoom.class);
             service.setGameRoom(gameRoom);
             sceneSwitch.switchToScene(stage, service, "guest-lobby-view.fxml");
         }

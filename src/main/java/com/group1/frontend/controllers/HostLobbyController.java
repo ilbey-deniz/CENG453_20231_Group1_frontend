@@ -1,6 +1,11 @@
 package com.group1.frontend.controllers;
 
 import com.group1.frontend.dto.httpDto.DestroyGameDto;
+import com.group1.frontend.dto.websocketDto.JoinLobbyDto;
+import com.group1.frontend.dto.websocketDto.KickPlayerDto;
+import com.group1.frontend.dto.websocketDto.WebSocketDto;
+import com.group1.frontend.enums.PlayerColor;
+import com.group1.frontend.events.PlayerJoinedEvent;
 import com.group1.frontend.events.PlayerKickedEvent;
 import com.group1.frontend.utils.LobbyPlayer;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -80,10 +85,37 @@ public class HostLobbyController extends Controller{
 
         service.connectToGameRoom(this::hostLobbyMessageHandler);
 
-
     }
-    public void hostLobbyMessageHandler(String message) {
 
+
+    public void hostLobbyMessageHandler(String message) {
+        WebSocketDto webSocketDto = (WebSocketDto) service.jsonToObject(message, WebSocketDto.class);
+        System.out.println(webSocketDto.toString());
+        switch (webSocketDto.getType()) {
+            case JOIN_LOBBY:
+
+                JoinLobbyDto joinLobbyDto = (JoinLobbyDto) webSocketDto.getContent();
+                handlePlayerJoinedEvent(new PlayerJoinedEvent(joinLobbyDto.getPlayer()));
+
+                break;
+            case KICK_PLAYER:
+                KickPlayerDto kickPlayerDto = (KickPlayerDto) service.jsonToObject(message, KickPlayerDto.class);
+//                handlePlayerKickedEvent(new PlayerKickedEvent(kickPlayerDto.getName()));
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    protected void handlePlayerJoinedEvent(PlayerJoinedEvent event) {
+        LobbyPlayer lobbyPlayer = event.getLobbyPlayer();
+        if(lobbyPlayer.getCpu()){
+            CPU_NAMES.replace(lobbyPlayer.getName(), false);
+        }
+        service.getGameRoom().addPlayer(lobbyPlayer);
+        addPlayerToTable(lobbyPlayer);
+        lobbyTable.refresh();
     }
 
 

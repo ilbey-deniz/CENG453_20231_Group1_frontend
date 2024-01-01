@@ -79,10 +79,10 @@ public class Service {
         if (json == null) throw new AssertionError();
         return json;
     }
-    public GameRoom jsonToObject(String json){
-        GameRoom object = null;
+    public Object jsonToObject(String json, Class<?> classType) {
+        Object object = null;
         try {
-            object = objectMapper.readValue(json, GameRoom.class);
+            object = objectMapper.readValue(json, classType);
         }
         catch(Exception e) {
             e.printStackTrace();
