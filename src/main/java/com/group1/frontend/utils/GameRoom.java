@@ -23,8 +23,8 @@ public class GameRoom {
         players.put(player.getName(), player);
     }
 
-    public void removePlayer(String username) {
-        players.remove(username);
+    public void removePlayer(String playerName) {
+        players.remove(playerName);
     }
 
     public List<LobbyPlayer> getPlayersAsList() {

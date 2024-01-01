@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 @JsonTypeName("KICK_PLAYER")
+//DON'T EVER NEVER EVER add @AllArgsConstructor
 public class KickPlayerDto implements WebSocketDto{
     private LobbyPlayer player;
 

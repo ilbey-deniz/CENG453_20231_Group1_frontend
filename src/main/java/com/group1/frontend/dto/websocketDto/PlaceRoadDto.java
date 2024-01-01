@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 @JsonTypeName("PLACE_ROAD")
+//DON'T EVER NEVER EVER add @AllArgsConstructor
 public class PlaceRoadDto implements WebSocketDto{
     private Edge edge;
 }

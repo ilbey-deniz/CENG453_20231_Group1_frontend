@@ -5,7 +5,7 @@ import lombok.*;
 
 @Data
 @JsonTypeName("JOIN_LOBBY")
+//DON'T EVER NEVER EVER add @AllArgsConstructor
 public class JoinLobbyDto implements WebSocketDto{
-//    private String roomCode;
     private LobbyPlayer player;
 }

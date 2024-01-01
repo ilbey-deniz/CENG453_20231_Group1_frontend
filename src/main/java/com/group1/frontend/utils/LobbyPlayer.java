@@ -1,5 +1,6 @@
 package com.group1.frontend.utils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.group1.frontend.MainApplication;
 import com.group1.frontend.dto.httpDto.PlayerDto;
@@ -14,6 +15,7 @@ import lombok.Setter;
 @JsonDeserialize(using = JsonDeserializers.LobbyPlayerDeserializer.class)
 public class LobbyPlayer {
     private String name;
+    @JsonIgnore
     private ImageView colorImage;
     private PlayerColor color;
     private Boolean cpu;

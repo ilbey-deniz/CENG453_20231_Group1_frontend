@@ -1,11 +1,11 @@
 package com.group1.frontend.controllers;
 
-import com.group1.frontend.dto.httpDto.DestroyGameDto;
+import com.group1.frontend.dto.httpDto.GameRoom_PlayerDto;
+import com.group1.frontend.dto.httpDto.PlayerDto;
 import com.group1.frontend.dto.websocketDto.JoinLobbyDto;
 import com.group1.frontend.dto.websocketDto.KickPlayerDto;
+import com.group1.frontend.dto.websocketDto.LeaveGameDto;
 import com.group1.frontend.dto.websocketDto.WebSocketDto;
-import com.group1.frontend.events.PlayerJoinedEvent;
-import com.group1.frontend.events.PlayerKickedEvent;
 import com.group1.frontend.utils.LobbyPlayer;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.FXML;
@@ -62,7 +62,7 @@ public class HostLobbyController extends Controller{
 
                 setGraphic(kickButton);
                 kickButton.setOnAction(
-                        event -> onKickButtonClick(lobbyPlayer.getName())
+                        event -> onKickButtonClick(lobbyPlayer)
                 );
 
 
@@ -77,12 +77,7 @@ public class HostLobbyController extends Controller{
             addPlayerToTable(lobbyPlayer);
         });
         hostNameLabel.setText(service.getUsername());
-
-        //roomCodeLabel.setText(service.getRoomCode());
         roomCodeLabel.setText(service.getGameRoom().getRoomCode());
-        lobbyTable.addEventHandler(PlayerKickedEvent.PLAYER_KICKED, this::handlePlayerKickedEvent);
-        lobbyTable.addEventHandler(PlayerJoinedEvent.PLAYER_JOINED, this::handlePlayerJoinedEvent);
-
         service.connectToGameRoom(this::hostLobbyMessageHandler);
 
     }
@@ -92,52 +87,59 @@ public class HostLobbyController extends Controller{
         WebSocketDto dto = (WebSocketDto) service.jsonToObject(message, WebSocketDto.class);
         //TODO: handle other types of messages, getting class type is too ugly
         if (dto.getClass().equals(JoinLobbyDto.class)) {
-            JoinLobbyDto joinLobbyDto = (JoinLobbyDto) dto;
-            LobbyPlayer lobbyPlayer = joinLobbyDto.getPlayer();
-            lobbyTable.fireEvent(new PlayerJoinedEvent(lobbyPlayer));
+            LobbyPlayer lobbyPlayer = ((JoinLobbyDto) dto).getPlayer();
+            if(lobbyPlayer.getCpu()){
+                CPU_NAMES.replace(lobbyPlayer.getName(), false);
+            }
+            service.getGameRoom().addPlayer(lobbyPlayer);
+            addPlayerToTable(lobbyPlayer);
+            lobbyTable.refresh();
+        }
+        else if(dto.getClass().equals(LeaveGameDto.class)){
+            LeaveGameDto leaveGameDto = (LeaveGameDto) dto;
+            LobbyPlayer lobbyPlayer = leaveGameDto.getPlayer();
+            service.getGameRoom().removePlayer(lobbyPlayer.getName());
+            removeFromLobbyTable(lobbyPlayer.getName());
         }
     }
 
+    protected void onKickButtonClick(LobbyPlayer lobbyPlayer) {
+        String roomCode = service.getGameRoom().getRoomCode();
+        PlayerDto playerDto = new PlayerDto(
+                lobbyPlayer.getName(),
+                lobbyPlayer.getColor(),
+                lobbyPlayer.getReady(),
+                false,
+                lobbyPlayer.getCpu()
+        );
+        GameRoom_PlayerDto gameRoomPlayerDto = new GameRoom_PlayerDto(
+                roomCode,
+                playerDto
+        );
 
-    protected void handlePlayerJoinedEvent(PlayerJoinedEvent event) {
-        LobbyPlayer lobbyPlayer = event.getLobbyPlayer();
-        if(lobbyPlayer.getCpu()){
-            CPU_NAMES.replace(lobbyPlayer.getName(), false);
+        HttpResponse<String> response = service.makeRequestWithToken(
+                "/game/playerKicked",
+                "POST",
+                gameRoomPlayerDto
+        );
+        if(response.statusCode() == 200){
+            KickPlayerDto kickPlayerJson = new KickPlayerDto();
+            kickPlayerJson.setPlayer(lobbyPlayer);
+            String message = service.objectToJson(kickPlayerJson);
+            service.sendWebsocketMessage(message);
+
+            if(lobbyPlayer.getCpu()){
+                CPU_NAMES.replace(lobbyPlayer.getName(), false);
+            }
+            service.getGameRoom().removePlayer(lobbyPlayer.getName());
+            LOBBY_PLAYER_COLORS.replace(lobbyPlayer.getColor(), false);
+            removeFromLobbyTable(lobbyPlayer.getName());
         }
-        service.getGameRoom().addPlayer(lobbyPlayer);
-        addPlayerToTable(lobbyPlayer);
-        lobbyTable.refresh();
-    }
 
-
-    protected void handlePlayerKickedEvent(PlayerKickedEvent event) {
-        LobbyPlayer lobbyPlayer = event.getName() == null ? null : lobbyTable.getItems().stream()
-                .filter(player -> player.getName().equals(event.getName()))
-                .findFirst()
-                .orElse(null);
-        if (lobbyPlayer == null) {
-            return;
-        }
-        if(lobbyPlayer.getCpu()){
-            CPU_NAMES.replace(lobbyPlayer.getName(), false);
-        }
-        service.getGameRoom().removePlayer(lobbyPlayer.getName());
-        LOBBY_PLAYER_COLORS.replace(lobbyPlayer.getColor(), false);
-        lobbyTable.getItems().remove(lobbyPlayer);
-        lobbyTable.refresh();
-    }
-
-    protected void onKickButtonClick(String name) {
-        lobbyTable.fireEvent(new PlayerKickedEvent(name));
     }
 
     @FXML
     protected void onReadyButtonClick() {
-        lobbyTable.getItems().forEach(lobbyPlayer -> {
-            if (lobbyPlayer.getName().equals(service.getUsername())) {
-                lobbyPlayer.setReady(true);
-            }
-        });
 
     }
 
@@ -158,17 +160,27 @@ public class HostLobbyController extends Controller{
 
     @FXML
     protected void onBackButtonClick() {
-        //TODO: room should be destroyed and players should be notified
-        //alternatively, the host can be kicked and the host can be transferred to another non-CPU player
-        //if there are no non-CPU players left, the room should be destroyed
-        //In any case, some sort of HostLeftEvent should be fired
-        service.disconnectFromGameRoom();
         HttpResponse<String> response = service.makeRequestWithToken(
-                "/game/destroy",
+                "/game/playerLeft",
                 "POST",
-                new DestroyGameDto(service.getGameRoom().getRoomCode())
-        );
-        sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
+                new GameRoom_PlayerDto(
+                        service.getGameRoom().getRoomCode(),
+                        new PlayerDto(
+                                service.getUsername(),
+                                null,
+                                false,
+                                true,
+                                false
+                        )
+        ));
+        if(response.statusCode() == 200){
+            LeaveGameDto leaveGameDto = new LeaveGameDto();
+            leaveGameDto.setPlayer(service.getGameRoom().getPlayers().get(service.getUsername()));
+            service.sendWebsocketMessage(service.objectToJson(leaveGameDto));
+            service.disconnectFromGameRoom();
+            service.setGameRoom(null);
+            sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
+        }
     }
     @FXML
     protected void onStartGameButtonClick() {
@@ -177,5 +189,9 @@ public class HostLobbyController extends Controller{
 
     private void addPlayerToTable(LobbyPlayer lobbyPlayer) {
         lobbyTable.getItems().add(lobbyPlayer);
+    }
+    private void removeFromLobbyTable(String playerName){
+        lobbyTable.getItems().removeIf(player -> player.getName().equals(playerName));
+        lobbyTable.refresh();
     }
 }

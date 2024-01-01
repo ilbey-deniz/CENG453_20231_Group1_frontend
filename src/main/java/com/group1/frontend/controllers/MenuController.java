@@ -1,6 +1,5 @@
 package com.group1.frontend.controllers;
-import com.group1.frontend.components.Game;
-import com.group1.frontend.dto.httpDto.JoinGameDto;
+import com.group1.frontend.dto.httpDto.GameRoom_PlayerDto;
 import com.group1.frontend.dto.httpDto.PlayerDto;
 import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.utils.GameRoom;
@@ -71,14 +70,14 @@ public class MenuController extends Controller{
                 false,
                 false,
                 false);
-        JoinGameDto joinGameDto = new JoinGameDto(
+        GameRoom_PlayerDto gameRoomPlayerDto = new GameRoom_PlayerDto(
                 roomCodeTextField.getText(),
                 playerDto
         );
         HttpResponse<String> response = service.makeRequestWithToken(
                 "/game/join",
                 "POST",
-                joinGameDto);
+                gameRoomPlayerDto);
         if(response.statusCode() == 200) {
             GameRoom gameRoom = (GameRoom) service.jsonToObject(response.body(), GameRoom.class);
             service.setGameRoom(gameRoom);
