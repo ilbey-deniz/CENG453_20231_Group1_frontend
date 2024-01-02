@@ -10,7 +10,8 @@ import lombok.*;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = KickPlayerDto.class),
         @JsonSubTypes.Type(value = JoinLobbyDto.class),
-        @JsonSubTypes.Type(value = LeaveGameDto.class)
+        @JsonSubTypes.Type(value = LeaveGameDto.class),
+        @JsonSubTypes.Type(value = PlayerReadyDto.class),
 })
 //DON'T EVER NEVER EVER add @AllArgsConstructor to the classes that implement this class
 public interface WebSocketDto {

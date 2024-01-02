@@ -1,5 +1,6 @@
 package com.group1.frontend.utils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.util.List;
 public class GameRoom {
     private String roomCode;
     private String hostName;
+    private Boolean isStarted;
     @JsonDeserialize(using = JsonDeserializers.PlayersHashMapDeserializer.class)
     private HashMap<String, LobbyPlayer> players;
 
@@ -27,6 +29,7 @@ public class GameRoom {
         players.remove(playerName);
     }
 
+    @JsonIgnore
     public List<LobbyPlayer> getPlayersAsList() {
         return new ArrayList<>(players.values());
     }

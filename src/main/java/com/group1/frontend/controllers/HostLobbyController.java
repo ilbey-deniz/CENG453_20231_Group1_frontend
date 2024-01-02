@@ -2,10 +2,7 @@ package com.group1.frontend.controllers;
 
 import com.group1.frontend.dto.httpDto.GameRoom_PlayerDto;
 import com.group1.frontend.dto.httpDto.PlayerDto;
-import com.group1.frontend.dto.websocketDto.JoinLobbyDto;
-import com.group1.frontend.dto.websocketDto.KickPlayerDto;
-import com.group1.frontend.dto.websocketDto.LeaveGameDto;
-import com.group1.frontend.dto.websocketDto.WebSocketDto;
+import com.group1.frontend.dto.websocketDto.*;
 import com.group1.frontend.utils.GameRoom;
 import com.group1.frontend.utils.LobbyPlayer;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -66,7 +63,6 @@ public class HostLobbyController extends Controller{
                         event -> onKickButtonClick(lobbyPlayer)
                 );
 
-
                 if (lobbyPlayer.getName().equals(service.getUsername())) {
                     kickButton.setDisable(true);
                 }
@@ -86,7 +82,7 @@ public class HostLobbyController extends Controller{
 
     public void hostLobbyMessageHandler(String message) {
         WebSocketDto dto = (WebSocketDto) service.jsonToObject(message, WebSocketDto.class);
-        //TODO: handle other types of messages, getting class type is too ugly
+        //TODO: find a different way to handle message types, class type is too ugly
         if (dto.getClass().equals(JoinLobbyDto.class)) {
             LobbyPlayer lobbyPlayer = ((JoinLobbyDto) dto).getPlayer();
             if(lobbyPlayer.getCpu()){
@@ -100,6 +96,18 @@ public class HostLobbyController extends Controller{
             LobbyPlayer lobbyPlayer = leaveGameDto.getPlayer();
             service.getGameRoom().removePlayer(lobbyPlayer.getName());
             removeFromLobbyTable(lobbyPlayer.getName());
+        }
+        else if(dto.getClass().equals(PlayerReadyDto.class)){
+            PlayerReadyDto playerReadyDto = (PlayerReadyDto) dto;
+            LobbyPlayer lobbyPlayer = playerReadyDto.getPlayer();
+            service.getGameRoom().getPlayers().put(lobbyPlayer.getName(), lobbyPlayer);
+            //find the player in the table and update the ready column
+            lobbyTable.getItems().forEach(player -> {
+                if(player.getName().equals(lobbyPlayer.getName())){
+                    player.setReady(lobbyPlayer.getReady());
+                }
+            });
+            lobbyTable.refresh();
         }
     }
 
@@ -140,6 +148,30 @@ public class HostLobbyController extends Controller{
 
     @FXML
     protected void onReadyButtonClick() {
+        LobbyPlayer lobbyPlayer = service.getGameRoom().getPlayers().get(service.getUsername());
+        HttpResponse<String> response = service.makeRequestWithToken(
+                "/game/playerReady",
+                "POST",
+                new GameRoom_PlayerDto(
+                        service.getGameRoom().getRoomCode(),
+                        new PlayerDto(
+                                lobbyPlayer.getName(),
+                                lobbyPlayer.getColor(),
+                                !lobbyPlayer.getReady(),
+                                true,
+                                false
+                        )
+                )
+        );
+        if(response.statusCode() == 200){
+            lobbyPlayer.setReady(!lobbyPlayer.getReady());
+            service.getGameRoom().getPlayers().put(lobbyPlayer.getName(), lobbyPlayer);
+            PlayerReadyDto playerReadyDto = new PlayerReadyDto();
+            playerReadyDto.setPlayer(lobbyPlayer);
+            String message = service.objectToJson(playerReadyDto);
+            service.sendWebsocketMessage(message);
+            lobbyTable.refresh();
+        }
 
     }
 

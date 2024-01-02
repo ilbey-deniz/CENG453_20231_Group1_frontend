@@ -5,6 +5,7 @@ import com.group1.frontend.dto.httpDto.PlayerDto;
 import com.group1.frontend.dto.websocketDto.JoinLobbyDto;
 import com.group1.frontend.dto.websocketDto.KickPlayerDto;
 import com.group1.frontend.dto.websocketDto.LeaveGameDto;
+import com.group1.frontend.dto.websocketDto.PlayerReadyDto;
 import com.group1.frontend.dto.websocketDto.WebSocketDto;
 import com.group1.frontend.utils.LobbyPlayer;
 import javafx.fxml.FXML;
@@ -101,12 +102,52 @@ public class GuestLobbyController extends Controller{
                     removeFromLobbyTable(player.getName());
                 }
             }
+            else if(dto.getClass().equals(PlayerReadyDto.class)){
+                PlayerReadyDto playerReadyDto = (PlayerReadyDto) dto;
+                LobbyPlayer lobbyPlayer = playerReadyDto.getPlayer();
+                service.getGameRoom().getPlayers().put(lobbyPlayer.getName(), lobbyPlayer);
+                lobbyTable.getItems().forEach(player -> {
+                    if(player.getName().equals(lobbyPlayer.getName())){
+                        player.setReady(lobbyPlayer.getReady());
+                    }
+                });
+                lobbyTable.refresh();
+            }
 
     }
 
     @FXML
     protected void onReadyButtonClick() {
-
+        LobbyPlayer lobbyPlayer = service.getGameRoom().getPlayers().get(service.getUsername());
+        HttpResponse<String> response = service.makeRequestWithToken(
+                "/game/playerReady",
+                "POST",
+                new GameRoom_PlayerDto(
+                        service.getGameRoom().getRoomCode(),
+                        new PlayerDto(
+                                lobbyPlayer.getName(),
+                                lobbyPlayer.getColor(),
+                                !lobbyPlayer.getReady(),
+                                false,
+                                false
+                        )
+                )
+        );
+        if(response.statusCode() == 200){
+            lobbyPlayer.setReady(!lobbyPlayer.getReady());
+            service.getGameRoom().getPlayers().put(lobbyPlayer.getName(), lobbyPlayer);
+            PlayerReadyDto playerReadyDto = new PlayerReadyDto();
+            playerReadyDto.setPlayer(lobbyPlayer);
+            String message = service.objectToJson(playerReadyDto);
+            service.sendWebsocketMessage(message);
+            //find the player in the table and update the ready column
+            lobbyTable.getItems().forEach(player -> {
+                if(player.getName().equals(lobbyPlayer.getName())){
+                    player.setReady(lobbyPlayer.getReady());
+                }
+            });
+            lobbyTable.refresh();
+        }
     }
     @FXML
     protected void onBackButtonClick() {
