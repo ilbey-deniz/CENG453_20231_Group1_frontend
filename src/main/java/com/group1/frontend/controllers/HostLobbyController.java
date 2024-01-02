@@ -6,6 +6,7 @@ import com.group1.frontend.dto.websocketDto.JoinLobbyDto;
 import com.group1.frontend.dto.websocketDto.KickPlayerDto;
 import com.group1.frontend.dto.websocketDto.LeaveGameDto;
 import com.group1.frontend.dto.websocketDto.WebSocketDto;
+import com.group1.frontend.utils.GameRoom;
 import com.group1.frontend.utils.LobbyPlayer;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.FXML;
@@ -93,7 +94,6 @@ public class HostLobbyController extends Controller{
             }
             service.getGameRoom().addPlayer(lobbyPlayer);
             addPlayerToTable(lobbyPlayer);
-            lobbyTable.refresh();
         }
         else if(dto.getClass().equals(LeaveGameDto.class)){
             LeaveGameDto leaveGameDto = (LeaveGameDto) dto;
@@ -145,17 +145,32 @@ public class HostLobbyController extends Controller{
 
     @FXML
     protected void onAddCpuPlayerButtonClick() {
-        if (service.getGameRoom().getPlayers().size() >= 4) {
-            //TODO: disable Add CPU button (UI disable)
-            return;
-        }
-        LobbyPlayer lobbyPlayer = new LobbyPlayer(
-                getRandomAvailableColor(),
-                getRandomAvailableCpuName(),
+        PlayerDto playerDto = new PlayerDto(
+                CPU_NAMES.entrySet().stream().filter(entry -> !entry.getValue()).findFirst().get().getKey(),
+                null,
                 true,
-                true);
-        service.getGameRoom().addPlayer(lobbyPlayer);
-        lobbyTable.getItems().add(lobbyPlayer);
+                false,
+                true
+        );
+        HttpResponse<String> response = service.makeRequestWithToken(
+                "/game/join",
+                "POST",
+                new GameRoom_PlayerDto(
+                        service.getGameRoom().getRoomCode(),
+                        playerDto
+
+                )
+        );
+        if(response.statusCode() == 200){
+            CPU_NAMES.replace(playerDto.getName(), true);
+            GameRoom gameRoom = (GameRoom) service.jsonToObject(response.body(), GameRoom.class);
+            service.setGameRoom(gameRoom);
+            JoinLobbyDto joinLobbyDto = new JoinLobbyDto();
+            joinLobbyDto.setPlayer(gameRoom.getPlayers().get(playerDto.getName()));
+            String message = service.objectToJson(joinLobbyDto);
+            service.sendWebsocketMessage(message);
+            addPlayerToTable(gameRoom.getPlayers().get(playerDto.getName()));
+        }
     }
 
     @FXML
@@ -189,6 +204,7 @@ public class HostLobbyController extends Controller{
 
     private void addPlayerToTable(LobbyPlayer lobbyPlayer) {
         lobbyTable.getItems().add(lobbyPlayer);
+        lobbyTable.refresh();
     }
     private void removeFromLobbyTable(String playerName){
         lobbyTable.getItems().removeIf(player -> player.getName().equals(playerName));
