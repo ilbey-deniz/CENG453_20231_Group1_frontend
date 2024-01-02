@@ -170,6 +170,11 @@ public class HostLobbyController extends Controller{
             playerReadyDto.setPlayer(lobbyPlayer);
             String message = service.objectToJson(playerReadyDto);
             service.sendWebsocketMessage(message);
+            lobbyTable.getItems().forEach(player -> {
+                if(player.getName().equals(lobbyPlayer.getName())){
+                    player.setReady(lobbyPlayer.getReady());
+                }
+            });
             lobbyTable.refresh();
         }
 
