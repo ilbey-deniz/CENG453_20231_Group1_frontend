@@ -10,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import lombok.Getter;
 
 import java.net.http.HttpResponse;
@@ -274,6 +276,15 @@ public class HostLobbyController extends Controller{
         else{
             statusLabel.setText(response.body());
         }
+    }
+
+    @FXML
+    public void onRoomCodeLabelClick() {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(service.getGameRoom().getRoomCode());
+        clipboard.setContent(content);
+        statusLabel.setText("Room code copied to clipboard");
     }
 
     private void addPlayerToTable(LobbyPlayer lobbyPlayer) {

@@ -43,7 +43,7 @@
                </columnResizePolicy>
             </TableView>
             <Label layoutX="33.0" layoutY="291.0" text="Room Code:" AnchorPane.leftAnchor="33.0" />
-            <Label fx:id="roomCodeLabel" layoutX="120.0" layoutY="292.0" text="12345" />
+            <Label fx:id="roomCodeLabel" layoutX="120.0" layoutY="292.0" onMouseClicked="#onRoomCodeLabelClick" text="12345" />
             <Button fx:id="readyButton" alignment="CENTER" contentDisplay="CENTER" layoutX="405.0" layoutY="288.0" mnemonicParsing="false" onAction="#onReadyButtonClick" prefHeight="24.0" prefWidth="78.0" text="Ready!" />
             <Button fx:id="addCpuPlayerButton" layoutX="258.0" layoutY="288.0" mnemonicParsing="false" onAction="#onAddCpuPlayerButtonClick" text="Add CPU Player" />
             <Button fx:id="backButton" layoutX="29.0" layoutY="384.0" mnemonicParsing="false" onAction="#onBackButtonClick" text="Back" />

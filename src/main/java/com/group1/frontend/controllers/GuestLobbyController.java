@@ -11,6 +11,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 
 import java.net.http.HttpResponse;
 
@@ -188,6 +190,14 @@ public class GuestLobbyController extends Controller{
         else {
             statusLabel.setText(response.body());
         }
+    }
+    @FXML
+    public void onRoomCodeLabelClick() {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(service.getGameRoom().getRoomCode());
+        clipboard.setContent(content);
+        statusLabel.setText("Room code copied to clipboard");
     }
 
     public void removeFromLobbyTable(String playerName) {
