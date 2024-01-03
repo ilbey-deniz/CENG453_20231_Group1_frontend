@@ -439,4 +439,21 @@ public class Game extends AnchorPane {
         }
         return null;
     }
+
+    // it just needed at guest initialization.
+    public void setOwnerOfBuildings() {
+        // set empty owners of corner, edges, roads, and buildings.
+        for(Player player: this.players){
+            for (Building building: player.getBuildings()){
+                building.setOwner(player);
+                building.getCorner().setOwner(player);
+                building.getCorner().setOccupied(true);
+            }
+            for (Road road: player.getRoads()){
+                road.setOwner(player);
+                road.getEdge().setOwner(player);
+                road.getEdge().setOccupied(true);
+            }
+        }
+    }
 }

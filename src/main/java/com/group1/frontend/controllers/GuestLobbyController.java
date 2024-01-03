@@ -67,61 +67,62 @@ public class GuestLobbyController extends Controller{
         WebSocketDto dto = (WebSocketDto) service.jsonToObject(message, WebSocketDto.class);
         //TODO: handle other types of messages, getting class type is too ugly
 
-            if(dto.getClass().equals(JoinLobbyDto.class)){
-                LobbyPlayer lobbyPlayer = ((JoinLobbyDto) dto).getPlayer();
-                service.getGameRoom().addPlayer(lobbyPlayer);
-                lobbyTable.getItems().add(lobbyPlayer);
-                lobbyTable.refresh();
+        if(dto.getClass().equals(JoinLobbyDto.class)){
+            LobbyPlayer lobbyPlayer = ((JoinLobbyDto) dto).getPlayer();
+            service.getGameRoom().addPlayer(lobbyPlayer);
+            lobbyTable.getItems().add(lobbyPlayer);
+            lobbyTable.refresh();
+        }
+        else if (dto.getClass().equals(KickPlayerDto.class)){
+            LobbyPlayer player = ((KickPlayerDto) dto).getPlayer();
+            if (player.getName().equals(service.getUsername())) {
+                //TODO: show some sort of "you were kicked" message
+                service.disconnectFromGameRoom();
+                service.setGameRoom(null);
+                sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
             }
-            else if (dto.getClass().equals(KickPlayerDto.class)){
-                LobbyPlayer player = ((KickPlayerDto) dto).getPlayer();
-                if (player.getName().equals(service.getUsername())) {
-                    //TODO: show some sort of "you were kicked" message
-                    service.disconnectFromGameRoom();
-                    service.setGameRoom(null);
-                    sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
-                }
-                else{
-                    service.getGameRoom().removePlayer(player.getName());
-                    removeFromLobbyTable(player.getName());
+            else{
+                service.getGameRoom().removePlayer(player.getName());
+                removeFromLobbyTable(player.getName());
 
+            }
+        }
+        else if (dto.getClass().equals(LeaveGameDto.class)){
+            LobbyPlayer player = ((LeaveGameDto) dto).getPlayer();
+            //if the player is the host, delete the room
+            if(service.getGameRoom().getHostName().equals(player.getName())){
+                //TODO: show some sort of "host left" message
+                service.disconnectFromGameRoom();
+                service.setGameRoom(null);
+                sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
+            }
+            else{
+                service.getGameRoom().removePlayer(player.getName());
+                removeFromLobbyTable(player.getName());
+            }
+        }
+        else if(dto.getClass().equals(PlayerReadyDto.class)){
+            PlayerReadyDto playerReadyDto = (PlayerReadyDto) dto;
+            LobbyPlayer lobbyPlayer = playerReadyDto.getPlayer();
+            service.getGameRoom().getPlayers().put(lobbyPlayer.getName(), lobbyPlayer);
+            lobbyTable.getItems().forEach(player -> {
+                if(player.getName().equals(lobbyPlayer.getName())){
+                    player.setReady(lobbyPlayer.getReady());
                 }
-            }
-            else if (dto.getClass().equals(LeaveGameDto.class)){
-                LobbyPlayer player = ((LeaveGameDto) dto).getPlayer();
-                //if the player is the host, delete the room
-                if(service.getGameRoom().getHostName().equals(player.getName())){
-                    //TODO: show some sort of "host left" message
-                    service.disconnectFromGameRoom();
-                    service.setGameRoom(null);
-                    sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
-                }
-                else{
-                    service.getGameRoom().removePlayer(player.getName());
-                    removeFromLobbyTable(player.getName());
-                }
-            }
-            else if(dto.getClass().equals(PlayerReadyDto.class)){
-                PlayerReadyDto playerReadyDto = (PlayerReadyDto) dto;
-                LobbyPlayer lobbyPlayer = playerReadyDto.getPlayer();
-                service.getGameRoom().getPlayers().put(lobbyPlayer.getName(), lobbyPlayer);
-                lobbyTable.getItems().forEach(player -> {
-                    if(player.getName().equals(lobbyPlayer.getName())){
-                        player.setReady(lobbyPlayer.getReady());
-                    }
-                });
-                lobbyTable.refresh();
-            }
-            else if (dto.getClass().equals(StartGameDto.class)){
-                statusLabel.setText("Starting game...");
-            }
-            else if (dto.getClass().equals(GameDto.class)){
-                GameDto gameDto = (GameDto) dto;
-                Game game = new Game(gameDto);
-                //TODO: set the players with longest road
-                service.setGame(game);
-                sceneSwitch.switchToScene(stage, service, "board-view.fxml");
-            }
+            });
+            lobbyTable.refresh();
+        }
+        else if (dto.getClass().equals(StartGameDto.class)){
+            statusLabel.setText("Starting game...");
+        }
+        else if (dto.getClass().equals(GameDto.class)){
+            GameDto gameDto = (GameDto) dto;
+            Game game = new Game(gameDto);
+            game.setOwnerOfBuildings();
+            //TODO: set the players with longest road
+            service.setGame(game);
+            sceneSwitch.switchToScene(stage, service, "board-view.fxml");
+        }
 
     }
 
