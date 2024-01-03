@@ -140,8 +140,8 @@ public class BoardController extends Controller{
                 boardView = new BoardView(service.getGame().getBoard());
             }
             //TODO: player resources are NULL?
-            loadPlayerInfos();
-            highlightPlayerInfo(service.getGame().getCurrentPlayer());
+//            loadPlayerInfos();
+//            highlightPlayerInfo(service.getGame().getCurrentPlayer());
 
             timer = new Timer(TURN_TIME);
 

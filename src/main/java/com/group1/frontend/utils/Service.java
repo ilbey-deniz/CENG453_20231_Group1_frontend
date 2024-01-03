@@ -34,8 +34,8 @@ public class Service {
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
             .writer()
             .withDefaultPrettyPrinter();
-    private ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new SimpleModule().addSerializer(Board.class, new JsonSerializers.BoardSerializer()));
+    private ObjectMapper objectMapper = new ObjectMapper();
+//            .registerModule(new SimpleModule().addSerializer(Board.class, new JsonSerializers.BoardSerializer()));
 
 
     //make a request to the backend

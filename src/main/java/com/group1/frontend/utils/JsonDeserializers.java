@@ -8,6 +8,7 @@ import com.group1.frontend.components.*;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.enums.ResourceType;
+import com.group1.frontend.enums.TileType;
 
 import java.util.*;
 
@@ -67,7 +68,8 @@ public class JsonDeserializers {
             JsonNode node = jsonParser.getCodec().readTree(jsonParser);
             BuildingType buildingType = BuildingType.valueOf(node.get("buildingType").asText());
             List<Tile> tiles = node.get("tiles").traverse(jsonParser.getCodec()).readValueAs(List.class);
-            Corner corner = node.get("corner").traverse(jsonParser.getCodec()).readValueAs(Corner.class);
+            LinkedHashMap cornerLHM = node.get("corner").traverse(jsonParser.getCodec()).readValueAs(LinkedHashMap.class);
+            Corner corner = new Corner((Double) cornerLHM.get("xCoordinate"), (Double) cornerLHM.get("yCoordinate"));
             return new Building(buildingType, null, tiles, corner);
         }
     }
@@ -76,7 +78,9 @@ public class JsonDeserializers {
         public Road deserialize(JsonParser jsonParser,
                                  DeserializationContext deserializationContext) throws java.io.IOException{
             JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-            Edge edge = node.get("edge").traverse(jsonParser.getCodec()).readValueAs(Edge.class);
+            LinkedHashMap edgeLHM = node.get("edge").traverse(jsonParser.getCodec()).readValueAs(LinkedHashMap.class);
+            Edge edge = new Edge((Double) edgeLHM.get("firstXCoordinate"), (Double) edgeLHM.get("firstYCoordinate"),
+                    (Double) edgeLHM.get("secondXCoordinate"), (Double) edgeLHM.get("secondYCoordinate"));
             return new Road(null, edge);
         }
     }
@@ -85,22 +89,34 @@ public class JsonDeserializers {
         public Board deserialize(JsonParser jsonParser,
                                  DeserializationContext deserializationContext) throws java.io.IOException{
             JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-            ArrayList<Tile> tilesAsList = node.get("tiles").traverse(jsonParser.getCodec()).readValueAs(ArrayList.class);
+            ArrayList<LinkedHashMap> tilesAsList = node.get("tiles").traverse(jsonParser.getCodec()).readValueAs(ArrayList.class);
             HashMap<List<Double>, Tile> tiles = new HashMap<>();
-            for (Tile tile : tilesAsList) {
-                tiles.put(tile.getCoordinates(), tile);
+            for (LinkedHashMap tileLHM : tilesAsList) {
+                TileType tileType = TileType.valueOf((String) tileLHM.get("tileType"));
+                Integer number = (Integer) tileLHM.get("diceNumber");
+                Double xCoordinate = (Double) tileLHM.get("xcoordinate");
+                Double yCoordinate = (Double) tileLHM.get("ycoordinate");
+                tiles.put(List.of(xCoordinate, yCoordinate), new Tile(number, tileType, xCoordinate, yCoordinate));
             }
 
-            ArrayList<Corner> cornersAsList = node.get("corners").traverse(jsonParser.getCodec()).readValueAs(ArrayList.class);
+            ArrayList<LinkedHashMap> cornersAsList = node.get("corners").traverse(jsonParser.getCodec()).readValueAs(ArrayList.class);
             HashMap<List<Double>, Corner> corners = new HashMap<>();
-            for (Corner corner : cornersAsList) {
-                corners.put(corner.getCoordinates(), corner);
+            for (LinkedHashMap cornerLHM : cornersAsList) {
+                Double xCoordinate = (Double) cornerLHM.get("xcoordinate");
+                Double yCoordinate = (Double) cornerLHM.get("ycoordinate");
+                corners.put(List.of(xCoordinate, yCoordinate), new Corner(xCoordinate, yCoordinate));
             }
 
-            ArrayList<Edge> edgesAsList = node.get("edges").traverse(jsonParser.getCodec()).readValueAs(ArrayList.class);
+            ArrayList<LinkedHashMap> edgesAsList = node.get("edges").traverse(jsonParser.getCodec()).readValueAs(ArrayList.class);
             HashMap<List<Double>, Edge> edges = new HashMap<>();
-            for (Edge edge : edgesAsList) {
-                edges.put(edge.getCoordinates(), edge);
+            for (LinkedHashMap edgeLHM : edgesAsList) {
+                Double firstXCoordinate = (Double) edgeLHM.get("firstXCoordinate");
+                Double firstYCoordinate = (Double) edgeLHM.get("firstYCoordinate");
+                Double secondXCoordinate = (Double) edgeLHM.get("secondXCoordinate");
+                Double secondYCoordinate = (Double) edgeLHM.get("secondYCoordinate");
+                edges.put(List.of(firstXCoordinate, firstYCoordinate, secondXCoordinate, secondYCoordinate),
+                        new Edge(firstXCoordinate, firstYCoordinate, secondXCoordinate, secondYCoordinate));
+
             }
 
             return new Board(tiles, corners, edges);

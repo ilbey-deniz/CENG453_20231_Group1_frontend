@@ -1,5 +1,6 @@
 package com.group1.frontend.components;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.group1.frontend.enums.TileType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +19,7 @@ public class Tile {
     private double xCoordinate;
     private double yCoordinate;
 
+    @JsonIgnore
     public List<Double> getCoordinates() {
         return List.of(xCoordinate, yCoordinate);
     }
