@@ -54,8 +54,32 @@ public class JsonDeserializers {
             for (String resourceAsString : resourcesAsString.keySet()) {
                 resources.put(ResourceType.valueOf(resourceAsString), resourcesAsString.get(resourceAsString));
             }
-            List<Building> buildings = node.get("buildings").traverse(jsonParser.getCodec()).readValueAs(List.class);
-            HashSet<Road> roads = node.get("roads").traverse(jsonParser.getCodec()).readValueAs(HashSet.class);
+            ArrayList<LinkedHashMap> buildingsLHM = node.get("buildings").traverse(jsonParser.getCodec()).readValueAs(ArrayList.class);
+            List<Building> buildings = new ArrayList<>();
+            for (LinkedHashMap buildingLHM : buildingsLHM) {
+                BuildingType buildingType = BuildingType.valueOf((String) buildingLHM.get("buildingType"));
+                ArrayList<LinkedHashMap> tileLHM = (ArrayList<LinkedHashMap>) buildingLHM.get("tiles");
+                List<Tile> tiles = new ArrayList<>();
+                for (LinkedHashMap tile : tileLHM) {
+                    TileType tileType = TileType.valueOf((String) tile.get("tileType"));
+                    Integer number = (Integer) tile.get("diceNumber");
+                    Double xCoordinate = (Double) tile.get("xcoordinate");
+                    Double yCoordinate = (Double) tile.get("ycoordinate");
+                    tiles.add(new Tile(number, tileType, xCoordinate, yCoordinate));
+                }
+                LinkedHashMap cornerLHM = (LinkedHashMap) buildingLHM.get("corner");
+                Corner corner = new Corner((Double) cornerLHM.get("xcoordinate"), (Double) cornerLHM.get("ycoordinate"));
+//                Player owner = buildingLHM.get("owner") == null ? null : this.deserialize(jsonParser, deserializationContext);
+                buildings.add(new Building(buildingType, null, tiles, corner));
+            }
+            ArrayList<LinkedHashMap> roadsLHM = node.get("roads").traverse(jsonParser.getCodec()).readValueAs(ArrayList.class);
+            HashSet<Road> roads = new HashSet<>();
+            for (LinkedHashMap roadLHM : roadsLHM) {
+                LinkedHashMap edgeLHM = (LinkedHashMap) roadLHM.get("edge");
+                Edge edge = new Edge((Double) edgeLHM.get("firstXCoordinate"), (Double) edgeLHM.get("firstYCoordinate"),
+                        (Double) edgeLHM.get("secondXCoordinate"), (Double) edgeLHM.get("secondYCoordinate"));
+                roads.add(new Road(null, edge));
+            }
             PlayerColor color = PlayerColor.valueOf(node.get("color").asText());
             String name = node.get("name").asText();
             Boolean cpu = node.get("cpu").asBoolean();
