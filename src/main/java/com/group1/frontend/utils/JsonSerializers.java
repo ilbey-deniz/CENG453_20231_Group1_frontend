@@ -27,5 +27,49 @@ public class JsonSerializers {
             jsonGenerator.writeEndObject();
         }
     }
+    public static class GameSerializer extends StdSerializer<Game>{
+        public GameSerializer() {
+            this(null);
+        }
+
+        public GameSerializer(Class<Game> t) {
+            super(t);
+        }
+
+        @Override
+        public void serialize(Game game, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeObjectField("players", game.getPlayers());
+            jsonGenerator.writeObjectField("board", game.getBoard());
+            jsonGenerator.writeObjectField("occupiedBuildings", game.getOccupiedBuildings());
+            jsonGenerator.writeObjectField("currentPlayer", game.getCurrentPlayer());
+            jsonGenerator.writeObjectField("turnNumber", game.getTurnNumber());
+            jsonGenerator.writeObjectField("currentDiceRoll", game.getCurrentDiceRoll());
+            jsonGenerator.writeEndObject();
+        }
+    }
+    public static class PlayerSerializer extends StdSerializer<com.group1.frontend.components.Player>{
+        public PlayerSerializer() {
+            this(null);
+        }
+
+        public PlayerSerializer(Class<com.group1.frontend.components.Player> t) {
+            super(t);
+        }
+
+        @Override
+        public void serialize(com.group1.frontend.components.Player player, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeObjectField("resources", player.getResources());
+            jsonGenerator.writeObjectField("buildings", player.getBuildings());
+            jsonGenerator.writeObjectField("roads", player.getRoads());
+            jsonGenerator.writeObjectField("color", player.getColor());
+            jsonGenerator.writeObjectField("name", player.getName());
+            jsonGenerator.writeObjectField("cpu", player.getCpu());
+            jsonGenerator.writeObjectField("victoryPoint", player.getVictoryPoint());
+            jsonGenerator.writeObjectField("longestRoad", player.getLongestRoad());
+            jsonGenerator.writeEndObject();
+        }
+    }
 
 }

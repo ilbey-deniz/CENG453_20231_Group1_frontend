@@ -2,11 +2,13 @@ package com.group1.frontend.components;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.group1.frontend.constants.BoardConstants;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.utils.JsonDeserializers;
+import com.group1.frontend.utils.JsonSerializers;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +19,7 @@ import java.util.*;
 @Setter
 @AllArgsConstructor
 @JsonDeserialize(using = JsonDeserializers.PlayerDeserializer.class)
+@JsonSerialize(using = JsonSerializers.PlayerSerializer.class)
 public class Player {
     //TODO: make them private
     HashMap<ResourceType, Integer> resources;

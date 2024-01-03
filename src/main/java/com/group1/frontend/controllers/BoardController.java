@@ -121,17 +121,15 @@ public class BoardController extends Controller{
                 service.getGame().createInitialBuildings();
                 service.getGame().getPlayers().forEach(player -> {
                     //place random settlements and one road for each player
-                    player.getRoads().forEach(road -> boardView.getEdgeView(
-                            road.getEdge()).occupyEdge(player.getColor()));
-                    player.getBuildings().forEach(building -> boardView.getCornerView(
-                            building.getCorner()).occupyCorner(player.getColor(), building.getBuildingType()));
+
                     player.addResource(ResourceType.GRAIN, 10);
                     player.addResource(ResourceType.LUMBER, 10);
                     player.addResource(ResourceType.WOOL, 10);
                     player.addResource(ResourceType.BRICK, 10);
                     player.addResource(ResourceType.ORE, 10);
                 });
-                GameDto gameDto = service.getGame().convertToDto();
+                GameDto gameDto = new GameDto();
+                gameDto.setGame(service.getGame());
                 String message = service.objectToJson(gameDto);
                 service.sendWebsocketMessage(message);
             }
@@ -139,8 +137,13 @@ public class BoardController extends Controller{
             else {
                 boardView = new BoardView(service.getGame().getBoard());
             }
-            //TODO: player resources are NULL?
             loadPlayerInfos();
+            for(Player player : service.getGame().getPlayers()){
+                player.getRoads().forEach(road -> boardView.getEdgeView(
+                        road.getEdge()).occupyEdge(player.getColor()));
+                player.getBuildings().forEach(building -> boardView.getCornerView(
+                        building.getCorner()).occupyCorner(player.getColor(), building.getBuildingType()));
+            }
             highlightPlayerInfo(service.getGame().getCurrentPlayer());
 
             timer = new Timer(TURN_TIME);

@@ -150,5 +150,54 @@ public class JsonDeserializers {
             return new Board(tiles, corners, edges);
         }
     }
+    public static class GameDeserializer extends JsonDeserializer<Game> {
+        @Override
+        public Game deserialize(JsonParser jsonParser,
+                                DeserializationContext deserializationContext) throws java.io.IOException {
+            JsonNode node = jsonParser.getCodec().readTree(jsonParser);
+            Board board = node.get("board").traverse(jsonParser.getCodec()).readValueAs(Board.class);
+            ArrayList<Player> players = new ArrayList<>();
+            for (JsonNode playerNode : node.get("players")) {
+                players.add(playerNode.traverse(jsonParser.getCodec()).readValueAs(Player.class));
+            }
+            //replace player's tiles and corners with the ones in the board
+            for (Player player : players) {
+                for (Building playerBuilding : player.getBuildings()) {
+                    for (Tile playerTile : playerBuilding.getTiles()) {
+                        //tile set
+                        List<Double> coordinates = playerTile.getCoordinates();
+                        board.getTilesAsMap().get(coordinates);
+                        playerBuilding.getTiles().set(playerBuilding.getTiles().indexOf(playerTile), board.getTilesAsMap().get(coordinates));
+                    }
+                    //corner set
+                    List<Double> coordinates = List.of(playerBuilding.getCorner().getXCoordinate(),
+                            playerBuilding.getCorner().getYCoordinate());
+                    playerBuilding.setCorner(board.getCornersAsMap().get(coordinates));
+                }
+                for (Road road : player.getRoads()) {
+                    //edge set
+                    List<Double> coordinates = List.of(road.getEdge().getFirstXCoordinate(), road.getEdge().getFirstYCoordinate(),
+                            road.getEdge().getSecondXCoordinate(), road.getEdge().getSecondYCoordinate());
+                    road.setEdge(board.getEdgesAsMap().get(coordinates));
+                }
+            }
+            HashSet<Building> occupiedBuildings = new HashSet<>();
+            for (Player player : players) {
+                occupiedBuildings.addAll(player.getBuildings());
+            }
+
+            Player currentPlayerTemp = node.get("currentPlayer").traverse(jsonParser.getCodec()).readValueAs(Player.class);
+            Player currentPlayer = null;
+            for (Player player : players) {
+                if (player.getName().equals(currentPlayerTemp.getName())) {
+                    currentPlayer = player;
+                }
+            }
+            int turnNumber = node.get("turnNumber").asInt();
+            IntegerPair currentDiceRoll = node.get("currentDiceRoll").traverse(jsonParser.getCodec()).readValueAs(IntegerPair.class);
+
+            return new Game(players, board, occupiedBuildings, currentPlayer, turnNumber, currentDiceRoll);
+        }
+    }
 
 }

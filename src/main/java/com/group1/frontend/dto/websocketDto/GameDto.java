@@ -15,9 +15,10 @@ import java.util.List;
 @Data
 @JsonTypeName("INITIAL_GAME")
 public class GameDto implements WebSocketDto{
-    private List<Player> players;
-    private Board board;
-    private Player currentPlayer;
-    private int turnNumber;
-    private IntegerPair currentDiceRoll;
+//    private List<Player> players;
+//    private Board board;
+//    private Player currentPlayer;
+//    private int turnNumber;
+//    private IntegerPair currentDiceRoll;
+    private Game game;
 }

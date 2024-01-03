@@ -117,7 +117,7 @@ public class GuestLobbyController extends Controller{
         }
         else if (dto.getClass().equals(GameDto.class)){
             GameDto gameDto = (GameDto) dto;
-            Game game = new Game(gameDto);
+            Game game = gameDto.getGame();
             game.setOwnerOfBuildings();
             //TODO: set the players with longest road
             service.setGame(game);

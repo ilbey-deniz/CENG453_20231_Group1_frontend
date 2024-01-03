@@ -3,11 +3,11 @@ package com.group1.frontend.components;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.group1.frontend.dto.websocketDto.GameDto;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.events.*;
 import com.group1.frontend.utils.IntegerPair;
 import com.group1.frontend.utils.JsonDeserializers;
+import com.group1.frontend.utils.JsonSerializers;
 import javafx.scene.layout.AnchorPane;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +22,8 @@ import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomElementFr
 @Getter
 @Setter
 @AllArgsConstructor
-@JsonSerialize
+@JsonSerialize(using = JsonSerializers.GameSerializer.class)
+@JsonDeserialize(using = JsonDeserializers.GameDeserializer.class)
 public class Game extends AnchorPane {
     private List<Player> players;
     private Board board;
@@ -34,7 +35,7 @@ public class Game extends AnchorPane {
     private HashMap<Player, Integer> playersWithLongestRoad;
 
 
-    public Game(List<Player> players, Board board) {
+    public Game(List<Player> players, Board board, HashSet<Building> occupiedBuildings, Player currentPlayer, int turnNumber, IntegerPair currentDiceRoll) {
         this.players = players;
         this.board = board;
         this.currentPlayer = players.getFirst();
@@ -50,22 +51,14 @@ public class Game extends AnchorPane {
         this.occupiedBuildings = new HashSet<>();
         this.playersWithLongestRoad = new HashMap<>();
     }
-    public Game(GameDto gameDto) {
-        this.players = gameDto.getPlayers();
-        this.board = gameDto.getBoard();
-        this.currentPlayer = gameDto.getCurrentPlayer();
-        this.turnNumber = gameDto.getTurnNumber();
-        this.currentDiceRoll = gameDto.getCurrentDiceRoll();
+    public Game (List<Player> players, Board board, Player currentPlayer, Integer turnNumber, IntegerPair currentDiceRoll) {
+        this.players = players;
+        this.board = board;
+        this.currentPlayer = currentPlayer;
+        this.turnNumber = turnNumber;
+        this.currentDiceRoll = currentDiceRoll;
+        this.occupiedBuildings = new HashSet<>();
         this.playersWithLongestRoad = new HashMap<>();
-    }
-    public GameDto convertToDto() {
-        GameDto gameDto = new GameDto();
-        gameDto.setPlayers(players);
-        gameDto.setBoard(board);
-        gameDto.setCurrentPlayer(currentPlayer);
-        gameDto.setTurnNumber(turnNumber);
-        gameDto.setCurrentDiceRoll(currentDiceRoll);
-        return gameDto;
     }
 
     public void addPlayer(Player player) {

@@ -138,6 +138,10 @@ public class Board {
         return new ArrayList<>(tiles.values());
     }
 
+    public HashMap<List<Double> ,Tile> getTilesAsMap() {
+        return tiles;
+    }
+
 
     public List<Corner> getCorners() {
         return new ArrayList<>(corners.values());
