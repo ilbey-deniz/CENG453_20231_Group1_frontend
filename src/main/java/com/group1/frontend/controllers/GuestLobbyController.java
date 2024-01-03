@@ -1,12 +1,9 @@
 package com.group1.frontend.controllers;
 
+import com.group1.frontend.components.Game;
 import com.group1.frontend.dto.httpDto.GameRoom_PlayerDto;
 import com.group1.frontend.dto.httpDto.PlayerDto;
-import com.group1.frontend.dto.websocketDto.JoinLobbyDto;
-import com.group1.frontend.dto.websocketDto.KickPlayerDto;
-import com.group1.frontend.dto.websocketDto.LeaveGameDto;
-import com.group1.frontend.dto.websocketDto.PlayerReadyDto;
-import com.group1.frontend.dto.websocketDto.WebSocketDto;
+import com.group1.frontend.dto.websocketDto.*;
 import com.group1.frontend.utils.LobbyPlayer;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -32,6 +29,8 @@ public class GuestLobbyController extends Controller{
     private Label hostNameLabel;
     @FXML
     private Label roomCodeLabel;
+    @FXML
+    private Label statusLabel;
 
     public void init() {
         colorColumn.setCellValueFactory(
@@ -113,6 +112,16 @@ public class GuestLobbyController extends Controller{
                 });
                 lobbyTable.refresh();
             }
+            else if (dto.getClass().equals(StartGameDto.class)){
+                statusLabel.setText("Starting game...");
+            }
+            else if (dto.getClass().equals(GameDto.class)){
+                GameDto gameDto = (GameDto) dto;
+                Game game = new Game(gameDto);
+                //TODO: set the players with longest road
+                service.setGame(game);
+                sceneSwitch.switchToScene(stage, service, "board-view.fxml");
+            }
 
     }
 
@@ -148,6 +157,9 @@ public class GuestLobbyController extends Controller{
             });
             lobbyTable.refresh();
         }
+        else{
+            statusLabel.setText(response.body());
+        }
     }
     @FXML
     protected void onBackButtonClick() {
@@ -171,6 +183,9 @@ public class GuestLobbyController extends Controller{
             service.disconnectFromGameRoom();
             service.setGameRoom(null);
             sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
+        }
+        else {
+            statusLabel.setText(response.body());
         }
     }
 

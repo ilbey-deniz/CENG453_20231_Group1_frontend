@@ -5,6 +5,8 @@ import com.group1.frontend.enums.BuildingType;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class Corner {
@@ -26,5 +28,8 @@ public class Corner {
         this.occupied = false;
         this.owner = null;
         this.buildingType = null;
+    }
+    public List<Double> getCoordinates() {
+        return List.of(xCoordinate, yCoordinate);
     }
 }

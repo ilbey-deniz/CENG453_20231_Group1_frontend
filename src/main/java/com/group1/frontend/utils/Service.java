@@ -2,6 +2,9 @@ package com.group1.frontend.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.group1.frontend.components.Board;
+import com.group1.frontend.components.Game;
 import com.group1.frontend.dto.httpDto.HttpRequestDto;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,11 +29,13 @@ public class Service {
 
     private String username;
     private GameRoom gameRoom = null;
+    private Game game = null;
     private ObjectWriter objectWriter = new ObjectMapper()
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
             .writer()
             .withDefaultPrettyPrinter();
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new SimpleModule().addSerializer(Board.class, new JsonSerializers.BoardSerializer()));
 
 
     //make a request to the backend

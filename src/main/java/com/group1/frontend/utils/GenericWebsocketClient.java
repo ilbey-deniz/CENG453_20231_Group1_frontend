@@ -28,7 +28,7 @@ public class GenericWebsocketClient extends WebSocketClient {
     @Override
     public void onMessage(String s) {
         Platform.runLater(() -> {
-            System.out.println("Received message: " + s);
+            System.out.println("Message received");
             if (onMessageHandler != null) {
                 onMessageHandler.handle(s);
             }

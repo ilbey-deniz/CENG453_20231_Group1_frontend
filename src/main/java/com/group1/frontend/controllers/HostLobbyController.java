@@ -28,7 +28,8 @@ public class HostLobbyController extends Controller{
     private TableColumn<LobbyPlayer, Boolean> readyColumn;
     @FXML
     private TableColumn<LobbyPlayer, LobbyPlayer> kickColumn;
-
+    @FXML
+    private Label statusLabel;
     @FXML
     private Label roomCodeLabel;
     @FXML
@@ -36,13 +37,13 @@ public class HostLobbyController extends Controller{
 
     public void init() {
         colorColumn.setCellValueFactory(
-                new PropertyValueFactory<LobbyPlayer, ImageView>("colorImage")
+                new PropertyValueFactory<>("colorImage")
         );
         usernameColumn.setCellValueFactory(
-                new PropertyValueFactory<LobbyPlayer, String>("name")
+                new PropertyValueFactory<>("name")
         );
         readyColumn.setCellValueFactory(
-                new PropertyValueFactory<LobbyPlayer, Boolean>("ready")
+                new PropertyValueFactory<>("ready")
         );
         kickColumn.setCellValueFactory(
                 param -> new ReadOnlyObjectWrapper<>(param.getValue())
@@ -143,6 +144,9 @@ public class HostLobbyController extends Controller{
             LOBBY_PLAYER_COLORS.replace(lobbyPlayer.getColor(), false);
             removeFromLobbyTable(lobbyPlayer.getName());
         }
+        else {
+            statusLabel.setText(response.body());
+        }
 
     }
 
@@ -177,6 +181,9 @@ public class HostLobbyController extends Controller{
             });
             lobbyTable.refresh();
         }
+        else {
+            statusLabel.setText(response.body());
+        }
 
     }
 
@@ -208,6 +215,9 @@ public class HostLobbyController extends Controller{
             service.sendWebsocketMessage(message);
             addPlayerToTable(gameRoom.getPlayers().get(playerDto.getName()));
         }
+        else {
+            statusLabel.setText(response.body());
+        }
     }
 
     @FXML
@@ -233,10 +243,37 @@ public class HostLobbyController extends Controller{
             service.setGameRoom(null);
             sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
         }
+        else {
+            statusLabel.setText(response.body());
+        }
     }
     @FXML
     protected void onStartGameButtonClick() {
-        sceneSwitch.switchToScene(stage, service, "board-view.fxml");
+        HttpResponse<String> response = service.makeRequestWithToken(
+                "/game/start",
+                "POST",
+                new GameRoom_PlayerDto(
+                        service.getGameRoom().getRoomCode(),
+                        new PlayerDto(
+                                service.getUsername(),
+                                null,
+                                false,
+                                true,
+                                false
+                        )
+                )
+        );
+        if (response.statusCode() == 200) {
+            service.getGameRoom().setIsStarted(true);
+            StartGameDto startGameDto = new StartGameDto();
+            startGameDto.setRoomCode(service.getGameRoom().getRoomCode());
+            String message = service.objectToJson(startGameDto);
+            service.sendWebsocketMessage(message);
+            sceneSwitch.switchToScene(stage, service, "board-view.fxml");
+        }
+        else{
+            statusLabel.setText(response.body());
+        }
     }
 
     private void addPlayerToTable(LobbyPlayer lobbyPlayer) {

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -15,4 +17,8 @@ public class Tile {
     // center coordinates of the tile
     private double xCoordinate;
     private double yCoordinate;
+
+    public List<Double> getCoordinates() {
+        return List.of(xCoordinate, yCoordinate);
+    }
 }

@@ -50,6 +50,7 @@
             <Button fx:id="startGameButton" layoutX="404.0" layoutY="326.0" mnemonicParsing="false" onAction="#onStartGameButtonClick" prefHeight="25.0" prefWidth="78.0" text="Start Game" />
             <Label layoutX="29.0" layoutY="311.0" text="Host:" AnchorPane.leftAnchor="33.0" />
             <Label fx:id="hostNameLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="79.0" layoutY="311.0" text="hostname" />
+            <Label fx:id="statusLabel" layoutX="34.0" layoutY="331.0" textFill="RED" />
          </children>
       </AnchorPane>
    </children>

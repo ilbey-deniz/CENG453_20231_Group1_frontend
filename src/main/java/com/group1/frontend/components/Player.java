@@ -1,10 +1,13 @@
 package com.group1.frontend.components;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.group1.frontend.constants.BoardConstants;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.enums.ResourceType;
+import com.group1.frontend.utils.JsonDeserializers;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,11 +15,12 @@ import java.util.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@JsonDeserialize(using = JsonDeserializers.PlayerDeserializer.class)
 public class Player {
-
+    //TODO: make them private
     HashMap<ResourceType, Integer> resources;
     List<Building> buildings;
-
     HashSet<Road> roads;
     PlayerColor color;
     String name;

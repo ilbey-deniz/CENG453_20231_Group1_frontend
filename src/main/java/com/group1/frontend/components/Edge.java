@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.security.PublicKey;
+import java.util.List;
+
 @Setter
 @Getter
 @AllArgsConstructor
@@ -27,5 +30,8 @@ public class Edge {
         this.secondYCoordinate = secondYCoordinate;
         this.occupied = false;
         this.owner = null;
+    }
+    public List<Double> getCoordinates() {
+        return List.of(firstXCoordinate, firstYCoordinate, secondXCoordinate, secondYCoordinate);
     }
 }

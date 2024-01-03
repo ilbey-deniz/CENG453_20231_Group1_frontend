@@ -1,23 +1,36 @@
 package com.group1.frontend.components;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonKey;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.group1.frontend.enums.TileType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.*;
 
 import static com.group1.frontend.constants.BoardConstants.*;
 import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomKey;
 
+@AllArgsConstructor
+@JsonDeserialize(using = com.group1.frontend.utils.JsonDeserializers.BoardDeserializer.class)
+@JsonSerialize(using = com.group1.frontend.utils.JsonSerializers.BoardSerializer.class)
 public class Board {
-    private final HashMap<List<Double> ,Tile> tiles;
-    private final HashMap<List<Double> ,Corner> corners;
-    private final HashMap<List<Double>, Edge> edges;
-
-    @Getter
-    private final Set<List<Double>> points;
-    @Getter
-    private final List<List<List<Double>>> groupedCorners;
+    @JsonIgnore
+    private HashMap<List<Double> ,Tile> tiles;
+    @JsonIgnore
+    private HashMap<List<Double> ,Corner> corners;
+    @JsonIgnore
+    private HashMap<List<Double>, Edge> edges;
+    @JsonIgnore
+    private Set<List<Double>> points;
+    @JsonIgnore
+    private List<List<List<Double>>> groupedCorners;
 
 
     public Board() {
@@ -26,6 +39,11 @@ public class Board {
         edges = new HashMap<>();
         points = new HashSet<>();
         groupedCorners = new ArrayList<>();
+    }
+    public Board(HashMap<List<Double> ,Tile> tiles, HashMap<List<Double> ,Corner> corners, HashMap<List<Double>, Edge> edges) {
+        this.tiles = tiles;
+        this.corners = corners;
+        this.edges = edges;
     }
 
     public void generateRandomBoard() {
@@ -68,6 +86,7 @@ public class Board {
         }
     }
 
+    @JsonIgnore
     private Set<List<Double>> getNonDuplicateEdges() {
         Set<List<Double>> nonDuplicateEdges = new HashSet<>();
         for(List<List<Double>> groupedCorner : groupedCorners){
@@ -92,6 +111,7 @@ public class Board {
         return nonDuplicateEdges;
     }
 
+    @JsonIgnore
     public void getCornersFromTileCoordinates(){
         for(double[] tileCoordinate : TILE_COORDINATES) {
             double x = tileCoordinate[0] * 2;
@@ -128,6 +148,7 @@ public class Board {
         return corners;
     }
 
+    @JsonKey
     public List<Edge> getEdges() {
         return new ArrayList<>(edges.values());
     }
@@ -137,6 +158,7 @@ public class Board {
             return edges;
     }
 
+    @JsonIgnore
     public List<Corner> getAdjacentCornersOfEdge(Edge e) {
         //for first coordinate pair
         List<Corner> adjacentCorners = new ArrayList<>();
@@ -146,6 +168,7 @@ public class Board {
 
     }
 
+    @JsonIgnore
     public List<Corner> getAdjacentCornersOfCorner(Corner c){
         List<Corner> adjacentCorners = new ArrayList<>();
 
@@ -188,6 +211,7 @@ public class Board {
         return adjacentCorners;
     }
 
+    @JsonIgnore
     public List<Edge> getAdjacentEdgesOfCorner(Corner c) {
         List<Edge> adjacentEdges = new ArrayList<>();
         for(Edge edge : getEdges()) {
@@ -202,6 +226,7 @@ public class Board {
 
     // the first y coordinate is smaller than second for all corners of edge
     // TODO: by using this convert the edges to hashmap create a getter for hashmap that run in o(1)
+    @JsonIgnore
     public Edge getEdgeBetweenCorners(Corner c1, Corner c2){
         if(c1.getYCoordinate() > c2.getYCoordinate()){
             return getEdgesAsMap().get(Arrays.asList(c2.getXCoordinate(), c2.getYCoordinate(), c1.getXCoordinate(), c1.getYCoordinate()));
@@ -211,6 +236,7 @@ public class Board {
         }
     }
 
+    @JsonIgnore
     public List<Edge> getAdjacentEdgesOfEdge(Edge e){
         List<Edge> adjacentEdges = new ArrayList<>();
         for(Edge edge : getEdges()) {
@@ -227,6 +253,7 @@ public class Board {
         return adjacentEdges;
     }
 
+    @JsonIgnore
     public List<Tile> getAdjacentTilesOfCorner(Corner c) {
         List<Tile> adjacentTiles = new ArrayList<>();
         int mod = ((int) c.getYCoordinate())%3;

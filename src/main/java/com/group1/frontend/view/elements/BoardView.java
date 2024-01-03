@@ -28,7 +28,6 @@ public class BoardView extends AnchorPane {
     List<TileView> tileViews = new java.util.ArrayList<>();
 
     public BoardView(Board board) throws FileNotFoundException {
-        board.generateRandomBoard();
 
         Polygon backgroundIsland = new Polygon();
         double backgroundScaleConstant = TILE_HEIGHT*2.75;

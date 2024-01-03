@@ -2,19 +2,17 @@ package com.group1.frontend.controllers;
 
 import com.group1.frontend.components.*;
 import com.group1.frontend.dto.httpDto.ScoreDto;
+import com.group1.frontend.dto.websocketDto.GameDto;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.events.TimeEvent;
 import com.group1.frontend.utils.BoardUtilityFunctions;
+import com.group1.frontend.utils.IntegerPair;
 import com.group1.frontend.utils.LobbyPlayer;
 import com.group1.frontend.view.elements.BoardView;
 import com.group1.frontend.events.*;
 import com.group1.frontend.utils.Timer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
@@ -25,7 +23,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.util.Pair;
 
 
 import java.io.FileNotFoundException;
@@ -91,8 +88,6 @@ public class BoardController extends Controller{
     private final HashSet<Edge> highlightedEdges;
     private final HashSet<Corner> highlightedCorners;
     private final HashSet<Corner> highlightedBuildings;
-
-    private Game game;
     private Timer timer;
     private BoardView boardView;
 
@@ -107,44 +102,52 @@ public class BoardController extends Controller{
     }
 
     public void init() {
-        try {
-            service.setWebsocketHandler(this::boardMessageHandler);
-            game = new Game();
-            Board board = new Board();
-            game.setBoard(board);
-            boardView = new BoardView(board);
-            //add player from lobby to game
-            List<LobbyPlayer> lobbyPlayers = service.getGameRoom().getPlayersAsList();
-            lobbyPlayers.forEach(lobbyPlayer -> {
-                Player player = new Player(lobbyPlayer.getColor(), lobbyPlayer.getName(), lobbyPlayer.getCpu());
-                game.addPlayer(player);
-            });
-
-            game.setCurrentPlayer(game.getPlayers().get(0));
-
-            game.createInitialBuildings();
-
-            game.getPlayers().forEach(player -> {
-                //place random settlements and one road for each player
-                player.getRoads().forEach(road -> boardView.getEdgeView(
-                        road.getEdge()).occupyEdge(player.getColor()));
-                player.getBuildings().forEach(building -> boardView.getCornerView(
-                        building.getCorner()).occupyCorner(player.getColor(), building.getBuildingType()));
-                player.addResource(ResourceType.GRAIN, 10);
-                player.addResource(ResourceType.LUMBER, 10);
-                player.addResource(ResourceType.WOOL, 10);
-                player.addResource(ResourceType.BRICK, 10);
-                player.addResource(ResourceType.ORE, 10);
-            });
-
+        service.setWebsocketHandler(this::boardMessageHandler);
+        try{
+            //game is null when the player is host
+            if(service.getGame() == null){
+                service.setGame(new Game());
+                Board board = new Board();
+                board.generateRandomBoard();
+                service.getGame().setBoard(board);
+                boardView = new BoardView(board);
+                //add players from lobby to game
+                List<LobbyPlayer> lobbyPlayers = service.getGameRoom().getPlayersAsList();
+                lobbyPlayers.forEach(lobbyPlayer -> {
+                    Player player = new Player(lobbyPlayer.getColor(), lobbyPlayer.getName(), lobbyPlayer.getCpu());
+                    service.getGame().addPlayer(player);
+                });
+                service.getGame().setCurrentPlayer(service.getGame().getRandomNonCpuPlayer());
+                service.getGame().createInitialBuildings();
+                service.getGame().getPlayers().forEach(player -> {
+                    //place random settlements and one road for each player
+                    player.getRoads().forEach(road -> boardView.getEdgeView(
+                            road.getEdge()).occupyEdge(player.getColor()));
+                    player.getBuildings().forEach(building -> boardView.getCornerView(
+                            building.getCorner()).occupyCorner(player.getColor(), building.getBuildingType()));
+                    player.addResource(ResourceType.GRAIN, 10);
+                    player.addResource(ResourceType.LUMBER, 10);
+                    player.addResource(ResourceType.WOOL, 10);
+                    player.addResource(ResourceType.BRICK, 10);
+                    player.addResource(ResourceType.ORE, 10);
+                });
+                GameDto gameDto = service.getGame().convertToDto();
+                String message = service.objectToJson(gameDto);
+                service.sendWebsocketMessage(message);
+            }
+            //game is not null when the player is guest, since it is created in LobbyController
+            else {
+                boardView = new BoardView(service.getGame().getBoard());
+            }
+            //TODO: player resources are NULL?
             loadPlayerInfos();
-            highlightPlayerInfo(game.getCurrentPlayer());
+            highlightPlayerInfo(service.getGame().getCurrentPlayer());
 
             timer = new Timer(TURN_TIME);
 
             hexagonPane.getChildren().add(boardView);
             hexagonPane.getChildren().add(timer);
-            hexagonPane.getChildren().add(game);
+            hexagonPane.getChildren().add(service.getGame());
 
             hexagonPane.addEventHandler(CornerClickedEvent.CORNER_CLICKED, this::handleCornerClickEvent);
             hexagonPane.addEventHandler(EdgeClickedEvent.EDGE_CLICKED, this::handleEdgeClickEvent);
@@ -163,14 +166,10 @@ public class BoardController extends Controller{
                 writeToGameUpdates("");
             }
             writeToGameUpdates("Welcome to Catan!");
-
-            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-            String json = ow.writeValueAsString(game.getPlayers());
-            System.out.println(json);
-
             timer.start();
 
-        } catch (Exception e) {
+        }
+        catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -190,12 +189,12 @@ public class BoardController extends Controller{
             removeHighlight();
 
             //place the settlement
-            hexagonPane.fireEvent(new BuildingPlacedEvent(event.getCorner(), BuildingType.SETTLEMENT, game.getCurrentPlayer()));
+            hexagonPane.fireEvent(new BuildingPlacedEvent(event.getCorner(), BuildingType.SETTLEMENT, service.getGame().getCurrentPlayer()));
 
             //unselect the settlementToggleButton
             settlementToggleButton.setSelected(false);
             //update resource labels
-            updatePlayerInfo(game.getCurrentPlayer());
+            updatePlayerInfo(service.getGame().getCurrentPlayer());
         }
 
         if(cityToggleButton.isSelected()){
@@ -209,11 +208,11 @@ public class BoardController extends Controller{
             removeHighlight();
 
             //place the city
-            hexagonPane.fireEvent(new BuildingPlacedEvent(event.getCorner(), BuildingType.CITY, game.getCurrentPlayer()));
+            hexagonPane.fireEvent(new BuildingPlacedEvent(event.getCorner(), BuildingType.CITY, service.getGame().getCurrentPlayer()));
             //unselect the cityToggleButton
             cityToggleButton.setSelected(false);
             //update resource labels
-            updatePlayerInfo(game.getCurrentPlayer());
+            updatePlayerInfo(service.getGame().getCurrentPlayer());
         }
 
     }
@@ -229,12 +228,12 @@ public class BoardController extends Controller{
             //unhighlight all edges
             removeHighlight();
             //place the road
-            hexagonPane.fireEvent(new BuildingPlacedEvent(event.getEdge(), BuildingType.ROAD, game.getCurrentPlayer()));
+            hexagonPane.fireEvent(new BuildingPlacedEvent(event.getEdge(), BuildingType.ROAD, service.getGame().getCurrentPlayer()));
 
             //unselect the roadToggleButton
             roadToggleButton.setSelected(false);
             //update resource labels
-            updatePlayerInfo(game.getCurrentPlayer());
+            updatePlayerInfo(service.getGame().getCurrentPlayer());
         }
     }
 
@@ -253,21 +252,21 @@ public class BoardController extends Controller{
     public void handleDiceRolledEvent(DiceRolledEvent event) {
         if(event.getEventType() == DiceRolledEvent.DICE_ROLLED_ALREADY){
             statusLabel.setText("The dice is already rolled");
-            return;
         }
         else if (event.getEventType() == DiceRolledEvent.DICE_ROLLED){
-            Pair<Integer, Integer> dicePair = game.rollDice();
-            game.distributeResources(dicePair.getKey() + dicePair.getValue());
+            IntegerPair dicePair = service.getGame().rollDice();
+            //send DiceRoll message
+            service.getGame().distributeResources(dicePair.getFirst() + dicePair.getSecond());
 
             try {
-                firstDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getKey()));
-                secondDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getValue()));
+                firstDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getFirst()));
+                secondDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getSecond()));
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
             //statusLabel.setText("Dice rolled: " + (dicePair.getKey() + dicePair.getValue()));
-            statusLabel.setText(game.getCurrentPlayer().getName() + " rolled: " + (dicePair.getKey() + dicePair.getValue()));
-            writeToGameUpdates(game.getCurrentPlayer().getName() + " rolled: " + (dicePair.getKey() + dicePair.getValue()));
+            statusLabel.setText(service.getGame().getCurrentPlayer().getName() + " rolled: " + (dicePair.getFirst() + dicePair.getSecond()));
+            writeToGameUpdates(service.getGame().getCurrentPlayer().getName() + " rolled: " + (dicePair.getFirst() + dicePair.getSecond()));
 
             updateAllPlayerInfos();
         }
@@ -286,49 +285,51 @@ public class BoardController extends Controller{
         timer.start();
 
         removeHighlight(); //unhighlight all highlighted edges, corners
-        unhighlightPlayerInfo(game.getCurrentPlayer()); //unhighlight current player info
+        unhighlightPlayerInfo(service.getGame().getCurrentPlayer()); //unhighlight current player info
 
-        game.endTurn();
+        service.getGame().endTurn();
+        //send TurnEnded message
 
-        if(game.checkWinner()!=null){
-            hexagonPane.fireEvent(new GameWonEvent(game.checkWinner()));
+        if(service.getGame().checkWinner()!=null){
+            hexagonPane.fireEvent(new GameWonEvent(service.getGame().checkWinner()));
             return;
         }
 
-        highlightPlayerInfo(game.getCurrentPlayer());
+        highlightPlayerInfo(service.getGame().getCurrentPlayer());
 
-        statusLabel.setText(game.getCurrentPlayer().getName() + "'s turn");
-        writeToGameUpdates(game.getCurrentPlayer().getName() + "'s turn");
+        statusLabel.setText(service.getGame().getCurrentPlayer().getName() + "'s turn");
+        writeToGameUpdates(service.getGame().getCurrentPlayer().getName() + "'s turn");
 
-        game.autoPlayCpuPlayer();
+        service.getGame().autoPlayCpuPlayer();
     }
 
     private void handleBuildingPlacedEvent(BuildingPlacedEvent buildingPlacedEvent) {
+        //send BuildingPlaced message
         if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.SETTLEMENT_PLACED){
-            game.placeSettlement((Corner) buildingPlacedEvent.getPlacement());
+            service.getGame().placeSettlement((Corner) buildingPlacedEvent.getPlacement());
             statusLabel.setText("Settlement built");
             writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a settlement");
             boardView.getCornerView((Corner) buildingPlacedEvent.getPlacement()).occupyCorner(buildingPlacedEvent.getPlayer().getColor(), BuildingType.SETTLEMENT);
         }
         else if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CITY_PLACED){
-            game.placeCity((Corner) buildingPlacedEvent.getPlacement());
+            service.getGame().placeCity((Corner) buildingPlacedEvent.getPlacement());
             statusLabel.setText("City built");
             writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a city");
             boardView.getCornerView((Corner) buildingPlacedEvent.getPlacement()).occupyCorner(buildingPlacedEvent.getPlayer().getColor(), BuildingType.CITY);
         }
         else{
-            game.placeRoad((Edge) buildingPlacedEvent.getPlacement());
+            service.getGame().placeRoad((Edge) buildingPlacedEvent.getPlacement());
             statusLabel.setText("Road built");
             writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a road");
             boardView.getEdgeView((Edge) buildingPlacedEvent.getPlacement()).occupyEdge(buildingPlacedEvent.getPlayer().getColor());
-            game.fireLongestRoadEventInNeed(game.getCurrentPlayer().getLongestRoad());
-            game.updateAllVictoryPoints();
+            service.getGame().fireLongestRoadEventInNeed(service.getGame().getCurrentPlayer().getLongestRoad());
+            service.getGame().updateAllVictoryPoints();
         }
         updatePlayerInfo(buildingPlacedEvent.getPlayer());
     }
 
     private void handleLongestRoadEvent(LongestRoadEvent event) {
-        for (Player player : game.getPlayers()) {
+        for (Player player : service.getGame().getPlayers()) {
             getPlayerInfoController(player).unhighlightLongestRoadLabel();
         }
         //for each player, highlight the longestRoadImage if it is in the playersWithLongestRoad list
@@ -365,12 +366,16 @@ public class BoardController extends Controller{
     }
 
     public void onLeaveButtonClick() {
+        //TODO: send LeaveGame message
+        service.setGame(null);
+        service.setGameRoom(null);
+        service.disconnectFromGameRoom();
         sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
     }
 
     public void onDiceButtonClick(){
         DiceRolledEvent diceRolledEvent;
-        if(game.getCurrentDiceRoll()!=null){
+        if(service.getGame().getCurrentDiceRoll()!=null){
             diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED_ALREADY);
         }
         else{
@@ -378,15 +383,15 @@ public class BoardController extends Controller{
         }
         hexagonPane.fireEvent(diceRolledEvent);
     }
-    public void onEndTourButtonClick(ActionEvent event){
+    public void onEndTourButtonClick(){
         hexagonPane.fireEvent(new TurnEndedEvent(TurnEndedEvent.TURN_ENDED));
     }
     public void onTradeButtonClick(){
 
     }
-    public void onSettlementButtonClick(ActionEvent event){
+    public void onSettlementButtonClick(){
         removeHighlight();
-        if(!game.getCurrentPlayer().hasEnoughResources(BuildingType.SETTLEMENT)){
+        if(!service.getGame().getCurrentPlayer().hasEnoughResources(BuildingType.SETTLEMENT)){
             statusLabel.setText("Not enough resources. You need 1 brick, 1 lumber, 1 wool, 1 grain");
             settlementToggleButton.setSelected(false);
             return;
@@ -394,7 +399,7 @@ public class BoardController extends Controller{
 
         statusLabel.setText("Select a corner to build a settlement");
         //highlight all corners that are available to build a settlement
-        List<Corner> availableCorners = game.getAvailableCorners();
+        List<Corner> availableCorners = service.getGame().getAvailableCorners();
         if(availableCorners.isEmpty()){
             statusLabel.setText("There is no valid corner to build a settlement");
             settlementToggleButton.setSelected(false);
@@ -411,16 +416,16 @@ public class BoardController extends Controller{
 
 
     }
-    public void onCityButtonClick(ActionEvent event){
+    public void onCityButtonClick(){
         removeHighlight();
-        if(!game.getCurrentPlayer().hasEnoughResources(BuildingType.CITY)){
+        if(!service.getGame().getCurrentPlayer().hasEnoughResources(BuildingType.CITY)){
             statusLabel.setText("Not enough resources. You need 3 ore, 2 grain");
             cityToggleButton.setSelected(false);
             return;
         }
         statusLabel.setText("Select a settlement to build a city on it");
         //highlight all corners that are available to build a city
-        List<Building> buildings = game.getCurrentPlayer().getBuildings();
+        List<Building> buildings = service.getGame().getCurrentPlayer().getBuildings();
         if(buildings.isEmpty()){
             statusLabel.setText("There is no valid corner to build a city");
             cityToggleButton.setSelected(false);
@@ -437,16 +442,16 @@ public class BoardController extends Controller{
             }
         });
     }
-    public void onRoadButtonClick(ActionEvent event){
+    public void onRoadButtonClick(){
         removeHighlight();
-        if(!game.getCurrentPlayer().hasEnoughResources(BuildingType.ROAD)){
+        if(!service.getGame().getCurrentPlayer().hasEnoughResources(BuildingType.ROAD)){
             statusLabel.setText("Not enough resources. You need 1 brick, 1 lumber");
             roadToggleButton.setSelected(false);
             return;
         }
         statusLabel.setText("Select an edge to build a road");
         //highlight all edges that are available to build a road
-        List<Edge> availableEdges = game.getAvailableEdges();
+        List<Edge> availableEdges = service.getGame().getAvailableEdges();
         if(availableEdges.isEmpty()){
             statusLabel.setText("There is no valid edge to build a road");
             roadToggleButton.setSelected(false);
@@ -490,13 +495,12 @@ public class BoardController extends Controller{
         highlightedCorners.clear();
         highlightedBuildings.clear();
     }
-
-    //TODO: move these to another class
     public void loadPlayerInfos() {
-        for (Player player : game.getPlayers()) {
+        for (Player player : service.getGame().getPlayers()) {
             FXMLLoader loader = getSceneLoader("player-info-view.fxml");
-            AnchorPane playerInfoAnchorPane = null;
+            AnchorPane playerInfoAnchorPane;
             try {
+                assert loader != null;
                 playerInfoAnchorPane = loader.load();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -511,7 +515,7 @@ public class BoardController extends Controller{
         }
     }
     public void updateAllPlayerInfos() {
-        for (Player player : game.getPlayers()) {
+        for (Player player : service.getGame().getPlayers()) {
             getPlayerInfoController(player).setPlayerInfo(player);
         }
     }
@@ -528,7 +532,7 @@ public class BoardController extends Controller{
         return (PlayerInfoController) playerInfoVBox.getChildren().get(playerInfoMap.get(player)).getProperties().get("controller");
     }
     public void savePlayerScores() {
-        for (Player player : game.getPlayers()) {
+        for (Player player : service.getGame().getPlayers()) {
             if (player.isCpu()) {
                 continue;
             }
@@ -540,11 +544,4 @@ public class BoardController extends Controller{
         }
     }
 
-    private void restartTimer() {
-        hexagonPane.getChildren().remove(timer);
-        timer = new Timer(TURN_TIME);
-        hexagonPane.getChildren().add(timer);
-        leftTimeLabel.setStyle("-fx-text-fill: black");
-        timer.start();
-    }
 }

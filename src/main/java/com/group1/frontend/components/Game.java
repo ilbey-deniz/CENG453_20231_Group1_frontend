@@ -1,9 +1,14 @@
 package com.group1.frontend.components;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.group1.frontend.dto.websocketDto.GameDto;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.events.*;
+import com.group1.frontend.utils.IntegerPair;
+import com.group1.frontend.utils.JsonDeserializers;
 import javafx.scene.layout.AnchorPane;
-import javafx.util.Pair;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,23 +18,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.group1.frontend.constants.BoardConstants.REQUIRED_RESOURCES;
 import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomElementFromSet;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class Game extends AnchorPane {
-    @Getter
-    @Setter
     private List<Player> players;
-    @Setter
     private Board board;
-
-    private final HashSet<Building> occupiedBuildings;
-    @Getter
-    @Setter
+    private HashSet<Building> occupiedBuildings;
     private Player currentPlayer;
-    private int turnNumber;
-
-    @Getter
-    private Pair<Integer, Integer> currentDiceRoll;
-
-    private final HashMap<Player, Integer> playersWithLongestRoad;
+    private Integer turnNumber;
+    private IntegerPair currentDiceRoll;
+    //not in dto
+    private HashMap<Player, Integer> playersWithLongestRoad;
 
 
     public Game(List<Player> players, Board board) {
@@ -48,6 +48,23 @@ public class Game extends AnchorPane {
         this.occupiedBuildings = new HashSet<>();
         this.playersWithLongestRoad = new HashMap<>();
     }
+    public Game(GameDto gameDto) {
+        this.players = gameDto.getPlayers();
+        this.board = gameDto.getBoard();
+        this.currentPlayer = gameDto.getCurrentPlayer();
+        this.turnNumber = gameDto.getTurnNumber();
+        this.currentDiceRoll = gameDto.getCurrentDiceRoll();
+        this.playersWithLongestRoad = new HashMap<>();
+    }
+    public GameDto convertToDto() {
+        GameDto gameDto = new GameDto();
+        gameDto.setPlayers(players);
+        gameDto.setBoard(board);
+        gameDto.setCurrentPlayer(currentPlayer);
+        gameDto.setTurnNumber(turnNumber);
+        gameDto.setCurrentDiceRoll(currentDiceRoll);
+        return gameDto;
+    }
 
     public void addPlayer(Player player) {
         players.add(player);
@@ -58,10 +75,22 @@ public class Game extends AnchorPane {
         players.remove(player);
     }
 
+    @JsonIgnore
+    public Player getRandomNonCpuPlayer() {
+        List<Player> nonCpuPlayers = new ArrayList<>();
+        for(Player player : players) {
+            if (!player.isCpu()) {
+                nonCpuPlayers.add(player);
+            }
+        }
+        return nonCpuPlayers.get((int) (Math.random() * nonCpuPlayers.size()));
+    }
+
     //1. get player's road list
     //2. for each road, getAdjacentEdgesOfEdge and check if they are not occupied. if not occupied, add to availableEdges HashSet
     //TODO: getAdjacentEdgesOfEdge function finds same edge multiple times, bad performance
     //TODO: storing availableEdges for each player as a HashSet is better
+    @JsonIgnore
     public List<Edge> getAvailableEdges() {
         HashSet<Edge> availableEdges = new HashSet<>();
         for(Road road : currentPlayer.roads) {
@@ -80,6 +109,7 @@ public class Game extends AnchorPane {
     //3.get every building's list (all players')
     //4.for each building's corners, getAdjacentCornersOfCorner and remove them from availableCorners HashSet
 
+    @JsonIgnore
     public List<Corner> getAvailableCorners() {
         HashSet<Corner> availableCorners = new HashSet<>();
         for(Road road : currentPlayer.roads) {
@@ -131,11 +161,11 @@ public class Game extends AnchorPane {
         return isAvailable.get();
     }
 
-    public Pair<Integer, Integer> rollDice(){
+    public IntegerPair rollDice(){
         int dice1 = (int) (Math.random() * 6) + 1;
         int dice2 = (int) (Math.random() * 6) + 1;
-        currentDiceRoll = new Pair<>(dice1, dice2);
-        return new Pair<>(dice1, dice2);
+        currentDiceRoll = new IntegerPair(dice1, dice2);
+        return new IntegerPair(dice1, dice2);
     }
 
     public void endTurn() {
@@ -260,6 +290,7 @@ public class Game extends AnchorPane {
         return maxRoadLength;
     }
 
+    @JsonIgnore
     public List<Corner> getEndCorners(Player player) {
         List<Corner> endCorners = new ArrayList<>();
         for (Road road : player.roads) {
@@ -305,6 +336,7 @@ public class Game extends AnchorPane {
         return endCorners;
     }
 
+    @JsonIgnore
     public HashSet<Corner> getAllCornerOfRoads(Player player) {
         HashSet<Corner> corners = new HashSet<>();
         for (Road road : player.roads) {
