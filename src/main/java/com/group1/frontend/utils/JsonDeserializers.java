@@ -49,7 +49,11 @@ public class JsonDeserializers {
                                   DeserializationContext deserializationContext) throws java.io.IOException{
 
             JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-            HashMap<ResourceType, Integer> resources = node.get("resources").traverse(jsonParser.getCodec()).readValueAs(HashMap.class);
+            HashMap<String, Integer> resourcesAsString = node.get("resources").traverse(jsonParser.getCodec()).readValueAs(HashMap.class);
+            HashMap<ResourceType, Integer> resources = new HashMap<>();
+            for (String resourceAsString : resourcesAsString.keySet()) {
+                resources.put(ResourceType.valueOf(resourceAsString), resourcesAsString.get(resourceAsString));
+            }
             List<Building> buildings = node.get("buildings").traverse(jsonParser.getCodec()).readValueAs(List.class);
             HashSet<Road> roads = node.get("roads").traverse(jsonParser.getCodec()).readValueAs(HashSet.class);
             PlayerColor color = PlayerColor.valueOf(node.get("color").asText());

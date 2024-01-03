@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.group1.frontend.components.Board;
+import com.group1.frontend.components.Game;
 
 import java.io.IOException;
 

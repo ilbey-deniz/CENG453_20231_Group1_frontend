@@ -2,6 +2,7 @@ package com.group1.frontend.components;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.group1.frontend.dto.websocketDto.GameDto;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.events.*;
@@ -21,6 +22,7 @@ import static com.group1.frontend.utils.BoardUtilityFunctions.getRandomElementFr
 @Getter
 @Setter
 @AllArgsConstructor
+@JsonSerialize
 public class Game extends AnchorPane {
     private List<Player> players;
     private Board board;
@@ -206,6 +208,7 @@ public class Game extends AnchorPane {
         currentPlayer.addVictoryPoint(1);
     }
 
+    @JsonIgnore
     public Building getBuildingFromCorner(Corner corner) {
         for(Building building : occupiedBuildings) {
             if (building.getCorner().equals(corner)) {
