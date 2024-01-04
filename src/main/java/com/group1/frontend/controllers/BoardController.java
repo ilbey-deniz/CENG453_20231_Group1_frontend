@@ -2,7 +2,10 @@ package com.group1.frontend.controllers;
 
 import com.group1.frontend.components.*;
 import com.group1.frontend.dto.httpDto.ScoreDto;
+import com.group1.frontend.dto.websocketDto.DiceRollDto;
 import com.group1.frontend.dto.websocketDto.GameDto;
+import com.group1.frontend.dto.websocketDto.JoinLobbyDto;
+import com.group1.frontend.dto.websocketDto.WebSocketDto;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.enums.TradeViewType;
@@ -164,7 +167,7 @@ public class BoardController extends Controller{
             hexagonPane.addEventHandler(TimeEvent.TIMES_UP, this::handleTimesUpEvent);
             hexagonPane.addEventHandler(TimeEvent.ONE_TICK, this::handleOneTickEvent);
             hexagonPane.addEventHandler(DiceRolledEvent.DICE_ROLLED, this::handleDiceRolledEvent);
-            hexagonPane.addEventHandler(DiceRolledEvent.DICE_ROLLED_ALREADY, this::handleDiceRolledEvent);
+            hexagonPane.addEventHandler(DiceRolledEvent.CPU_ROLLED_DICE, this::handleDiceRolledEvent);
             hexagonPane.addEventHandler(TurnEndedEvent.TURN_ENDED, this::handleTurnEndedEvent);
             hexagonPane.addEventHandler(BuildingPlacedEvent.ROAD_PLACED, this::handleBuildingPlacedEvent);
             hexagonPane.addEventHandler(BuildingPlacedEvent.SETTLEMENT_PLACED, this::handleBuildingPlacedEvent);
@@ -184,6 +187,17 @@ public class BoardController extends Controller{
         }
     }
     public void boardMessageHandler(String message) {
+        WebSocketDto dto = (WebSocketDto) service.jsonToObject(message, WebSocketDto.class);
+        if (dto.getClass().equals(DiceRollDto.class)) {
+            DiceRollDto diceRollDto = (DiceRollDto) dto;
+            DiceRolledEvent diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED, new IntegerPair(diceRollDto.getDice1(), diceRollDto.getDice2()));
+            hexagonPane.fireEvent(diceRolledEvent);
+        }
+
+        else {
+            throw new RuntimeException("Invalid message type");
+        }
+
         writeToGameUpdates(message);
     }
     public void handleCornerClickEvent(CornerClickedEvent event) {
@@ -259,29 +273,28 @@ public class BoardController extends Controller{
     }
 
     public void handleDiceRolledEvent(DiceRolledEvent event) {
-        if(event.getEventType() == DiceRolledEvent.DICE_ROLLED_ALREADY){
-            statusLabel.setText("The dice is already rolled");
-        }
-        else if (event.getEventType() == DiceRolledEvent.DICE_ROLLED){
-            IntegerPair dicePair = service.getGame().rollDice();
-            //send DiceRoll message
-            service.getGame().distributeResources(dicePair.getFirst() + dicePair.getSecond());
 
-            try {
-                firstDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getFirst()));
-                secondDiceImage.setImage(BoardUtilityFunctions.getDiceImage(dicePair.getSecond()));
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            //statusLabel.setText("Dice rolled: " + (dicePair.getKey() + dicePair.getValue()));
-            statusLabel.setText(service.getGame().getCurrentPlayer().getName() + " rolled: " + (dicePair.getFirst() + dicePair.getSecond()));
-            writeToGameUpdates(service.getGame().getCurrentPlayer().getName() + " rolled: " + (dicePair.getFirst() + dicePair.getSecond()));
+        service.getGame().distributeResources(event.getDiceRoll().getFirst() + event.getDiceRoll().getSecond());
 
-            updateAllPlayerInfos();
+
+        if(event.getEventType() == DiceRolledEvent.CPU_ROLLED_DICE){
+            DiceRollDto diceRollDto = new DiceRollDto();
+            diceRollDto.setDice1(event.getDiceRoll().getFirst());
+            diceRollDto.setDice2(event.getDiceRoll().getSecond());
+            service.sendWebsocketMessage(service.objectToJson(diceRollDto));
         }
-        else{
-            throw new RuntimeException("Invalid event type");
+
+        try {
+            firstDiceImage.setImage(BoardUtilityFunctions.getDiceImage(event.getDiceRoll().getFirst()));
+            secondDiceImage.setImage(BoardUtilityFunctions.getDiceImage(event.getDiceRoll().getSecond()));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         }
+        //statusLabel.setText("Dice rolled: " + (event.getDiceRoll().getKey() + event.getDiceRoll().getValue()));
+        statusLabel.setText(service.getGame().getCurrentPlayer().getName() + " rolled: " + (event.getDiceRoll().getFirst() + event.getDiceRoll().getSecond()));
+        writeToGameUpdates(service.getGame().getCurrentPlayer().getName() + " rolled: " + (event.getDiceRoll().getFirst() + event.getDiceRoll().getSecond()));
+
+        updateAllPlayerInfos();
     }
 
     public void handleTurnEndedEvent(TurnEndedEvent event) {
@@ -308,8 +321,9 @@ public class BoardController extends Controller{
 
         statusLabel.setText(service.getGame().getCurrentPlayer().getName() + "'s turn");
         writeToGameUpdates(service.getGame().getCurrentPlayer().getName() + "'s turn");
-
-        service.getGame().autoPlayCpuPlayer();
+        if(service.getGame().equals(service.getGameRoom().getHostName())){
+            service.getGame().autoPlayCpuPlayer();
+        }
     }
 
     private void handleBuildingPlacedEvent(BuildingPlacedEvent buildingPlacedEvent) {
@@ -385,12 +399,18 @@ public class BoardController extends Controller{
     public void onDiceButtonClick(){
         DiceRolledEvent diceRolledEvent;
         if(service.getGame().getCurrentDiceRoll()!=null){
-            diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED_ALREADY);
+            statusLabel.setText("You already rolled the dice");
         }
+
         else{
-            diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED);
+            IntegerPair dicePair = service.getGame().rollDice();
+            DiceRollDto diceRollDto = new DiceRollDto();
+            diceRollDto.setDice1(dicePair.getFirst());
+            diceRollDto.setDice2(dicePair.getSecond());
+            service.sendWebsocketMessage(service.objectToJson(diceRollDto));
+            diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED, dicePair);
+            hexagonPane.fireEvent(diceRolledEvent);
         }
-        hexagonPane.fireEvent(diceRolledEvent);
     }
     public void onEndTourButtonClick(){
         hexagonPane.fireEvent(new TurnEndedEvent(TurnEndedEvent.TURN_ENDED));

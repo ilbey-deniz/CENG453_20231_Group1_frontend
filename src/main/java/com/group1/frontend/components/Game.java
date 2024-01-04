@@ -3,11 +3,13 @@ package com.group1.frontend.components;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.group1.frontend.dto.websocketDto.DiceRollDto;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.events.*;
 import com.group1.frontend.utils.IntegerPair;
 import com.group1.frontend.utils.JsonDeserializers;
 import com.group1.frontend.utils.JsonSerializers;
+import com.group1.frontend.utils.Service;
 import javafx.scene.layout.AnchorPane;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,9 +40,10 @@ public class Game extends AnchorPane {
     public Game(List<Player> players, Board board, HashSet<Building> occupiedBuildings, Player currentPlayer, int turnNumber, IntegerPair currentDiceRoll) {
         this.players = players;
         this.board = board;
-        this.currentPlayer = players.getFirst();
-        this.turnNumber = 0;
-        this.occupiedBuildings = new HashSet<>();
+        this.currentPlayer = currentPlayer;
+        this.turnNumber = turnNumber;
+        this.occupiedBuildings = occupiedBuildings;
+        this.currentDiceRoll = currentDiceRoll;
         this.playersWithLongestRoad = new HashMap<>();
     }
     public Game() {
@@ -363,7 +366,8 @@ public class Game extends AnchorPane {
     }
     public void autoPlayCpuPlayer() {
         if(currentPlayer.isCpu()){
-            DiceRolledEvent diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED);
+            IntegerPair dicePair = rollDice();
+            DiceRolledEvent diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.CPU_ROLLED_DICE, dicePair);
             getParent().fireEvent(diceRolledEvent);
 
             if(currentPlayer.hasEnoughResources(BuildingType.CITY)){
