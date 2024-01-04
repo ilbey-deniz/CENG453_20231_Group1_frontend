@@ -419,7 +419,7 @@ public class Game extends AnchorPane {
                     }
                 }
             }
-            getParent().fireEvent(new TurnEndedEvent(TurnEndedEvent.TURN_ENDED));
+            getParent().fireEvent(new TurnEndedEvent(TurnEndedEvent.CPU_TURN_ENDED));
         }
     }
 

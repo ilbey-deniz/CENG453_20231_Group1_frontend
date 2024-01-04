@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = PlaceBuildingDto.class),
         @JsonSubTypes.Type(value = TradeInitDto.class),
         @JsonSubTypes.Type(value = TradeAcceptDto.class),
+        @JsonSubTypes.Type(value = EndTurnDto.class),
 })
 //DON'T EVER NEVER EVER add @AllArgsConstructor to the classes that implement this class
 public interface WebSocketDto {

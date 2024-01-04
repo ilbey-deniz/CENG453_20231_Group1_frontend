@@ -224,6 +224,9 @@ public class BoardController extends Controller{
             );
 
         }
+        else if(dto.getClass().equals(EndTurnDto.class)){
+            hexagonPane.fireEvent(new TurnEndedEvent(TurnEndedEvent.CPU_TURN_ENDED));
+        }
         else if (dto.getClass().equals(TextMessageDto.class)) {
 
         }
@@ -490,7 +493,11 @@ public class BoardController extends Controller{
         unhighlightPlayerInfo(service.getGame().getCurrentPlayer()); //unhighlight current player info
 
         service.getGame().endTurn();
-        //send TurnEnded message
+
+        if(event.getEventType().equals(TurnEndedEvent.CPU_TURN_ENDED)){
+            EndTurnDto endTurnDto = new EndTurnDto();
+            service.sendWebsocketMessage(service.objectToJson(endTurnDto));
+        }
 
         if(service.getGame().checkWinner()!=null){
             hexagonPane.fireEvent(new GameWonEvent(service.getGame().checkWinner()));
@@ -501,7 +508,7 @@ public class BoardController extends Controller{
 
         statusLabel.setText(service.getGame().getCurrentPlayer().getName() + "'s turn");
         writeToGameUpdates(service.getGame().getCurrentPlayer().getName() + "'s turn");
-        if(service.getGame().equals(service.getGameRoom().getHostName())){
+        if(service.getUsername().equals(service.getGameRoom().getHostName())){
             service.getGame().autoPlayCpuPlayer();
         }
     }
@@ -617,6 +624,8 @@ public class BoardController extends Controller{
         }
     }
     public void onEndTourButtonClick(){
+        EndTurnDto endTurnDto = new EndTurnDto();
+        service.sendWebsocketMessage(service.objectToJson(endTurnDto));
         hexagonPane.fireEvent(new TurnEndedEvent(TurnEndedEvent.TURN_ENDED));
     }
     public void onTradeButtonClick(){
