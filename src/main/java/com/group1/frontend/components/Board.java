@@ -240,6 +240,15 @@ public class Board {
         }
     }
 
+    public Edge getEdgeBetweenPoints(double firstXCoordinate, double firstYCoordinate, double secondXCoordinate, double secondYCoordinate){
+        if(firstYCoordinate > secondYCoordinate){
+            return getEdgesAsMap().get(Arrays.asList(secondXCoordinate, secondYCoordinate, firstXCoordinate, firstYCoordinate));
+        }
+        else{
+            return getEdgesAsMap().get(Arrays.asList(firstXCoordinate, firstYCoordinate, secondXCoordinate, secondYCoordinate));
+        }
+    }
+
     @JsonIgnore
     public List<Edge> getAdjacentEdgesOfEdge(Edge e){
         List<Edge> adjacentEdges = new ArrayList<>();

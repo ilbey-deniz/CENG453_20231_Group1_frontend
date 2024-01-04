@@ -190,7 +190,7 @@ public class BoardController extends Controller{
             e.printStackTrace();
         }
     }
-    public void boardMessageHandler(String message) {
+    private void boardMessageHandler(String message) {
         WebSocketDto dto = (WebSocketDto) service.jsonToObject(message, WebSocketDto.class);
         if (dto.getClass().equals(DiceRollDto.class)) {
             DiceRollDto diceRollDto = (DiceRollDto) dto;
@@ -226,6 +226,25 @@ public class BoardController extends Controller{
         }
         else if (dto.getClass().equals(TextMessageDto.class)) {
 
+        }
+        else if (dto.getClass().equals(PlaceBuildingDto.class)) {
+            PlaceBuildingDto placeBuildingDto = (PlaceBuildingDto) dto;
+            Player player = service.getGame().getPlayerByName(placeBuildingDto.getPlayerName());
+            List<Double> coordinates = placeBuildingDto.getCoordinates();
+            Object placementObject;
+            if(coordinates.size() == 2){
+                placementObject = service.getGame().getBoard().getCornersAsMap().get(coordinates);
+            }
+            else {
+                placementObject = service.getGame().getBoard().getEdgesAsMap().get(coordinates);
+            }
+            BuildingPlacedEvent buildingPlacedEvent = new BuildingPlacedEvent(
+                    placeBuildingDto.getBuildingType() == BuildingType.ROAD ? BuildingPlacedEvent.ROAD_PLACED :
+                            placeBuildingDto.getBuildingType() == BuildingType.CITY ? BuildingPlacedEvent.CITY_PLACED :
+                                    BuildingPlacedEvent.SETTLEMENT_PLACED,
+                    placementObject,
+                    player);
+            hexagonPane.fireEvent(buildingPlacedEvent);
         }
         else {
             throw new RuntimeException("Invalid message type");
@@ -332,7 +351,7 @@ public class BoardController extends Controller{
         tradeToggleButton.setSelected(false);
 
     }
-    public void handleCornerClickEvent(CornerClickedEvent event) {
+    private void handleCornerClickEvent(CornerClickedEvent event) {
         //check settlementToggleButton is selected
         if(settlementToggleButton.isSelected()){
             //check if the corner is available to build a settlement
@@ -344,8 +363,17 @@ public class BoardController extends Controller{
             //unhighlight all corners
             removeHighlight();
 
+            BuildingPlacedEvent buildingPlacedEvent = new BuildingPlacedEvent(
+                    BuildingPlacedEvent.SETTLEMENT_PLACED ,event.getCorner(), service.getGame().getCurrentPlayer());
             //place the settlement
-            hexagonPane.fireEvent(new BuildingPlacedEvent(event.getCorner(), BuildingType.SETTLEMENT, service.getGame().getCurrentPlayer()));
+            hexagonPane.fireEvent(buildingPlacedEvent);
+
+            // send building placed message
+            PlaceBuildingDto placeBuildingDto = new PlaceBuildingDto();
+            placeBuildingDto.setBuildingType(BuildingType.SETTLEMENT);
+            placeBuildingDto.setCoordinates(List.of(event.getCorner().getXCoordinate(), event.getCorner().getYCoordinate()));
+            placeBuildingDto.setPlayerName(buildingPlacedEvent.getPlayer().getName());
+            service.sendWebsocketMessage(service.objectToJson(placeBuildingDto));
 
             //unselect the settlementToggleButton
             settlementToggleButton.setSelected(false);
@@ -363,8 +391,16 @@ public class BoardController extends Controller{
             //unhighlight all corners
             removeHighlight();
 
+            BuildingPlacedEvent buildingPlacedEvent = new BuildingPlacedEvent(
+                    BuildingPlacedEvent.CITY_PLACED, event.getCorner(), service.getGame().getCurrentPlayer());
             //place the city
-            hexagonPane.fireEvent(new BuildingPlacedEvent(event.getCorner(), BuildingType.CITY, service.getGame().getCurrentPlayer()));
+            hexagonPane.fireEvent(buildingPlacedEvent);
+            // send building placed message
+            PlaceBuildingDto placeBuildingDto = new PlaceBuildingDto();
+            placeBuildingDto.setBuildingType(BuildingType.CITY);
+            placeBuildingDto.setCoordinates(List.of(event.getCorner().getXCoordinate(), event.getCorner().getYCoordinate()));
+            placeBuildingDto.setPlayerName(buildingPlacedEvent.getPlayer().getName());
+            service.sendWebsocketMessage(service.objectToJson(placeBuildingDto));
             //unselect the cityToggleButton
             cityToggleButton.setSelected(false);
             //update resource labels
@@ -372,7 +408,7 @@ public class BoardController extends Controller{
         }
 
     }
-    public void handleEdgeClickEvent(EdgeClickedEvent event) {
+    private void handleEdgeClickEvent(EdgeClickedEvent event) {
         //chech roadToggleButton is selected
         if(roadToggleButton.isSelected()){
             //check if the edge is available to build a road
@@ -383,8 +419,19 @@ public class BoardController extends Controller{
 
             //unhighlight all edges
             removeHighlight();
+            BuildingPlacedEvent buildingPlacedEvent = new BuildingPlacedEvent(
+                    BuildingPlacedEvent.ROAD_PLACED ,event.getEdge(), service.getGame().getCurrentPlayer());
             //place the road
-            hexagonPane.fireEvent(new BuildingPlacedEvent(event.getEdge(), BuildingType.ROAD, service.getGame().getCurrentPlayer()));
+            hexagonPane.fireEvent(buildingPlacedEvent);
+            // send building placed message
+            PlaceBuildingDto placeBuildingDto = new PlaceBuildingDto();
+            placeBuildingDto.setBuildingType(BuildingType.ROAD);
+            placeBuildingDto.setCoordinates(List.of(event.getEdge().getFirstXCoordinate(),
+                    event.getEdge().getFirstYCoordinate(),
+                    event.getEdge().getSecondXCoordinate(),
+                    event.getEdge().getSecondYCoordinate()));
+            placeBuildingDto.setPlayerName(buildingPlacedEvent.getPlayer().getName());
+            service.sendWebsocketMessage(service.objectToJson(placeBuildingDto));
 
             //unselect the roadToggleButton
             roadToggleButton.setSelected(false);
@@ -392,7 +439,8 @@ public class BoardController extends Controller{
             updatePlayerInfo(service.getGame().getCurrentPlayer());
         }
     }
-    public void handleOneTickEvent(TimeEvent event) {
+
+    private void handleOneTickEvent(TimeEvent event) {
         leftTimeLabel.setText(secondsToTime(event.getRemainingSeconds()));
         if(event.getRemainingSeconds() <= 10){
             leftTimeLabel.setStyle("-fx-text-fill: red");
@@ -403,7 +451,8 @@ public class BoardController extends Controller{
         writeToGameUpdates("Time's up!");
         hexagonPane.fireEvent(new TurnEndedEvent(TurnEndedEvent.TURN_ENDED));
     }
-    public void handleDiceRolledEvent(DiceRolledEvent event) {
+
+    private void handleDiceRolledEvent(DiceRolledEvent event) {
 
         service.getGame().distributeResources(event.getDiceRoll().getFirst() + event.getDiceRoll().getSecond());
 
@@ -427,7 +476,8 @@ public class BoardController extends Controller{
 
         updateAllPlayerInfos();
     }
-    public void handleTurnEndedEvent(TurnEndedEvent event) {
+
+    private void handleTurnEndedEvent(TurnEndedEvent event) {
 
         timer.stop();
         hexagonPane.getChildren().remove(timer);
@@ -456,29 +506,55 @@ public class BoardController extends Controller{
         }
     }
     private void handleBuildingPlacedEvent(BuildingPlacedEvent buildingPlacedEvent) {
+
         //send BuildingPlaced message
-        if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.SETTLEMENT_PLACED){
-            service.getGame().placeSettlement((Corner) buildingPlacedEvent.getPlacement());
+        if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.SETTLEMENT_PLACED
+                || buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CPU_SETTLEMENT_PLACED){
+            service.getGame().placeSettlement(buildingPlacedEvent.getCorner());
             statusLabel.setText("Settlement built");
             writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a settlement");
-            boardView.getCornerView((Corner) buildingPlacedEvent.getPlacement()).occupyCorner(buildingPlacedEvent.getPlayer().getColor(), BuildingType.SETTLEMENT);
+            boardView.getCornerView(buildingPlacedEvent.getCorner()).occupyCorner(buildingPlacedEvent.getPlayer().getColor(), BuildingType.SETTLEMENT);
         }
-        else if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CITY_PLACED){
-            service.getGame().placeCity((Corner) buildingPlacedEvent.getPlacement());
+        else if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CITY_PLACED
+                || buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CPU_CITY_PLACED){
+            service.getGame().placeCity(buildingPlacedEvent.getCorner());
             statusLabel.setText("City built");
             writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a city");
-            boardView.getCornerView((Corner) buildingPlacedEvent.getPlacement()).occupyCorner(buildingPlacedEvent.getPlayer().getColor(), BuildingType.CITY);
+            boardView.getCornerView(buildingPlacedEvent.getCorner()).occupyCorner(buildingPlacedEvent.getPlayer().getColor(), BuildingType.CITY);
         }
-        else{
-            service.getGame().placeRoad((Edge) buildingPlacedEvent.getPlacement());
+        else if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.ROAD_PLACED
+                || buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CPU_ROAD_PLACED){
+            service.getGame().placeRoad(buildingPlacedEvent.getEdge());
             statusLabel.setText("Road built");
             writeToGameUpdates(buildingPlacedEvent.getPlayer().getName() + " built a road");
-            boardView.getEdgeView((Edge) buildingPlacedEvent.getPlacement()).occupyEdge(buildingPlacedEvent.getPlayer().getColor());
+            boardView.getEdgeView(buildingPlacedEvent.getEdge()).occupyEdge(buildingPlacedEvent.getPlayer().getColor());
             service.getGame().fireLongestRoadEventInNeed(service.getGame().getCurrentPlayer().getLongestRoad());
             service.getGame().updateAllVictoryPoints();
         }
+        // handle bot
+        if (buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CPU_ROAD_PLACED
+                || buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CPU_CITY_PLACED
+                || buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CPU_SETTLEMENT_PLACED) {
+            // send building placed message
+            PlaceBuildingDto placeBuildingDto = new PlaceBuildingDto();
+            placeBuildingDto.setBuildingType(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CPU_ROAD_PLACED ?
+                    BuildingType.ROAD : buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CPU_CITY_PLACED ?
+                    BuildingType.CITY : BuildingType.SETTLEMENT);
+            if (buildingPlacedEvent.getEventType() == BuildingPlacedEvent.CPU_ROAD_PLACED) {
+                placeBuildingDto.setCoordinates(List.of(buildingPlacedEvent.getEdge().getFirstXCoordinate(),
+                        buildingPlacedEvent.getEdge().getFirstYCoordinate(),
+                        buildingPlacedEvent.getEdge().getSecondXCoordinate(),
+                        buildingPlacedEvent.getEdge().getSecondYCoordinate()));
+            } else {
+                placeBuildingDto.setCoordinates(List.of(buildingPlacedEvent.getCorner().getXCoordinate(),
+                        buildingPlacedEvent.getCorner().getYCoordinate()));
+            }
+            placeBuildingDto.setPlayerName(buildingPlacedEvent.getPlayer().getName());
+            service.sendWebsocketMessage(service.objectToJson(placeBuildingDto));
+        }
         updatePlayerInfo(buildingPlacedEvent.getPlayer());
     }
+
     private void handleLongestRoadEvent(LongestRoadEvent event) {
         for (Player player : service.getGame().getPlayers()) {
             getPlayerInfoController(player).unhighlightLongestRoadLabel();
@@ -489,6 +565,7 @@ public class BoardController extends Controller{
             writeToGameUpdates(player.getName() + " has the longest road");
         });
     }
+
     private void handleGameWonEvent(GameWonEvent event) {
         writeToGameUpdates(event.getWinner().getName() + " won the game!");
         statusLabel.setText(event.getWinner().getName() + " won the game!");
@@ -502,16 +579,19 @@ public class BoardController extends Controller{
         secondDiceButton.setDisable(true);
         savePlayerScores();
     }
+
     public void onSendButtonClick() {
         String message = chatTextField.getText();
         writeToGameUpdates(message);
         chatTextField.clear();
     }
+
     public void onEnter(KeyEvent event) {
         if(event.getCode() == KeyCode.ENTER){
             onSendButtonClick();
         }
     }
+
     public void onLeaveButtonClick() {
         //TODO: send LeaveGame message
         service.setGame(null);
@@ -519,6 +599,7 @@ public class BoardController extends Controller{
         service.disconnectFromGameRoom();
         sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
     }
+
     public void onDiceButtonClick(){
         DiceRolledEvent diceRolledEvent;
         if(service.getGame().getCurrentDiceRoll()!=null){

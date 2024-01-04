@@ -397,7 +397,7 @@ public class Game extends AnchorPane {
                 }
                 if(!availableBuildings.isEmpty()){
                     Building randomBuilding = availableBuildings.get((int) (Math.random() * availableBuildings.size()));
-                    getParent().fireEvent(new BuildingPlacedEvent(randomBuilding.getCorner(), BuildingType.CITY, currentPlayer));
+                    getParent().fireEvent(new BuildingPlacedEvent(BuildingPlacedEvent.CPU_CITY_PLACED, randomBuilding.getCorner(), currentPlayer));
                 }
 
             }
@@ -405,7 +405,7 @@ public class Game extends AnchorPane {
                 List<Corner> availableCorners = getAvailableCorners();
                 if(!availableCorners.isEmpty()){
                     Corner randomCorner = availableCorners.get((int) (Math.random() * availableCorners.size()));
-                    getParent().fireEvent(new BuildingPlacedEvent(randomCorner, BuildingType.SETTLEMENT, currentPlayer));
+                    getParent().fireEvent(new BuildingPlacedEvent(BuildingPlacedEvent.CPU_SETTLEMENT_PLACED ,randomCorner,  currentPlayer));
                 }
             }
             Random random = new Random();
@@ -414,7 +414,7 @@ public class Game extends AnchorPane {
                     List<Edge> availableEdges = getAvailableEdges();
                     if(!availableEdges.isEmpty()){
                         Edge randomEdge = availableEdges.get((int) (Math.random() * availableEdges.size()));
-                        getParent().fireEvent(new BuildingPlacedEvent(randomEdge, BuildingType.ROAD, currentPlayer));
+                        getParent().fireEvent(new BuildingPlacedEvent(BuildingPlacedEvent.CPU_ROAD_PLACED, randomEdge, currentPlayer));
                         fireLongestRoadEventInNeed(currentPlayer.getLongestRoad());
                     }
                 }
