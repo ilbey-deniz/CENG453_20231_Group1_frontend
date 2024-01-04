@@ -35,7 +35,6 @@ public class Service {
             .writer()
             .withDefaultPrettyPrinter();
     private ObjectMapper objectMapper = new ObjectMapper();
-//            .registerModule(new SimpleModule().addSerializer(Board.class, new JsonSerializers.BoardSerializer()));
 
 
     //make a request to the backend
@@ -117,7 +116,23 @@ public class Service {
     }
 
     public void sendWebsocketMessage(String message) {
-        client.send(message);
+        if(client.isOpen()){
+            client.send(message);
+        }
+        else{
+            System.out.println("Websocket is not open. reconnecting...");
+            connectToGameRoom(client.getOnMessageHandler());
+            while (!client.isOpen()) {
+                try {
+                    Thread.sleep(100);
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("Websocket reconnected");
+            client.send(message);
+        }
     }
     public void disconnectFromGameRoom() {
         client.close();

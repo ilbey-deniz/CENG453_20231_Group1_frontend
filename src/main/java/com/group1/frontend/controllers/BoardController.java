@@ -1,13 +1,9 @@
 package com.group1.frontend.controllers;
 
 import com.group1.frontend.components.*;
-import com.group1.frontend.dto.httpDto.EmptyDto;
 import com.group1.frontend.dto.httpDto.RoomCodeDto;
 import com.group1.frontend.dto.httpDto.ScoreDto;
-import com.group1.frontend.dto.websocketDto.DiceRollDto;
-import com.group1.frontend.dto.websocketDto.GameDto;
-import com.group1.frontend.dto.websocketDto.TradeInitDto;
-import com.group1.frontend.dto.websocketDto.WebSocketDto;
+import com.group1.frontend.dto.websocketDto.*;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.enums.TradeViewType;
@@ -40,6 +36,7 @@ import java.util.List;
 
 import static com.group1.frontend.constants.BoardConstants.TURN_TIME;
 import static com.group1.frontend.utils.BoardUtilityFunctions.secondsToTime;
+import static com.group1.frontend.utils.BoardUtilityFunctions.tradeResourcesToString;
 import static com.group1.frontend.utils.SceneSwitch.getSceneLoader;
 
 
@@ -134,11 +131,11 @@ public class BoardController extends Controller{
                 //place random settlements and one road for each player
                 service.getGame().createInitialBuildings();
                 service.getGame().getPlayers().forEach(player -> {
-                    player.addResource(ResourceType.GRAIN, 10);
-                    player.addResource(ResourceType.LUMBER, 10);
-                    player.addResource(ResourceType.WOOL, 10);
-                    player.addResource(ResourceType.BRICK, 10);
-                    player.addResource(ResourceType.ORE, 10);
+                    player.addResource(ResourceType.GRAIN, 1);
+                    player.addResource(ResourceType.LUMBER, 3);
+                    player.addResource(ResourceType.WOOL, 1);
+                    player.addResource(ResourceType.BRICK, 3);
+                    player.addResource(ResourceType.ORE, 0);
                 });
                 GameDto gameDto = new GameDto();
                 gameDto.setGame(service.getGame());
@@ -199,25 +196,55 @@ public class BoardController extends Controller{
             DiceRollDto diceRollDto = (DiceRollDto) dto;
             DiceRolledEvent diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED, new IntegerPair(diceRollDto.getDice1(), diceRollDto.getDice2()));
             hexagonPane.fireEvent(diceRolledEvent);
-        } else if (dto.getClass().equals(TradeInitDto.class)) {
+        }
+        else if (dto.getClass().equals(TradeInitDto.class)) {
             TradeInitDto tradeInitDto = (TradeInitDto) dto;
             TradeController tradeOfferController = getTradeController(TradeViewType.TRADE_OFFER);
-            tradeOfferController.setLabels(tradeInitDto.getOfferedResources(), tradeInitDto.getRequestedResources());
+            tradeOfferController.zeroizeLabels();
+            tradeOfferController.setResourceLabels(tradeInitDto.getOfferedResources(), tradeInitDto.getRequestedResources());
+            tradeOfferController.setTraderNameLabel(tradeInitDto.getTraderName());
             tradeOfferAnchorPane.setVisible(true);
-        } else {
+        }
+        else if (dto.getClass().equals(TradeAcceptDto.class)) {
+            TradeAcceptDto tradeAcceptDto = (TradeAcceptDto) dto;
+            service.getGame().tradeResources(
+                    tradeAcceptDto.getTraderName(),
+                    tradeAcceptDto.getTradeeName(),
+                    tradeAcceptDto.getRequestedResources(),
+                    tradeAcceptDto.getOfferedResources());
+            updateAllPlayerInfos();
+            writeToGameUpdates(
+                    tradeAcceptDto.getTraderName() +
+                    " traded with " +
+                    tradeAcceptDto.getTradeeName() +
+                    " : offered " +
+                    tradeResourcesToString(tradeAcceptDto.getRequestedResources()) +
+                    " and received " +
+                    tradeResourcesToString(tradeAcceptDto.getOfferedResources())
+            );
+
+        }
+        else if (dto.getClass().equals(TextMessageDto.class)) {
+
+        }
+        else {
             throw new RuntimeException("Invalid message type");
         }
-
-        writeToGameUpdates(message);
     }
-
     public void handleTradeAcceptCancelButtonEvent(TradeButtonEvent event) {
         if (event.getEventType() == TradeButtonEvent.TRADE_INIT_ACCEPT) {
             TradeController tradeController = getTradeController(TradeViewType.TRADE_INIT);
-            HashMap<ResourceType, Integer> offeredResources = tradeController.getOfferedResources();
-            HashMap<ResourceType, Integer> requestedResources = tradeController.getRequestedResources();
+            HashMap<ResourceType, Integer> offeredResources = tradeController.getOutResources();
+            HashMap<ResourceType, Integer> requestedResources = tradeController.getInResources();
             if (offeredResources.isEmpty() || requestedResources.isEmpty()) {
                 statusLabel.setText("You must offer and request at least one resource");
+                tradeToggleButton.setSelected(false);
+                return;
+            }
+            //if the player doesn't have enough resources to offer
+            if(!service.getGame().getCurrentPlayer().hasEnoughResourcesToTrade(offeredResources)){
+                statusLabel.setText("You don't have enough resources to offer");
+                tradeToggleButton.setSelected(false);
                 return;
             }
             HttpResponse<String> response = service.makeRequestWithToken("/game/tradeInit",
@@ -228,14 +255,13 @@ public class BoardController extends Controller{
                 tradeController.zeroizeLabels();
                 tradeInitAnchorPane.setVisible(false);
                 statusLabel.setText("Trade offer sent");
-                //Send TradeInit message
+                //Sending Trade message
                 TradeInitDto tradeInitDto = new TradeInitDto();
-                tradeInitDto.setOffererName(service.getGame().getCurrentPlayer().getName());
+                tradeInitDto.setTraderName(service.getUsername());
                 tradeInitDto.setOfferedResources(offeredResources);
                 tradeInitDto.setRequestedResources(requestedResources);
                 String message = service.objectToJson(tradeInitDto);
                 service.sendWebsocketMessage(message);
-                //Send text message: player offered a trade with resources: tradeOffer
             }
             else{
                 statusLabel.setText("Trade failed");
@@ -249,11 +275,62 @@ public class BoardController extends Controller{
             tradeInitAnchorPane.setVisible(false);
         }
         else if (event.getEventType() == TradeButtonEvent.TRADE_OFFER_ACCEPT) {
+            TradeController tradeController = getTradeController(TradeViewType.TRADE_OFFER);
+            HashMap<ResourceType, Integer> offeredResources = tradeController.getInResources();
+            HashMap<ResourceType, Integer> requestedResources = tradeController.getOutResources();
+            //check if the player has enough resources to accept the trade
+            if(!service.getGame().getCurrentPlayer().hasEnoughResourcesToTrade(requestedResources)){
+                statusLabel.setText("You don't have enough resources to accept the trade");
+                tradeToggleButton.setSelected(false);
+                return;
+            }
+            HttpResponse<String> response = service.makeRequestWithToken("/game/tradeAccept",
+                    "POST",
+                    new RoomCodeDto(service.getGameRoom().getRoomCode())
+            );
+            if(response.statusCode() == 200) {
+                statusLabel.setText("Trade accepted");
+                tradeOfferAnchorPane.setVisible(false);
+                Player trader = service.getGame().getPlayerByName(tradeController.getTraderNameLabel().getText());
+                Player tradee = service.getGame().getPlayerByName(service.getUsername());
+                service.getGame().tradeResources(
+                        tradeController.getTraderNameLabel().getText(),
+                        service.getUsername(),
+                        requestedResources,
+                        offeredResources);
+                //Sending Trade message
+                TradeAcceptDto tradeAcceptDto = new TradeAcceptDto();
+                tradeAcceptDto.setTraderName(trader.getName());
+                tradeAcceptDto.setTradeeName(tradee.getName());
+                tradeAcceptDto.setOfferedResources(offeredResources);
+                tradeAcceptDto.setRequestedResources(requestedResources);
+                String message = service.objectToJson(tradeAcceptDto);
+                service.sendWebsocketMessage(message);
+                updateAllPlayerInfos();
+                writeToGameUpdates(
+                        tradeAcceptDto.getTraderName() +
+                                " traded with " +
+                                tradeAcceptDto.getTradeeName() +
+                                " : offered " +
+                                tradeResourcesToString(tradeAcceptDto.getRequestedResources()) +
+                                " and received " +
+                                tradeResourcesToString(tradeAcceptDto.getOfferedResources())
+                );
+            }
+            else{
+                statusLabel.setText("Trade failed");
+            }
+            tradeController.zeroizeLabels();
+            tradeOfferAnchorPane.setVisible(false);
 
         }
         else if (event.getEventType() == TradeButtonEvent.TRADE_OFFER_CANCEL) {
             tradeOfferAnchorPane.setVisible(false);
+            TradeController tradeController = getTradeController(TradeViewType.TRADE_OFFER);
+            tradeController.zeroizeLabels();
         }
+        tradeToggleButton.setSelected(false);
+
     }
     public void handleCornerClickEvent(CornerClickedEvent event) {
         //check settlementToggleButton is selected
@@ -583,6 +660,9 @@ public class BoardController extends Controller{
             }
             PlayerInfoController playerInfoController = loader.getController();
             playerInfoController.initPlayerInfo(player);
+            if(player.getName().equals(service.getUsername())){
+                playerInfoController.highlightPlayerNameLabel();
+            }
 
             playerInfoAnchorPane.getProperties().put("controller", playerInfoController);
             playerInfoMap.put(player, playerInfoVBox.getChildren().size());
@@ -629,6 +709,7 @@ public class BoardController extends Controller{
             TradeController tradeController = loader.getController();
             tradeController.setTradeViewType(TradeViewType.TRADE_INIT);
             tradeController.setParent(hexagonPane);
+            tradeController.getTraderNameAnchorPane().setVisible(false);
             tradeAnchorPane.getProperties().put("controller", tradeController);
             tradeInitAnchorPane.getChildren().clear();
             tradeInitAnchorPane.getChildren().add(tradeAnchorPane);
@@ -644,6 +725,7 @@ public class BoardController extends Controller{
             TradeController tradeController = loader.getController();
             tradeController.setTradeViewType(TradeViewType.TRADE_OFFER);
             tradeController.setParent(hexagonPane);
+            tradeController.getTraderNameAnchorPane().setVisible(true);
             tradeAnchorPane.getProperties().put("controller", tradeController);
             tradeOfferAnchorPane.getChildren().clear();
             tradeOfferAnchorPane.getChildren().add(tradeAnchorPane);

@@ -86,4 +86,7 @@ public class PlayerInfoController extends Controller{
     public void highlightLongestRoadLabel() {
         this.longestRoadLabel.setTextFill(javafx.scene.paint.Color.RED);
     }
+    public void highlightPlayerNameLabel() {
+        this.playerNameLabel.setTextFill(javafx.scene.paint.Color.RED);
+    }
 }

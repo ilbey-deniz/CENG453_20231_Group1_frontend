@@ -63,6 +63,15 @@ public class Player {
         return true;
     }
 
+    public boolean hasEnoughResourcesToTrade(HashMap<ResourceType, Integer> requestedResources) {
+        for (ResourceType resourceType : requestedResources.keySet()) {
+            if (resources.get(resourceType) < requestedResources.get(resourceType)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void addVictoryPoint(int i) {
         victoryPoint += i;
     }

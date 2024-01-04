@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.group1.frontend.components.*;
+import com.group1.frontend.dto.websocketDto.TradeAcceptDto;
 import com.group1.frontend.dto.websocketDto.TradeInitDto;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.PlayerColor;
@@ -204,9 +205,9 @@ public class JsonDeserializers {
     public static class TradeInitDtoDeserializer extends JsonDeserializer<TradeInitDto> {
         @Override
         public TradeInitDto deserialize(JsonParser jsonParser,
-                                DeserializationContext deserializationContext) throws java.io.IOException {
+                                        DeserializationContext deserializationContext) throws java.io.IOException {
             JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-            String offererName = node.get("offererName").asText();
+            String traderName = node.get("traderName").asText();
             LinkedHashMap tradeOfferLHM = node.get("offeredResources").traverse(jsonParser.getCodec()).readValueAs(LinkedHashMap.class);
             HashMap<ResourceType, Integer> tradeOffer = new HashMap<>();
             for (Object resourceType : tradeOfferLHM.keySet()) {
@@ -218,10 +219,37 @@ public class JsonDeserializers {
                 tradeRequest.put(ResourceType.valueOf((String) resourceType), (Integer) tradeRequestLHM.get(resourceType));
             }
             TradeInitDto tradeInitDto = new TradeInitDto();
-            tradeInitDto.setOffererName(offererName);
+            tradeInitDto.setTraderName(traderName);
             tradeInitDto.setOfferedResources(tradeOffer);
             tradeInitDto.setRequestedResources(tradeRequest);
             return tradeInitDto;
+        }
+    }
+    public static class TradeAcceptDtoDeserializer extends JsonDeserializer<TradeAcceptDto> {
+        @Override
+        public TradeAcceptDto deserialize(JsonParser jsonParser,
+                                          DeserializationContext deserializationContext) throws java.io.IOException {
+
+            JsonNode node = jsonParser.getCodec().readTree(jsonParser);
+            String traderName = node.get("traderName").asText();
+            String tradeeName = node.get("tradeeName").asText();
+            LinkedHashMap tradeOfferLHM = node.get("offeredResources").traverse(jsonParser.getCodec()).readValueAs(LinkedHashMap.class);
+            HashMap<ResourceType, Integer> offeredResources = new HashMap<>();
+            for (Object resourceType : tradeOfferLHM.keySet()) {
+                offeredResources.put(ResourceType.valueOf((String) resourceType), (Integer) tradeOfferLHM.get(resourceType));
+            }
+            LinkedHashMap tradeRequestLHM = node.get("requestedResources").traverse(jsonParser.getCodec()).readValueAs(LinkedHashMap.class);
+            HashMap<ResourceType, Integer> requestedResources = new HashMap<>();
+            for (Object resourceType : tradeRequestLHM.keySet()) {
+                requestedResources.put(ResourceType.valueOf((String) resourceType), (Integer) tradeRequestLHM.get(resourceType));
+            }
+            TradeAcceptDto tradeAcceptDto = new TradeAcceptDto();
+            tradeAcceptDto.setTraderName(traderName);
+            tradeAcceptDto.setTradeeName(tradeeName);
+            tradeAcceptDto.setOfferedResources(offeredResources);
+            tradeAcceptDto.setRequestedResources(requestedResources);
+
+            return tradeAcceptDto;
         }
     }
 }

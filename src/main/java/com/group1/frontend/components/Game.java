@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.group1.frontend.dto.websocketDto.DiceRollDto;
 import com.group1.frontend.enums.BuildingType;
+import com.group1.frontend.enums.ResourceType;
 import com.group1.frontend.events.*;
 import com.group1.frontend.utils.IntegerPair;
 import com.group1.frontend.utils.JsonDeserializers;
@@ -164,6 +165,23 @@ public class Game extends AnchorPane {
         int dice2 = (int) (Math.random() * 6) + 1;
         currentDiceRoll = new IntegerPair(dice1, dice2);
         return new IntegerPair(dice1, dice2);
+    }
+
+    public void tradeResources(String traderName,
+                               String tradeeName,
+                               HashMap<ResourceType, Integer> offeredResources,
+                               HashMap<ResourceType, Integer> requestedResources){
+        Player trader = getPlayerByName(traderName);
+        Player tradee = getPlayerByName(tradeeName);
+        for (ResourceType resourceType : offeredResources.keySet()) {
+            trader.removeResource(resourceType, offeredResources.get(resourceType));
+            tradee.addResource(resourceType, offeredResources.get(resourceType));
+        }
+        for (ResourceType resourceType : requestedResources.keySet()) {
+            trader.addResource(resourceType, requestedResources.get(resourceType));
+            tradee.removeResource(resourceType, requestedResources.get(resourceType));
+        }
+
     }
 
     public void endTurn() {
@@ -452,5 +470,14 @@ public class Game extends AnchorPane {
                 road.getEdge().setOccupied(true);
             }
         }
+    }
+
+    public Player getPlayerByName(String playerName) {
+        for(Player player : players) {
+            if (player.getName().equals(playerName)) {
+                return player;
+            }
+        }
+        return null;
     }
 }

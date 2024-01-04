@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import com.group1.frontend.enums.TradeViewType;
+import javafx.scene.layout.AnchorPane;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -82,6 +83,10 @@ public class TradeController extends Controller{
     private Button acceptButton;
     @FXML
     private Button cancelButton;
+    @FXML
+    private Label traderNameLabel;
+    @FXML
+    private AnchorPane traderNameAnchorPane;
 
     private Parent parent;
 
@@ -176,10 +181,12 @@ public class TradeController extends Controller{
     @FXML
     public void onAcceptButtonClick(ActionEvent event){
         if(tradeViewType == TradeViewType.TRADE_INIT){
-            parent.fireEvent(new TradeButtonEvent(TradeButtonEvent.TRADE_INIT_ACCEPT, getRequestedResources(), getOfferedResources()));
+            parent.fireEvent(new TradeButtonEvent(TradeButtonEvent.TRADE_INIT_ACCEPT,
+                    getInResources(),
+                    getOutResources()));
         }
         else if(tradeViewType == TradeViewType.TRADE_OFFER){
-            parent.fireEvent(new TradeButtonEvent(TradeButtonEvent.TRADE_OFFER_ACCEPT, getRequestedResources(), getOfferedResources()));
+            parent.fireEvent(new TradeButtonEvent(TradeButtonEvent.TRADE_OFFER_ACCEPT, getInResources(), getOutResources()));
         }
     }
     @FXML
@@ -256,7 +263,7 @@ public class TradeController extends Controller{
         inBrickLabel.setText("0");
         inLumberLabel.setText("0");
     }
-    public void setLabels(HashMap<ResourceType, Integer> inResources, HashMap<ResourceType, Integer> outResources){
+    public void setResourceLabels(HashMap<ResourceType, Integer> inResources, HashMap<ResourceType, Integer> outResources){
         if(inResources.containsKey(ResourceType.GRAIN)){
             inGrainLabel.setText(String.valueOf(inResources.get(ResourceType.GRAIN)));
         }
@@ -288,7 +295,7 @@ public class TradeController extends Controller{
             outLumberLabel.setText(String.valueOf(outResources.get(ResourceType.LUMBER)));
         }
     }
-    public HashMap<ResourceType, Integer> getOfferedResources(){
+    public HashMap<ResourceType, Integer> getOutResources(){
         HashMap<ResourceType, Integer> offer = new HashMap<>();
         //dont add if 0
         if(Integer.parseInt(outGrainLabel.getText()) != 0){
@@ -308,7 +315,7 @@ public class TradeController extends Controller{
         }
         return offer;
     }
-    public HashMap<ResourceType, Integer> getRequestedResources(){
+    public HashMap<ResourceType, Integer> getInResources(){
         HashMap<ResourceType, Integer> request = new HashMap<>();
         //dont add if 0
         if(Integer.parseInt(inGrainLabel.getText()) != 0){
@@ -327,6 +334,10 @@ public class TradeController extends Controller{
             request.put(ResourceType.LUMBER, Integer.parseInt(inLumberLabel.getText()));
         }
         return request;
+    }
+
+    public void setTraderNameLabel(String traderName){
+        traderNameLabel.setText(traderName);
     }
 
 }

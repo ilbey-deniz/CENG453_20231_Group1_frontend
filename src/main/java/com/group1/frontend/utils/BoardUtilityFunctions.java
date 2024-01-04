@@ -1,6 +1,7 @@
 package com.group1.frontend.utils;
 
 import com.group1.frontend.MainApplication;
+import com.group1.frontend.enums.ResourceType;
 import javafx.scene.image.Image;
 
 import java.io.FileNotFoundException;
@@ -86,5 +87,13 @@ public class BoardUtilityFunctions {
             i++;
         }
         return null;
+    }
+
+    public static String tradeResourcesToString(Map<ResourceType, Integer> resources){
+        StringBuilder stringBuilder = new StringBuilder();
+        for(ResourceType resourceType : resources.keySet()){
+            stringBuilder.append(resources.get(resourceType)).append(" ").append(resourceType.toString()).append(", ");
+        }
+        return stringBuilder.toString();
     }
 }

@@ -1,11 +1,15 @@
 package com.group1.frontend.utils;
 
 import javafx.application.Platform;
+import lombok.Getter;
+import lombok.Setter;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 
+@Getter
+@Setter
 public class GenericWebsocketClient extends WebSocketClient {
     private OnMessageHandler onMessageHandler;
     public interface OnMessageHandler {
