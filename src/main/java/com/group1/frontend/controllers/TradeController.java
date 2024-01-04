@@ -1,5 +1,6 @@
 package com.group1.frontend.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -74,12 +75,112 @@ public class TradeController extends Controller{
     private Button acceptButton;
     @FXML
     private Button cancelButton;
-
-    @Setter
     @Getter
     private TradeViewType tradeViewType;
+    @FXML
+    public void onPlusButtonClick(ActionEvent event){
+        if(event.getSource() == outGrainPlusButton){
+            outGrainLabel.setText(String.valueOf(Integer.parseInt(outGrainLabel.getText()) + 1));
+        }
+        else if(event.getSource() == outOrePlusButton){
+            outOreLabel.setText(String.valueOf(Integer.parseInt(outOreLabel.getText()) + 1));
+        }
+        else if(event.getSource() == outWoolPlusButton){
+            outWoolLabel.setText(String.valueOf(Integer.parseInt(outWoolLabel.getText()) + 1));
+        }
+        else if(event.getSource() == outBrickPlusButton){
+            outBrickLabel.setText(String.valueOf(Integer.parseInt(outBrickLabel.getText()) + 1));
+        }
+        else if(event.getSource() == outLumberPlusButton){
+            outLumberLabel.setText(String.valueOf(Integer.parseInt(outLumberLabel.getText()) + 1));
+        }
+        else if(event.getSource() == inGrainPlusButton){
+            inGrainLabel.setText(String.valueOf(Integer.parseInt(inGrainLabel.getText()) + 1));
+        }
+        else if(event.getSource() == inOrePlusButton){
+            inOreLabel.setText(String.valueOf(Integer.parseInt(inOreLabel.getText()) + 1));
+        }
+        else if(event.getSource() == inWoolPlusButton){
+            inWoolLabel.setText(String.valueOf(Integer.parseInt(inWoolLabel.getText()) + 1));
+        }
+        else if(event.getSource() == inBrickPlusButton){
+            inBrickLabel.setText(String.valueOf(Integer.parseInt(inBrickLabel.getText()) + 1));
+        }
+        else if(event.getSource() == inLumberPlusButton){
+            inLumberLabel.setText(String.valueOf(Integer.parseInt(inLumberLabel.getText()) + 1));
+        }
 
+    }
+    @FXML
+    public void onMinusButtonClick(ActionEvent event){
+        if(event.getSource() == outGrainMinusButton){
+            if(Integer.parseInt(outGrainLabel.getText()) > 0){
+                outGrainLabel.setText(String.valueOf(Integer.parseInt(outGrainLabel.getText()) - 1));
+            }
+        }
+        else if(event.getSource() == outOreMinusButton){
+            if(Integer.parseInt(outOreLabel.getText()) > 0){
+                outOreLabel.setText(String.valueOf(Integer.parseInt(outOreLabel.getText()) - 1));
+            }
+        }
+        else if(event.getSource() == outWoolMinusButton){
+            if(Integer.parseInt(outWoolLabel.getText()) > 0){
+                outWoolLabel.setText(String.valueOf(Integer.parseInt(outWoolLabel.getText()) - 1));
+            }
+        }
+        else if(event.getSource() == outBrickMinusButton){
+            if(Integer.parseInt(outBrickLabel.getText()) > 0){
+                outBrickLabel.setText(String.valueOf(Integer.parseInt(outBrickLabel.getText()) - 1));
+            }
+        }
+        else if(event.getSource() == outLumberMinusButton){
+            if(Integer.parseInt(outLumberLabel.getText()) > 0){
+                outLumberLabel.setText(String.valueOf(Integer.parseInt(outLumberLabel.getText()) - 1));
+            }
+        }
+        else if(event.getSource() == inGrainMinusButton){
+            if(Integer.parseInt(inGrainLabel.getText()) > 0){
+                inGrainLabel.setText(String.valueOf(Integer.parseInt(inGrainLabel.getText()) - 1));
+            }
+        }
+        else if(event.getSource() == inOreMinusButton){
+            if(Integer.parseInt(inOreLabel.getText()) > 0){
+                inOreLabel.setText(String.valueOf(Integer.parseInt(inOreLabel.getText()) - 1));
+            }
+        }
+        else if(event.getSource() == inWoolMinusButton){
+            if(Integer.parseInt(inWoolLabel.getText()) > 0){
+                inWoolLabel.setText(String.valueOf(Integer.parseInt(inWoolLabel.getText()) - 1));
+            }
+        }
+        else if(event.getSource() == inBrickMinusButton){
+            if(Integer.parseInt(inBrickLabel.getText()) > 0){
+                inBrickLabel.setText(String.valueOf(Integer.parseInt(inBrickLabel.getText()) - 1));
+            }
+        }
+        else if(event.getSource() == inLumberMinusButton){
+            if(Integer.parseInt(inLumberLabel.getText()) > 0){
+                inLumberLabel.setText(String.valueOf(Integer.parseInt(inLumberLabel.getText()) - 1));
+            }
+        }
+    }
+    @FXML
+    public void onAcceptButtonClick(ActionEvent event){
 
+    }
+    @FXML
+    public void onCancelButtonClick(ActionEvent event){
+
+    }
+    public void setTradeViewType(TradeViewType tradeViewType){
+        this.tradeViewType = tradeViewType;
+        if(tradeViewType == TradeViewType.TRADE_OFFER){
+            hidePlusMinusButtons();
+        }
+        else if(tradeViewType == TradeViewType.TRADE_INIT){
+            showPlusMinusButtons();
+        }
+    }
     public void hidePlusMinusButtons(){
         outGrainPlusButton.setVisible(false);
         outGrainMinusButton.setVisible(false);
@@ -123,5 +224,17 @@ public class TradeController extends Controller{
         inBrickMinusButton.setVisible(true);
         inLumberPlusButton.setVisible(true);
         inLumberMinusButton.setVisible(true);
+    }
+    public void zeroizeLabels(){
+        outGrainLabel.setText("0");
+        outOreLabel.setText("0");
+        outWoolLabel.setText("0");
+        outBrickLabel.setText("0");
+        outLumberLabel.setText("0");
+        inGrainLabel.setText("0");
+        inOreLabel.setText("0");
+        inWoolLabel.setText("0");
+        inBrickLabel.setText("0");
+        inLumberLabel.setText("0");
     }
 }

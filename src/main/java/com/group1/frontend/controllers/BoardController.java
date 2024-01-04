@@ -125,10 +125,9 @@ public class BoardController extends Controller{
                     service.getGame().addPlayer(player);
                 });
                 service.getGame().setCurrentPlayer(service.getGame().getRandomNonCpuPlayer());
+                //place random settlements and one road for each player
                 service.getGame().createInitialBuildings();
                 service.getGame().getPlayers().forEach(player -> {
-                    //place random settlements and one road for each player
-
                     player.addResource(ResourceType.GRAIN, 10);
                     player.addResource(ResourceType.LUMBER, 10);
                     player.addResource(ResourceType.WOOL, 10);
@@ -151,6 +150,7 @@ public class BoardController extends Controller{
                 player.getBuildings().forEach(building -> boardView.getCornerView(
                         building.getCorner()).occupyCorner(player.getColor(), building.getBuildingType()));
             }
+            loadTradeViews();
             highlightPlayerInfo(service.getGame().getCurrentPlayer());
 
             timer = new Timer(TURN_TIME);
@@ -246,7 +246,6 @@ public class BoardController extends Controller{
             updatePlayerInfo(service.getGame().getCurrentPlayer());
         }
     }
-
     public void handleOneTickEvent(TimeEvent event) {
         leftTimeLabel.setText(secondsToTime(event.getRemainingSeconds()));
         if(event.getRemainingSeconds() <= 10){
@@ -398,33 +397,8 @@ public class BoardController extends Controller{
     }
     public void onTradeButtonClick(){
         removeHighlight();
-        //trade init
-        FXMLLoader loader = getSceneLoader("trade-view.fxml");
-        try {
-            assert loader != null;
-            AnchorPane tradeAnchorPane = loader.load();
-            TradeController tradeController = loader.getController();
-            tradeController.setTradeViewType(TradeViewType.TRADE_INIT);
-            tradeAnchorPane.getProperties().put("controller", tradeController);
-            tradeInitAnchorPane.getChildren().clear();
-            tradeInitAnchorPane.getChildren().add(tradeAnchorPane);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        //trade offer
-        loader = getSceneLoader("trade-view.fxml");
-        try {
-            assert loader != null;
-            AnchorPane tradeAnchorPane = loader.load();
-            TradeController tradeController = loader.getController();
-            tradeController.setTradeViewType(TradeViewType.TRADE_OFFER);
-            tradeAnchorPane.getProperties().put("controller", tradeController);
-            tradeOfferAnchorPane.getChildren().clear();
-            tradeOfferAnchorPane.getChildren().add(tradeAnchorPane);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        tradeInitAnchorPane.setVisible(!tradeInitAnchorPane.isVisible());
+        tradeOfferAnchorPane.setVisible(!tradeOfferAnchorPane.isVisible());
     }
     public void onSettlementButtonClick(){
         removeHighlight();
@@ -577,7 +551,37 @@ public class BoardController extends Controller{
                     "POST",
                     new ScoreDto(player.getName(), player.getVictoryPoint())
             );
+        }
+    }
+    public void loadTradeViews(){
+        tradeInitAnchorPane.setVisible(false);
+        tradeOfferAnchorPane.setVisible(false);
+        //trade init
+        FXMLLoader loader = getSceneLoader("trade-view.fxml");
+        try {
+            assert loader != null;
+            AnchorPane tradeAnchorPane = loader.load();
+            TradeController tradeController = loader.getController();
+            tradeController.setTradeViewType(TradeViewType.TRADE_INIT);
+            tradeAnchorPane.getProperties().put("controller", tradeController);
+            tradeInitAnchorPane.getChildren().clear();
+            tradeInitAnchorPane.getChildren().add(tradeAnchorPane);
 
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //trade offer
+        loader = getSceneLoader("trade-view.fxml");
+        try {
+            assert loader != null;
+            AnchorPane tradeAnchorPane = loader.load();
+            TradeController tradeController = loader.getController();
+            tradeController.setTradeViewType(TradeViewType.TRADE_OFFER);
+            tradeAnchorPane.getProperties().put("controller", tradeController);
+            tradeOfferAnchorPane.getChildren().clear();
+            tradeOfferAnchorPane.getChildren().add(tradeAnchorPane);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
