@@ -10,7 +10,7 @@
 <?import javafx.scene.shape.Ellipse?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.group1.frontend.controllers.TradeController">
    <children>
       <VBox prefHeight="169.0" prefWidth="450.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -34,19 +34,19 @@
                                     <Image url="@assets/grain.png" />
                                  </image>
                               </ImageView>
-                              <Button layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="outGrainPlusButton">
+                              <Button fx:id="outGrainPlusButton" layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
                                  <graphic>
-                                    <ImageView  fitHeight="16.0" fitWidth="13.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView fitHeight="16.0" fitWidth="13.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../../../assets/plus.png" />
                                        </image>
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="outGrainMinusButton">
+                              <Button fx:id="outGrainMinusButton" layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -73,7 +73,7 @@
                                     <Image url="@assets/wool.png" />
                                  </image>
                               </ImageView>
-                              <Button layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="outWoolPlusButton">
+                              <Button fx:id="outWoolPlusButton" layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -85,7 +85,7 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="outWoolMinusButton">
+                              <Button fx:id="outWoolMinusButton" layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -112,7 +112,7 @@
                                     <Image url="@assets/lumber.png" />
                                  </image>
                               </ImageView>
-                              <Button layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="outLumberPlusButton">
+                              <Button fx:id="outLumberPlusButton" layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -124,7 +124,7 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="outLumberMinusButton">
+                              <Button fx:id="outLumberMinusButton" layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -151,7 +151,7 @@
                                     <Image url="@assets/ore.png" />
                                  </image>
                               </ImageView>
-                              <Button layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="outOrePlusButton">
+                              <Button fx:id="outOrePlusButton" layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -163,7 +163,7 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="outOreMinusButton">
+                              <Button fx:id="outOreMinusButton" layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -190,7 +190,7 @@
                                     <Image url="@assets/brick.png" />
                                  </image>
                               </ImageView>
-                              <Button layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="outBrickPlusButton">
+                              <Button fx:id="outBrickPlusButton" layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -202,7 +202,7 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="outBrickMinusButton">
+                              <Button fx:id="outBrickMinusButton" layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -224,9 +224,9 @@
                         </AnchorPane>
                         <AnchorPane prefHeight="79.0" prefWidth="76.0">
                            <children>
-                              <Button layoutX="12.0" layoutY="14.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="52.0">
+                              <Button layoutX="12.0" layoutY="14.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="52.0" fx:id="acceptButton">
                                  <graphic>
-                                    <ImageView fx:id="acceptButton" fitHeight="32.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                                    <ImageView  fitHeight="32.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../../../assets/tick.png" />
                                        </image>
@@ -259,7 +259,7 @@
                                     <Image url="@assets/grain.png" />
                                  </image>
                               </ImageView>
-                              <Button layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="inGrainPlusButton">
+                              <Button fx:id="inGrainPlusButton" layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -271,7 +271,7 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="inGrainMinusButton">
+                              <Button fx:id="inGrainMinusButton" layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -298,7 +298,7 @@
                                     <Image url="@assets/wool.png" />
                                  </image>
                               </ImageView>
-                              <Button layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="inWoolPlusButton">
+                              <Button fx:id="inWoolPlusButton" layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -310,7 +310,7 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="inWoolMinusButton">
+                              <Button fx:id="inWoolMinusButton" layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -337,7 +337,7 @@
                                     <Image url="@assets/lumber.png" />
                                  </image>
                               </ImageView>
-                              <Button layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="inLumberPlusButton">
+                              <Button fx:id="inLumberPlusButton" layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -349,7 +349,7 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="inLumberMinusButton">
+                              <Button fx:id="inLumberMinusButton" layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -376,7 +376,7 @@
                                     <Image url="@assets/ore.png" />
                                  </image>
                               </ImageView>
-                              <Button layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="inOrePlusButton">
+                              <Button fx:id="inOrePlusButton" layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -388,7 +388,7 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="inOreMinusButton">
+                              <Button fx:id="inOreMinusButton" layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -415,7 +415,7 @@
                                     <Image url="@assets/brick.png" />
                                  </image>
                               </ImageView>
-                              <Button layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="inBrickPlusButton">
+                              <Button fx:id="inBrickPlusButton" layoutX="46.0" layoutY="20.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>
@@ -427,7 +427,7 @@
                                     </ImageView>
                                  </graphic>
                               </Button>
-                              <Button layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0" fx:id="inBrickMinusButton">
+                              <Button fx:id="inBrickMinusButton" layoutX="46.0" layoutY="48.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="17.0">
                                  <font>
                                     <Font name="System Bold" size="1.0" />
                                  </font>

@@ -5,6 +5,7 @@ import com.group1.frontend.dto.httpDto.ScoreDto;
 import com.group1.frontend.dto.websocketDto.GameDto;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.ResourceType;
+import com.group1.frontend.enums.TradeViewType;
 import com.group1.frontend.events.TimeEvent;
 import com.group1.frontend.utils.BoardUtilityFunctions;
 import com.group1.frontend.utils.IntegerPair;
@@ -84,6 +85,12 @@ public class BoardController extends Controller{
 
     @FXML
     private VBox playerInfoVBox;
+
+    @FXML
+    private AnchorPane tradeInitAnchorPane;
+
+    @FXML
+    private AnchorPane tradeOfferAnchorPane;
 
     private final HashSet<Edge> highlightedEdges;
     private final HashSet<Corner> highlightedCorners;
@@ -390,7 +397,34 @@ public class BoardController extends Controller{
         hexagonPane.fireEvent(new TurnEndedEvent(TurnEndedEvent.TURN_ENDED));
     }
     public void onTradeButtonClick(){
+        removeHighlight();
+        //trade init
+        FXMLLoader loader = getSceneLoader("trade-view.fxml");
+        try {
+            assert loader != null;
+            AnchorPane tradeAnchorPane = loader.load();
+            TradeController tradeController = loader.getController();
+            tradeController.setTradeViewType(TradeViewType.TRADE_INIT);
+            tradeAnchorPane.getProperties().put("controller", tradeController);
+            tradeInitAnchorPane.getChildren().clear();
+            tradeInitAnchorPane.getChildren().add(tradeAnchorPane);
 
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        //trade offer
+        loader = getSceneLoader("trade-view.fxml");
+        try {
+            assert loader != null;
+            AnchorPane tradeAnchorPane = loader.load();
+            TradeController tradeController = loader.getController();
+            tradeController.setTradeViewType(TradeViewType.TRADE_OFFER);
+            tradeAnchorPane.getProperties().put("controller", tradeController);
+            tradeOfferAnchorPane.getChildren().clear();
+            tradeOfferAnchorPane.getChildren().add(tradeAnchorPane);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     public void onSettlementButtonClick(){
         removeHighlight();
