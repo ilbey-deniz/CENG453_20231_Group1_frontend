@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = StartGameDto.class),
         @JsonSubTypes.Type(value = GameDto.class),
         @JsonSubTypes.Type(value = DiceRollDto.class),
+        @JsonSubTypes.Type(value = TradeInitDto.class),
 
 })
 //DON'T EVER NEVER EVER add @AllArgsConstructor to the classes that implement this class

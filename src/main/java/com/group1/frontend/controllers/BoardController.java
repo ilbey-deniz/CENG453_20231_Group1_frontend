@@ -1,10 +1,12 @@
 package com.group1.frontend.controllers;
 
 import com.group1.frontend.components.*;
+import com.group1.frontend.dto.httpDto.EmptyDto;
+import com.group1.frontend.dto.httpDto.RoomCodeDto;
 import com.group1.frontend.dto.httpDto.ScoreDto;
 import com.group1.frontend.dto.websocketDto.DiceRollDto;
 import com.group1.frontend.dto.websocketDto.GameDto;
-import com.group1.frontend.dto.websocketDto.JoinLobbyDto;
+import com.group1.frontend.dto.websocketDto.TradeInitDto;
 import com.group1.frontend.dto.websocketDto.WebSocketDto;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.ResourceType;
@@ -31,6 +33,7 @@ import javafx.scene.input.KeyEvent;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -174,6 +177,10 @@ public class BoardController extends Controller{
             hexagonPane.addEventHandler(BuildingPlacedEvent.CITY_PLACED, this::handleBuildingPlacedEvent);
             hexagonPane.addEventHandler(LongestRoadEvent.LONGEST_ROAD, this::handleLongestRoadEvent);
             hexagonPane.addEventHandler(GameWonEvent.GAME_WON, this::handleGameWonEvent);
+            hexagonPane.addEventHandler(TradeButtonEvent.TRADE_INIT_ACCEPT, this::handleTradeAcceptCancelButtonEvent);
+            hexagonPane.addEventHandler(TradeButtonEvent.TRADE_INIT_CANCEL, this::handleTradeAcceptCancelButtonEvent);
+            hexagonPane.addEventHandler(TradeButtonEvent.TRADE_OFFER_ACCEPT, this::handleTradeAcceptCancelButtonEvent);
+            hexagonPane.addEventHandler(TradeButtonEvent.TRADE_OFFER_CANCEL, this::handleTradeAcceptCancelButtonEvent);
 
             for(int i = 0; i < 19; i++){
                 writeToGameUpdates("");
@@ -192,13 +199,61 @@ public class BoardController extends Controller{
             DiceRollDto diceRollDto = (DiceRollDto) dto;
             DiceRolledEvent diceRolledEvent = new DiceRolledEvent(DiceRolledEvent.DICE_ROLLED, new IntegerPair(diceRollDto.getDice1(), diceRollDto.getDice2()));
             hexagonPane.fireEvent(diceRolledEvent);
-        }
-
-        else {
+        } else if (dto.getClass().equals(TradeInitDto.class)) {
+            TradeInitDto tradeInitDto = (TradeInitDto) dto;
+            TradeController tradeOfferController = getTradeController(TradeViewType.TRADE_OFFER);
+            tradeOfferController.setLabels(tradeInitDto.getOfferedResources(), tradeInitDto.getRequestedResources());
+            tradeOfferAnchorPane.setVisible(true);
+        } else {
             throw new RuntimeException("Invalid message type");
         }
 
         writeToGameUpdates(message);
+    }
+
+    public void handleTradeAcceptCancelButtonEvent(TradeButtonEvent event) {
+        if (event.getEventType() == TradeButtonEvent.TRADE_INIT_ACCEPT) {
+            TradeController tradeController = getTradeController(TradeViewType.TRADE_INIT);
+            HashMap<ResourceType, Integer> offeredResources = tradeController.getOfferedResources();
+            HashMap<ResourceType, Integer> requestedResources = tradeController.getRequestedResources();
+            if (offeredResources.isEmpty() || requestedResources.isEmpty()) {
+                statusLabel.setText("You must offer and request at least one resource");
+                return;
+            }
+            HttpResponse<String> response = service.makeRequestWithToken("/game/tradeInit",
+                    "POST",
+                    new RoomCodeDto(service.getGameRoom().getRoomCode())
+            );
+            if(response.statusCode() == 200){
+                tradeController.zeroizeLabels();
+                tradeInitAnchorPane.setVisible(false);
+                statusLabel.setText("Trade offer sent");
+                //Send TradeInit message
+                TradeInitDto tradeInitDto = new TradeInitDto();
+                tradeInitDto.setOffererName(service.getGame().getCurrentPlayer().getName());
+                tradeInitDto.setOfferedResources(offeredResources);
+                tradeInitDto.setRequestedResources(requestedResources);
+                String message = service.objectToJson(tradeInitDto);
+                service.sendWebsocketMessage(message);
+                //Send text message: player offered a trade with resources: tradeOffer
+            }
+            else{
+                statusLabel.setText("Trade failed");
+            }
+
+
+        }
+        else if (event.getEventType() == TradeButtonEvent.TRADE_INIT_CANCEL) {
+            TradeController tradeController = getTradeController(TradeViewType.TRADE_INIT);
+            tradeController.zeroizeLabels();
+            tradeInitAnchorPane.setVisible(false);
+        }
+        else if (event.getEventType() == TradeButtonEvent.TRADE_OFFER_ACCEPT) {
+
+        }
+        else if (event.getEventType() == TradeButtonEvent.TRADE_OFFER_CANCEL) {
+            tradeOfferAnchorPane.setVisible(false);
+        }
     }
     public void handleCornerClickEvent(CornerClickedEvent event) {
         //check settlementToggleButton is selected
@@ -271,7 +326,6 @@ public class BoardController extends Controller{
         writeToGameUpdates("Time's up!");
         hexagonPane.fireEvent(new TurnEndedEvent(TurnEndedEvent.TURN_ENDED));
     }
-
     public void handleDiceRolledEvent(DiceRolledEvent event) {
 
         service.getGame().distributeResources(event.getDiceRoll().getFirst() + event.getDiceRoll().getSecond());
@@ -296,7 +350,6 @@ public class BoardController extends Controller{
 
         updateAllPlayerInfos();
     }
-
     public void handleTurnEndedEvent(TurnEndedEvent event) {
 
         timer.stop();
@@ -325,7 +378,6 @@ public class BoardController extends Controller{
             service.getGame().autoPlayCpuPlayer();
         }
     }
-
     private void handleBuildingPlacedEvent(BuildingPlacedEvent buildingPlacedEvent) {
         //send BuildingPlaced message
         if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.SETTLEMENT_PLACED){
@@ -350,7 +402,6 @@ public class BoardController extends Controller{
         }
         updatePlayerInfo(buildingPlacedEvent.getPlayer());
     }
-
     private void handleLongestRoadEvent(LongestRoadEvent event) {
         for (Player player : service.getGame().getPlayers()) {
             getPlayerInfoController(player).unhighlightLongestRoadLabel();
@@ -361,7 +412,6 @@ public class BoardController extends Controller{
             writeToGameUpdates(player.getName() + " has the longest road");
         });
     }
-
     private void handleGameWonEvent(GameWonEvent event) {
         writeToGameUpdates(event.getWinner().getName() + " won the game!");
         statusLabel.setText(event.getWinner().getName() + " won the game!");
@@ -375,19 +425,16 @@ public class BoardController extends Controller{
         secondDiceButton.setDisable(true);
         savePlayerScores();
     }
-
     public void onSendButtonClick() {
         String message = chatTextField.getText();
         writeToGameUpdates(message);
         chatTextField.clear();
     }
-
     public void onEnter(KeyEvent event) {
         if(event.getCode() == KeyCode.ENTER){
             onSendButtonClick();
         }
     }
-
     public void onLeaveButtonClick() {
         //TODO: send LeaveGame message
         service.setGame(null);
@@ -395,7 +442,6 @@ public class BoardController extends Controller{
         service.disconnectFromGameRoom();
         sceneSwitch.switchToScene(stage, service, "menu-view.fxml");
     }
-
     public void onDiceButtonClick(){
         DiceRolledEvent diceRolledEvent;
         if(service.getGame().getCurrentDiceRoll()!=null){
@@ -418,7 +464,6 @@ public class BoardController extends Controller{
     public void onTradeButtonClick(){
         removeHighlight();
         tradeInitAnchorPane.setVisible(!tradeInitAnchorPane.isVisible());
-        tradeOfferAnchorPane.setVisible(!tradeOfferAnchorPane.isVisible());
     }
     public void onSettlementButtonClick(){
         removeHighlight();
@@ -583,6 +628,7 @@ public class BoardController extends Controller{
             AnchorPane tradeAnchorPane = loader.load();
             TradeController tradeController = loader.getController();
             tradeController.setTradeViewType(TradeViewType.TRADE_INIT);
+            tradeController.setParent(hexagonPane);
             tradeAnchorPane.getProperties().put("controller", tradeController);
             tradeInitAnchorPane.getChildren().clear();
             tradeInitAnchorPane.getChildren().add(tradeAnchorPane);
@@ -597,12 +643,22 @@ public class BoardController extends Controller{
             AnchorPane tradeAnchorPane = loader.load();
             TradeController tradeController = loader.getController();
             tradeController.setTradeViewType(TradeViewType.TRADE_OFFER);
+            tradeController.setParent(hexagonPane);
             tradeAnchorPane.getProperties().put("controller", tradeController);
             tradeOfferAnchorPane.getChildren().clear();
             tradeOfferAnchorPane.getChildren().add(tradeAnchorPane);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    public TradeController getTradeController(TradeViewType tradeViewType){
+        if(tradeViewType == TradeViewType.TRADE_INIT){
+            return (TradeController) tradeInitAnchorPane.getChildren().getFirst().getProperties().get("controller");
+        }
+        else if(tradeViewType == TradeViewType.TRADE_OFFER){
+            return (TradeController) tradeOfferAnchorPane.getChildren().getFirst().getProperties().get("controller");
+        }
+        return null;
     }
 
 }

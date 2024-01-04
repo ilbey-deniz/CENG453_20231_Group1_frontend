@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.group1.frontend.components.*;
+import com.group1.frontend.dto.websocketDto.TradeInitDto;
 import com.group1.frontend.enums.BuildingType;
 import com.group1.frontend.enums.PlayerColor;
 import com.group1.frontend.enums.ResourceType;
@@ -200,4 +201,27 @@ public class JsonDeserializers {
         }
     }
 
+    public static class TradeInitDtoDeserializer extends JsonDeserializer<TradeInitDto> {
+        @Override
+        public TradeInitDto deserialize(JsonParser jsonParser,
+                                DeserializationContext deserializationContext) throws java.io.IOException {
+            JsonNode node = jsonParser.getCodec().readTree(jsonParser);
+            String offererName = node.get("offererName").asText();
+            LinkedHashMap tradeOfferLHM = node.get("offeredResources").traverse(jsonParser.getCodec()).readValueAs(LinkedHashMap.class);
+            HashMap<ResourceType, Integer> tradeOffer = new HashMap<>();
+            for (Object resourceType : tradeOfferLHM.keySet()) {
+                tradeOffer.put(ResourceType.valueOf((String) resourceType), (Integer) tradeOfferLHM.get(resourceType));
+            }
+            LinkedHashMap tradeRequestLHM = node.get("requestedResources").traverse(jsonParser.getCodec()).readValueAs(LinkedHashMap.class);
+            HashMap<ResourceType, Integer> tradeRequest = new HashMap<>();
+            for (Object resourceType : tradeRequestLHM.keySet()) {
+                tradeRequest.put(ResourceType.valueOf((String) resourceType), (Integer) tradeRequestLHM.get(resourceType));
+            }
+            TradeInitDto tradeInitDto = new TradeInitDto();
+            tradeInitDto.setOffererName(offererName);
+            tradeInitDto.setOfferedResources(tradeOffer);
+            tradeInitDto.setRequestedResources(tradeRequest);
+            return tradeInitDto;
+        }
+    }
 }
