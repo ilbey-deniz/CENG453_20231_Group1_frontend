@@ -131,11 +131,11 @@ public class BoardController extends Controller{
                 //place random settlements and one road for each player
                 service.getGame().createInitialBuildings();
                 service.getGame().getPlayers().forEach(player -> {
-                    player.addResource(ResourceType.GRAIN, 1);
-                    player.addResource(ResourceType.LUMBER, 3);
-                    player.addResource(ResourceType.WOOL, 1);
-                    player.addResource(ResourceType.BRICK, 3);
-                    player.addResource(ResourceType.ORE, 0);
+                    player.addResource(ResourceType.GRAIN, 10);
+                    player.addResource(ResourceType.LUMBER, 10);
+                    player.addResource(ResourceType.WOOL, 10);
+                    player.addResource(ResourceType.BRICK, 10);
+                    player.addResource(ResourceType.ORE, 10);
                 });
                 GameDto gameDto = new GameDto();
                 gameDto.setGame(service.getGame());
@@ -169,9 +169,13 @@ public class BoardController extends Controller{
             hexagonPane.addEventHandler(DiceRolledEvent.DICE_ROLLED, this::handleDiceRolledEvent);
             hexagonPane.addEventHandler(DiceRolledEvent.CPU_ROLLED_DICE, this::handleDiceRolledEvent);
             hexagonPane.addEventHandler(TurnEndedEvent.TURN_ENDED, this::handleTurnEndedEvent);
+            hexagonPane.addEventHandler(TurnEndedEvent.CPU_TURN_ENDED, this::handleTurnEndedEvent);
             hexagonPane.addEventHandler(BuildingPlacedEvent.ROAD_PLACED, this::handleBuildingPlacedEvent);
             hexagonPane.addEventHandler(BuildingPlacedEvent.SETTLEMENT_PLACED, this::handleBuildingPlacedEvent);
             hexagonPane.addEventHandler(BuildingPlacedEvent.CITY_PLACED, this::handleBuildingPlacedEvent);
+            hexagonPane.addEventHandler(BuildingPlacedEvent.CPU_ROAD_PLACED, this::handleBuildingPlacedEvent);
+            hexagonPane.addEventHandler(BuildingPlacedEvent.CPU_SETTLEMENT_PLACED, this::handleBuildingPlacedEvent);
+            hexagonPane.addEventHandler(BuildingPlacedEvent.CPU_CITY_PLACED, this::handleBuildingPlacedEvent);
             hexagonPane.addEventHandler(LongestRoadEvent.LONGEST_ROAD, this::handleLongestRoadEvent);
             hexagonPane.addEventHandler(GameWonEvent.GAME_WON, this::handleGameWonEvent);
             hexagonPane.addEventHandler(TradeButtonEvent.TRADE_INIT_ACCEPT, this::handleTradeAcceptCancelButtonEvent);
@@ -225,7 +229,7 @@ public class BoardController extends Controller{
 
         }
         else if(dto.getClass().equals(EndTurnDto.class)){
-            hexagonPane.fireEvent(new TurnEndedEvent(TurnEndedEvent.CPU_TURN_ENDED));
+            hexagonPane.fireEvent(new TurnEndedEvent(TurnEndedEvent.TURN_ENDED));
         }
         else if (dto.getClass().equals(TextMessageDto.class)) {
 
@@ -256,15 +260,15 @@ public class BoardController extends Controller{
     public void handleTradeAcceptCancelButtonEvent(TradeButtonEvent event) {
         if (event.getEventType() == TradeButtonEvent.TRADE_INIT_ACCEPT) {
             TradeController tradeController = getTradeController(TradeViewType.TRADE_INIT);
-            HashMap<ResourceType, Integer> offeredResources = tradeController.getOutResources();
+            HashMap<ResourceType, Integer> outResources = tradeController.getOutResources();
             HashMap<ResourceType, Integer> requestedResources = tradeController.getInResources();
-            if (offeredResources.isEmpty() || requestedResources.isEmpty()) {
+            if (outResources.isEmpty() || requestedResources.isEmpty()) {
                 statusLabel.setText("You must offer and request at least one resource");
                 tradeToggleButton.setSelected(false);
                 return;
             }
             //if the player doesn't have enough resources to offer
-            if(!service.getGame().getCurrentPlayer().hasEnoughResourcesToTrade(offeredResources)){
+            if(!service.getGame().getCurrentPlayer().hasEnoughResourcesToTrade(outResources)){
                 statusLabel.setText("You don't have enough resources to offer");
                 tradeToggleButton.setSelected(false);
                 return;
@@ -280,7 +284,7 @@ public class BoardController extends Controller{
                 //Sending Trade message
                 TradeInitDto tradeInitDto = new TradeInitDto();
                 tradeInitDto.setTraderName(service.getUsername());
-                tradeInitDto.setOfferedResources(offeredResources);
+                //tradeInitDto.setOfferedResources(offeredResources);
                 tradeInitDto.setRequestedResources(requestedResources);
                 String message = service.objectToJson(tradeInitDto);
                 service.sendWebsocketMessage(message);
@@ -499,6 +503,7 @@ public class BoardController extends Controller{
             service.sendWebsocketMessage(service.objectToJson(endTurnDto));
         }
 
+        //TODO: service winner should be set
         if(service.getGame().checkWinner()!=null){
             hexagonPane.fireEvent(new GameWonEvent(service.getGame().checkWinner()));
             return;
@@ -512,7 +517,7 @@ public class BoardController extends Controller{
             service.getGame().autoPlayCpuPlayer();
         }
     }
-    private void handleBuildingPlacedEvent(BuildingPlacedEvent buildingPlacedEvent) {
+    public void handleBuildingPlacedEvent(BuildingPlacedEvent buildingPlacedEvent) {
 
         //send BuildingPlaced message
         if(buildingPlacedEvent.getEventType() == BuildingPlacedEvent.SETTLEMENT_PLACED

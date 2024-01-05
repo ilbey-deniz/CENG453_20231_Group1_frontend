@@ -414,8 +414,8 @@ public class Game extends AnchorPane {
                     List<Edge> availableEdges = getAvailableEdges();
                     if(!availableEdges.isEmpty()){
                         Edge randomEdge = availableEdges.get((int) (Math.random() * availableEdges.size()));
-                        getParent().fireEvent(new BuildingPlacedEvent(BuildingPlacedEvent.CPU_ROAD_PLACED, randomEdge, currentPlayer));
-                        fireLongestRoadEventInNeed(currentPlayer.getLongestRoad());
+                        BuildingPlacedEvent buildingPlacedEvent = new BuildingPlacedEvent(BuildingPlacedEvent.CPU_ROAD_PLACED, randomEdge, currentPlayer);
+                        getParent().fireEvent(buildingPlacedEvent);
                     }
                 }
             }
