@@ -127,7 +127,7 @@ public class BoardController extends Controller{
                     Player player = new Player(lobbyPlayer.getColor(), lobbyPlayer.getName(), lobbyPlayer.getCpu());
                     service.getGame().addPlayer(player);
                 });
-                service.getGame().setCurrentPlayer(service.getGame().getRandomNonCpuPlayer());
+                service.getGame().setCurrentPlayer(service.getGame().getPlayerByName(service.getUsername()));
                 //place random settlements and one road for each player
                 service.getGame().createInitialBuildings();
                 service.getGame().getPlayers().forEach(player -> {
@@ -155,6 +155,15 @@ public class BoardController extends Controller{
             }
             loadTradeViews();
             highlightPlayerInfo(service.getGame().getCurrentPlayer());
+
+            if(service.getGame().getCurrentPlayer().getName().equals(service.getUsername())){
+                enableButtons();
+                statusLabel.setText("Your turn");
+            }
+            else{
+                disableButtons();
+                statusLabel.setText(service.getGame().getCurrentPlayer().getName() + "'s turn");
+            }
 
             timer = new Timer(TURN_TIME);
 
@@ -497,6 +506,13 @@ public class BoardController extends Controller{
         unhighlightPlayerInfo(service.getGame().getCurrentPlayer()); //unhighlight current player info
 
         service.getGame().endTurn();
+        if(service.getGame().getCurrentPlayer().getName().equals(service.getUsername())){
+            statusLabel.setText("Your turn");
+            enableButtons();
+        }
+        else{
+            statusLabel.setText(service.getGame().getCurrentPlayer().getName() + "'s turn");
+        }
 
         if(event.getEventType().equals(TurnEndedEvent.CPU_TURN_ENDED)){
             EndTurnDto endTurnDto = new EndTurnDto();
@@ -511,7 +527,6 @@ public class BoardController extends Controller{
 
         highlightPlayerInfo(service.getGame().getCurrentPlayer());
 
-        statusLabel.setText(service.getGame().getCurrentPlayer().getName() + "'s turn");
         writeToGameUpdates(service.getGame().getCurrentPlayer().getName() + "'s turn");
         if(service.getUsername().equals(service.getGameRoom().getHostName())){
             service.getGame().autoPlayCpuPlayer();
@@ -629,6 +644,7 @@ public class BoardController extends Controller{
         }
     }
     public void onEndTourButtonClick(){
+        disableButtons();
         EndTurnDto endTurnDto = new EndTurnDto();
         service.sendWebsocketMessage(service.objectToJson(endTurnDto));
         hexagonPane.fireEvent(new TurnEndedEvent(TurnEndedEvent.TURN_ENDED));
@@ -838,4 +854,25 @@ public class BoardController extends Controller{
         return null;
     }
 
+    private void disableButtons(){
+        boardView.setDisable(true);
+        tradeToggleButton.setDisable(true);
+        settlementToggleButton.setDisable(true);
+        cityToggleButton.setDisable(true);
+        roadToggleButton.setDisable(true);
+        firstDiceButton.setDisable(true);
+        secondDiceButton.setDisable(true);
+        endTourButton.setDisable(true);
+    }
+
+    private void enableButtons(){
+        boardView.setDisable(false);
+        tradeToggleButton.setDisable(false);
+        settlementToggleButton.setDisable(false);
+        cityToggleButton.setDisable(false);
+        roadToggleButton.setDisable(false);
+        firstDiceButton.setDisable(false);
+        secondDiceButton.setDisable(false);
+        endTourButton.setDisable(false);
+    }
 }

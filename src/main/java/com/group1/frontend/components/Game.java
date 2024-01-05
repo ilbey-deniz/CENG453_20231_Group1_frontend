@@ -55,15 +55,6 @@ public class Game extends AnchorPane {
         this.occupiedBuildings = new HashSet<>();
         this.playersWithLongestRoad = new HashMap<>();
     }
-    public Game (List<Player> players, Board board, Player currentPlayer, Integer turnNumber, IntegerPair currentDiceRoll) {
-        this.players = players;
-        this.board = board;
-        this.currentPlayer = currentPlayer;
-        this.turnNumber = turnNumber;
-        this.currentDiceRoll = currentDiceRoll;
-        this.occupiedBuildings = new HashSet<>();
-        this.playersWithLongestRoad = new HashMap<>();
-    }
 
     public void addPlayer(Player player) {
         players.add(player);
