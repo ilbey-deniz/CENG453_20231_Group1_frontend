@@ -214,17 +214,17 @@ public class BoardController extends Controller{
             service.getGame().tradeResources(
                     tradeAcceptDto.getTraderName(),
                     tradeAcceptDto.getTradeeName(),
-                    tradeAcceptDto.getRequestedResources(),
-                    tradeAcceptDto.getOfferedResources());
+                    tradeAcceptDto.getOfferedResources(),
+                    tradeAcceptDto.getRequestedResources());
             updateAllPlayerInfos();
             writeToGameUpdates(
                     tradeAcceptDto.getTraderName() +
                     " traded with " +
                     tradeAcceptDto.getTradeeName() +
                     " : offered " +
-                    tradeResourcesToString(tradeAcceptDto.getRequestedResources()) +
+                    tradeResourcesToString(tradeAcceptDto.getOfferedResources()) +
                     " and received " +
-                    tradeResourcesToString(tradeAcceptDto.getOfferedResources())
+                    tradeResourcesToString(tradeAcceptDto.getRequestedResources())
             );
 
         }
@@ -260,15 +260,15 @@ public class BoardController extends Controller{
     public void handleTradeAcceptCancelButtonEvent(TradeButtonEvent event) {
         if (event.getEventType() == TradeButtonEvent.TRADE_INIT_ACCEPT) {
             TradeController tradeController = getTradeController(TradeViewType.TRADE_INIT);
-            HashMap<ResourceType, Integer> outResources = tradeController.getOutResources();
+            HashMap<ResourceType, Integer> offeredResources = tradeController.getOutResources();
             HashMap<ResourceType, Integer> requestedResources = tradeController.getInResources();
-            if (outResources.isEmpty() || requestedResources.isEmpty()) {
+            if (offeredResources.isEmpty() || requestedResources.isEmpty()) {
                 statusLabel.setText("You must offer and request at least one resource");
                 tradeToggleButton.setSelected(false);
                 return;
             }
             //if the player doesn't have enough resources to offer
-            if(!service.getGame().getCurrentPlayer().hasEnoughResourcesToTrade(outResources)){
+            if(!service.getGame().getCurrentPlayer().hasEnoughResourcesToTrade(offeredResources)){
                 statusLabel.setText("You don't have enough resources to offer");
                 tradeToggleButton.setSelected(false);
                 return;
@@ -284,7 +284,7 @@ public class BoardController extends Controller{
                 //Sending Trade message
                 TradeInitDto tradeInitDto = new TradeInitDto();
                 tradeInitDto.setTraderName(service.getUsername());
-                //tradeInitDto.setOfferedResources(offeredResources);
+                tradeInitDto.setOfferedResources(offeredResources);
                 tradeInitDto.setRequestedResources(requestedResources);
                 String message = service.objectToJson(tradeInitDto);
                 service.sendWebsocketMessage(message);
@@ -302,10 +302,10 @@ public class BoardController extends Controller{
         }
         else if (event.getEventType() == TradeButtonEvent.TRADE_OFFER_ACCEPT) {
             TradeController tradeController = getTradeController(TradeViewType.TRADE_OFFER);
-            HashMap<ResourceType, Integer> offeredResources = tradeController.getInResources();
-            HashMap<ResourceType, Integer> requestedResources = tradeController.getOutResources();
+            HashMap<ResourceType, Integer> inResources = tradeController.getInResources();
+            HashMap<ResourceType, Integer> outResources = tradeController.getOutResources();
             //check if the player has enough resources to accept the trade
-            if(!service.getGame().getCurrentPlayer().hasEnoughResourcesToTrade(requestedResources)){
+            if(!service.getGame().getCurrentPlayer().hasEnoughResourcesToTrade(outResources)){
                 statusLabel.setText("You don't have enough resources to accept the trade");
                 tradeToggleButton.setSelected(false);
                 return;
@@ -322,14 +322,14 @@ public class BoardController extends Controller{
                 service.getGame().tradeResources(
                         tradeController.getTraderNameLabel().getText(),
                         service.getUsername(),
-                        requestedResources,
-                        offeredResources);
+                        inResources,
+                        outResources);
                 //Sending Trade message
                 TradeAcceptDto tradeAcceptDto = new TradeAcceptDto();
                 tradeAcceptDto.setTraderName(trader.getName());
                 tradeAcceptDto.setTradeeName(tradee.getName());
-                tradeAcceptDto.setOfferedResources(offeredResources);
-                tradeAcceptDto.setRequestedResources(requestedResources);
+                tradeAcceptDto.setOfferedResources(inResources);
+                tradeAcceptDto.setRequestedResources(outResources);
                 String message = service.objectToJson(tradeAcceptDto);
                 service.sendWebsocketMessage(message);
                 updateAllPlayerInfos();
@@ -338,9 +338,9 @@ public class BoardController extends Controller{
                                 " traded with " +
                                 tradeAcceptDto.getTradeeName() +
                                 " : offered " +
-                                tradeResourcesToString(tradeAcceptDto.getRequestedResources()) +
+                                tradeResourcesToString(tradeAcceptDto.getOfferedResources()) +
                                 " and received " +
-                                tradeResourcesToString(tradeAcceptDto.getOfferedResources())
+                                tradeResourcesToString(tradeAcceptDto.getRequestedResources())
                 );
             }
             else{
