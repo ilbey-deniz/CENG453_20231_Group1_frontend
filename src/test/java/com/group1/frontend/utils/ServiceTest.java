@@ -33,7 +33,7 @@ public class ServiceTest {
         }
 
         // create a new service to test the join game
-        Service service2 = new Service();
+        service2 = new Service();
         service2.setBackendURL("http://localhost:8080/api");
         String username2 = "admin";
         String password2 = "123";
@@ -159,68 +159,93 @@ public class ServiceTest {
         }
     }
 
-//    @Test
-//    public void testReadyAndStartGame(){
-//        PlayerColor color = getRandomAvailableColor();
-//        PlayerDto playerDto = new PlayerDto(
-//                service.getUsername(),
-//                color,
-//                false,
-//                true,
-//                false);
-//        HttpResponse<String> response = service.makeRequestWithToken(
-//                "/game/create",
-//                "POST",
-//                playerDto);
-//
-//        LobbyPlayer lobbyPlayer = new LobbyPlayer();
-//
-//        if(response.statusCode() == 200) {
-//            service.createGameRoom();
-//            service.getGameRoom().setRoomCode(response.body());
-//            lobbyPlayer.setName(playerDto.getName());
-//            lobbyPlayer.setColor(playerDto.getColor());
-//            lobbyPlayer.setCpu(playerDto.isCpu());
-//            lobbyPlayer.setReady(playerDto.isReady());
-//            service.getGameRoom().addPlayer(lobbyPlayer);
-//            service.getGameRoom().setHostName(service.getUsername());
-//        }
-//        // join the game with service2
-//        PlayerDto playerDto2 = new PlayerDto(
-//                service2.getUsername(),
-//                color,
-//                false,
-//                false,
-//                false);
-//        GameRoom_PlayerDto gameRoomPlayerDto = new GameRoom_PlayerDto(
-//                service.getGameRoom().getRoomCode(),
-//                playerDto2
-//        );
-//        HttpResponse<String> response3 = service2.makeRequestWithToken(
-//                "/game/join",
-//                "POST",
-//                gameRoomPlayerDto);
-//        GameRoom gameRoom;
-//        if(response3.statusCode() == 200) {
-//            gameRoom = (GameRoom) service2.jsonToObject(response3.body(), GameRoom.class);
-//            service2.setGameRoom(gameRoom);
-//        }
-//        else {
-//            gameRoom = null;
-//        }
-//        // check the game started when players are ready
-//        lobbyPlayer.setReady(true);
-//        GameRoom_PlayerDto playerReadyDto;
-//        playerReadyDto.setRoomCode(service.getGameRoom().getRoomCode());
-//
-//
-//        HttpResponse<String> response4 = service.makeRequestWithToken(
-//                "/game/playerReady",
-//                "POST",
-//                playerReadyDto);
-//        if(response4.statusCode() == 200) {
-//
-//        }
-//
-//    }
+    @Test
+    public void testReadyAndStartGame(){
+        PlayerColor color = getRandomAvailableColor();
+        PlayerDto playerDto = new PlayerDto(
+                service.getUsername(),
+                color,
+                false,
+                true,
+                false);
+        HttpResponse<String> response = service.makeRequestWithToken(
+                "/game/create",
+                "POST",
+                playerDto);
+
+        LobbyPlayer lobbyPlayer = new LobbyPlayer();
+
+        if(response.statusCode() == 200) {
+            service.createGameRoom();
+            service.getGameRoom().setRoomCode(response.body());
+            lobbyPlayer.setName(playerDto.getName());
+            lobbyPlayer.setColor(playerDto.getColor());
+            lobbyPlayer.setCpu(playerDto.isCpu());
+            lobbyPlayer.setReady(playerDto.isReady());
+            service.getGameRoom().addPlayer(lobbyPlayer);
+            service.getGameRoom().setHostName(service.getUsername());
+        }
+        // join the game with service2
+        PlayerDto playerDto2 = new PlayerDto(
+                service2.getUsername(),
+                color,
+                false,
+                false,
+                false);
+        GameRoom_PlayerDto gameRoomPlayerDto = new GameRoom_PlayerDto(
+                service.getGameRoom().getRoomCode(),
+                playerDto2
+        );
+        HttpResponse<String> response3 = service2.makeRequestWithToken(
+                "/game/join",
+                "POST",
+                gameRoomPlayerDto);
+        int joinCount = 0;
+        if(response3.statusCode() == 200) {
+            joinCount++;
+        }
+        // check the game started when players are ready
+        playerDto.setReady(true);
+        GameRoom_PlayerDto gameRoomPlayerDto2 = new GameRoom_PlayerDto(
+                service.getGameRoom().getRoomCode(),
+                playerDto
+        );
+        HttpResponse<String> response4 = service.makeRequestWithToken(
+                "/game/playerReady",
+                "POST",
+                gameRoomPlayerDto2);
+        int readyCount = 0;
+        if(response4.statusCode() == 200) {
+            readyCount++;
+        }
+        playerDto2.setReady(true);
+        GameRoom_PlayerDto gameRoomPlayerDto3 = new GameRoom_PlayerDto(
+                service.getGameRoom().getRoomCode(),
+                playerDto2
+        );
+        HttpResponse<String> response5 = service2.makeRequestWithToken(
+                "/game/playerReady",
+                "POST",
+                gameRoomPlayerDto3);
+        if(response5.statusCode() == 200) {
+            readyCount++;
+        }
+
+        // start the game and check the game started
+        GameRoom_PlayerDto gameRoomPlayerDto4 = new GameRoom_PlayerDto(
+                service.getGameRoom().getRoomCode(),
+                playerDto
+        );
+        HttpResponse<String> response6 = service.makeRequestWithToken(
+                "/game/start",
+                "POST",
+                gameRoomPlayerDto4);
+        if(response6.statusCode() == 200) {
+            service.getGameRoom().setIsStarted(true);
+        }
+
+        assertEquals(2, readyCount);
+        assertEquals(1, joinCount);
+        assertEquals(true, service.getGameRoom().getIsStarted());
+    }
 }
