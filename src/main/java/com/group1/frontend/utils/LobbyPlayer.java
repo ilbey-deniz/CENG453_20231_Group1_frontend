@@ -35,6 +35,14 @@ public class LobbyPlayer {
         setColorImage(color);
         this.ready = playerDto.isReady();
     }
+
+    public LobbyPlayer() {
+        this.name = "";
+        this.cpu = false;
+        this.color = PlayerColor.red;
+        this.ready = false;
+    }
+
     public void setColorImage(PlayerColor color) {
         String colorStr = color.toString();
         try {
