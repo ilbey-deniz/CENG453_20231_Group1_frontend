@@ -46,5 +46,21 @@
     - Backend will set the AtomicBoolean to false, and the trade will be completed. The AtomicBoolean will prevent race conditions.
     - After the trade is completed, all players will be notified over websocket.
 
+## Testing
+- GameTest
+    - It tests the main functionalities of Game class.
+        - Initialize game with 4 predefined player, board and initial buildings.
+        - Test whether initialization is correct.
+        - Test whether resource adding and initial resource distribution correct.
+        - Test whether dice is bound between 2 and 12.
+        - Test whether resource correctly distributed with dice roll.
+- ServiceTest
+    - It tests the main functionalities of Service which is about game creation and lobby.
+        - Initialize test by creating two service by login.
+        - Test whether login correct.
+        - Test whether game creation correct and give 5 digit room code.
+        - Test whether lobby creation and joining lobby works correct.
+        - Test whether ready and start game functionalities correct.
+
 ## Notes
 - Our contribution to the project is 50%. We have worked on the project together, and we have done pair programming most of the time. Therefore, commits are not a good indicator of our contribution.
