@@ -58,7 +58,7 @@
     - It tests the main functionalities of Service which is about game creation and lobby.
         - Initialize test by creating two service by login.
         - Test whether login correct.
-        - Test whether game creation correct and give 5 digit room code.
+        - Test whether lobby creation correct and give 5 digit room code.
         - Test whether lobby creation and joining lobby works correct.
         - Test whether ready and start game functionalities correct.
 
